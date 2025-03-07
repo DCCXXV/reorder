@@ -1,3 +1,14 @@
-body{
-    background-color: beige;
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: local('Plus Jakarta Sans'), url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+    font-style: normal;
+    font-weight: 400;
+}
+
+:root {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.bold {
+    font-weight: bold;
 }

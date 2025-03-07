@@ -19,8 +19,6 @@ public class RootController {
 
     private static final Logger log = LogManager.getLogger(RootController.class);
 
-    private List<String> elements = new ArrayList<>();
-
     /**
      * Añade atributos comunes al modelo desde la sesión HTTP.
      *
@@ -57,7 +55,13 @@ public class RootController {
      * @return El nombre de la vista "createOrder".
      */
     @GetMapping("/createOrder")
-    public String createOrder(Model model) {
+    public String createOrder(Model model, HttpSession session) {
+        List<String> elements = (List<String>) session.getAttribute("elements");
+        if (elements == null) {
+            elements = new ArrayList<>();
+            session.setAttribute("elements", elements);
+        }
+        
         model.addAttribute("elements", elements);
         return "createOrder";
     }
@@ -76,7 +80,13 @@ public class RootController {
      *         respuesta para refrescar únicamente el contenido del contenedor especificado.
      */
     @PostMapping("/createOrder/addElement")
-    public String addElement(@RequestParam String elementTextInput, Model model) {
+    public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
+        List<String> elements = (List<String>) session.getAttribute("elements");
+        if (elements == null) {
+            elements = new ArrayList<>();
+            session.setAttribute("elements", elements);
+        }
+
         if (!elementTextInput.trim().isEmpty()) {
             elements.add(elementTextInput.trim());
         }
@@ -97,7 +107,13 @@ public class RootController {
      *         respuesta para refrescar únicamente el contenido del contenedor especificado.
      */
     @PostMapping("/createOrder/deleteElement")
-    public String deleteElement(@RequestParam String elementTextBadge, Model model) {
+    public String deleteElement(@RequestParam String elementTextBadge, HttpSession session,  Model model) {
+        List<String> elements = (List<String>) session.getAttribute("elements");
+        if (elements == null) {
+            elements = new ArrayList<>();
+            session.setAttribute("elements", elements);
+        }
+
         elements.remove(elementTextBadge.trim());
         model.addAttribute("elements", elements);
         return "createOrder :: #elementsContainer";

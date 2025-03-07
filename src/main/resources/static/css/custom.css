@@ -9,6 +9,49 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.bold {
-    font-weight: bold;
+.badge {
+    transition: all 0.05s ease-in-out;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.element-cancel {
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.15s ease-in-out;
+}
+
+.element-cancel:hover {
+    transform: rotateZ(-180deg);
+}
+
+.badge:hover {
+    filter: brightness(95%);
+}
+
+.badge:has(.element-cancel:hover) {
+    background-color: #EAE4E8 !important;
+    color: #BF616A !important;
+    
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    filter: brightness(100%);
+}
+
+.categoryLabel {
+    transition: all 0.05s ease-in-out;
+    cursor: pointer;
+}
+
+.categoryLabel:hover {
+    filter: brightness(95%);
+}
+
+#addCategory {
+    transition: all 0.05s ease;
+    cursor: pointer;
+}
+
+#addCategory:hover {
+    transform: scale(1.04);
 }

@@ -58,14 +58,16 @@ public class RootController {
      */
     @GetMapping("/createOrder")
     public String createOrder(Model model, HttpSession session) {
+        List<Integer> tiers = orderService.getTiers(session);
         List<String> elements = orderService.getElements(session);
+
+        model.addAttribute("tiers", tiers);
         model.addAttribute("elements", elements);
         return "createOrder";
     }
 
     /**
      * Añade un nuevo elemento a la lista de elementos y actualiza el modelo con la lista actual.
-     * Este método se activa mediante una solicitud POST a la ruta "/createOrder/addElement".
      *
      * @param elementTextInput El texto del elemento a añadir. Es el nombre (atributo name) del input en createOrder.
      * @param session          La sesión HTTP actual.
@@ -85,7 +87,6 @@ public class RootController {
 
     /**
      * Elimina un elemento de la lista de elementos y actualiza el modelo con la lista actualizada.
-     * Este método se activa mediante una solicitud POST a la ruta "/createOrder/deleteElement".
      *
      * @param elementTextBadge El texto del elemento a eliminar. Es el nombre del badge en createOrder.
      * @param session          La sesión HTTP actual.
@@ -102,4 +103,20 @@ public class RootController {
         model.addAttribute("elements", elements);
         return "createOrder :: #elementsContainer";
     }
+
+
+    /**
+     * Maneja la solicitud POST para añadir una nueva categoría a la lista de categorías en la sesión.
+     *
+     * @param model El modelo que se utiliza para pasar datos a la vista.
+     * @param session La sesión HTTP actual.
+     * @return El nombre de la vista fragmentada que se actualizará con las nuevas categorías.
+     */
+    @PostMapping("/createOrder/addTier")
+    public String addTier(Model model, HttpSession session) {
+        List<Integer> tiers = orderService.addTiers(session);
+        model.addAttribute("tiers", tiers);
+        return "createOrder :: tiersContainer";
+    }
+
 }

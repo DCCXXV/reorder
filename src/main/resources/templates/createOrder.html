@@ -1,5 +1,5 @@
 <div>
-<!-- Crear todo aquí esto estará incrustado en el index así que ya tiene todas la librerias y estilos-->
+    <!-- Crear todo aquí esto estará incrustado en el index así que ya tiene todas la librerias y estilos-->
     <span class="text-4xl font-bold">Crea tu Order</span>
     <div class="my-8">
         <form
@@ -8,16 +8,16 @@
             hx-trigger="submit"
             hx-target="#elementsContainer"
             hx-swap="innerHTML"
-            >      
+            id="elementForm">
             <div class="join">
-                <input type="text" name="elementTextInput" placeholder="Escribe un elemento" class="input join-item" />
+                <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
+                    class="input join-item focus:outline-none" />
                 <button type="submit" class="btn btn-primary text-white join-item">Añadir</button>
             </div>
         </form>
 
         <div class="flex flex-wrap gap-4" id="elementsContainer" th:fragment="elementsContainer">
             <span th:each="e : ${elements}" class="badge badge-soft badge-neutral align-middle font-bold p-4 text-xl text-center">
-
                 <!-- ignoren lo del th:attr escapar comillas es un caos en html-->
                 <i
                     hx-post="/createOrder/deleteElement"
@@ -30,42 +30,41 @@
                 <span th:text="${e}">elemento</span>
             </span>
         </div>
-
     </div>
-
-    <div class="grid grid-cols-1 gap-4 mb-8 mt-4">
-
-        <div class="rounded-lg border-b-2 overflow-hidden">
+    <div class="grid grid-cols-1 gap-4 mb-8 mt-4" id="tiersContainer" th:fragment="tiersContainer">
+        
+        <div class="rounded-lg border-b-2 overflow-hidden" th:each="tier, iterStat : ${tiers}">
             <div class="flex">
                 <div class="categoryLabel bg-accent flex flex-col gap-2 items-center justify-center w-16 h-24">
-                    <span class="text-neutral font-bold text-2xl">1</span>
+                    <span class="text-neutral font-bold text-2xl" th:text="${iterStat.count}">1</span>
                     <i class="fa-solid fa-grip text-neutral"></i>
                 </div>
-                <div class="flex-1 min-h-24 p-2 flex flex-wrap gap-2" id="tierS">
+                <div class="flex-1 min-h-24 p-2 flex flex-wrap gap-2" th:id="'tier' + ${iterStat.count}">
                     <!-- elementos -->
                 </div>
             </div>
         </div>
 
-        <div class="rounded-lg border-b-2 overflow-hidden">
-            <div class="flex">
-                <div class="categoryLabel bg-accent flex flex-col gap-2 items-center justify-center w-16 h-24">
-                    <span class="text-neutral font-bold text-2xl">2</span>
-                    <i class="fa-solid fa-grip text-neutral"></i>
-                </div>
-                <div class="flex-1 min-h-24 p-2 flex flex-wrap gap-2" id="tierS">
-                    <!-- elementos -->
-                </div>
-            </div>
-        </div>
+        <div 
+            class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
+            hx-post="/createOrder/addTier"
+            hx-target="#tiersContainer"
+            hx-swap="innerHTML"
+            id="addCategory">
 
-       
-        <div class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" id="addCategory">
-            <div class="tooltip tooltip-right tooltip-accent" data-tip="Añade una categoría">
+            <div class="tooltip tooltip-right tooltip-accent" data-tip="Añade una nueva categoría">
                 <span class="text-white font-bold text-2xl">
                     <i class="fa-solid fa-plus"></i>
                 </span>
             </div>
         </div>
+
     </div>
+    <script>
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            if (event.detail.target.id === 'elementsContainer') {
+                document.getElementById('elementTextInput').value = '';
+            }
+        });
+    </script>
 </div>

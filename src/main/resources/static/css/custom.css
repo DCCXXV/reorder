@@ -30,8 +30,9 @@
 }
 
 .badge:has(.element-cancel:hover) {
-    background-color: #EAE4E8 !important;
-    color: #BF616A !important;
+    background-color: #FFF3F2 !important;
+    color: #FF5861 !important;
+    border-color: #FF5861 !important;
     
     transform: scale(1.05);
     transition: transform 0.3s ease;
@@ -40,11 +41,30 @@
 
 .categoryLabel {
     transition: all 0.05s ease-in-out;
-    cursor: pointer;
+    
 }
 
 .categoryLabel:hover {
     filter: brightness(95%);
+}
+
+.tdel {
+    cursor: pointer;
+    transition: all 0.05s ease;
+    transform: scale(1.5);
+}
+
+.tdel:hover {
+    transform: scale(1.8);
+}
+
+.handle {
+    transition: all 0.05s ease-in-out;
+    cursor: grab;
+}
+
+.handle:hover {
+    transform: scale(1.1);
 }
 
 #addCategory {

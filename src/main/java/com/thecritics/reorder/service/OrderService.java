@@ -4,85 +4,98 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-
 import jakarta.servlet.http.HttpSession;
 
 @Service
 public class OrderService {
 
     /**
-     * Obtiene la lista de elementos almacenados en la sesión.
-     * Si la lista no existe, se crea una nueva y se almacena en la sesión.
+     * Añade un elemento al primer tier (sin asignar) del estado del Order en la sesión.
      *
+     * @param elementText El texto del elemento a añadir.
      * @param session La sesión HTTP actual.
-     * @return Una lista de elementos almacenados en la sesión.
+     * @return El estado actualizado del Order con el nuevo elemento añadido.
      */
-    public List<String> getElements(HttpSession session) {
-        List<String> elements = (List<String>) session.getAttribute("elements");
-        if (elements == null) {
-            elements = new ArrayList<>();
-            session.setAttribute("elements", elements);
+    public List<List<String>> addElement(String elementText, HttpSession session) {
+        List<List<String>> orderState = getOrderState(session);
+        if (!elementText.trim().isEmpty()) {
+            // tier 0 es sin asignar
+            orderState.get(0).add(elementText.trim());
         }
-        return elements;
+        return orderState;
     }
 
     /**
-     * Añade un nuevo elemento a la lista de elementos almacenados en la sesión.
-     * El elemento se añade solo si no está vacío o compuesto únicamente por espacios en blanco.
+     * Elimina un elemento del estado del Order en la sesión.
      *
-     * @param elementTextInput El texto del elemento a añadir.
+     * @param elementText El texto del elemento a eliminar.
      * @param session La sesión HTTP actual.
-     * @return La lista actualizada de elementos almacenados en la sesión.
+     * @return El estado actualizado del Order con el elemento eliminado.
      */
-    public List<String> addElement(String elementTextInput, HttpSession session) {
-        List<String> elements = getElements(session);
-        if (!elementTextInput.trim().isEmpty()) {
-            elements.add(elementTextInput.trim());
+    public List<List<String>> deleteElement(String elementText, HttpSession session) {
+        List<List<String>> orderState = getOrderState(session);
+        // Busca y elimina el elemento en cada tier
+        for (List<String> tier : orderState) {
+            tier.remove(elementText);
         }
-        return elements;
+        return orderState;
     }
 
     /**
-     * Elimina un elemento de la lista de elementos almacenados en la sesión.
+     * Añade un nuevo tier vacío al estado del Order en la sesión.
      *
-     * @param elementTextBadge El texto del elemento a eliminar.
      * @param session La sesión HTTP actual.
-     * @return La lista actualizada de elementos almacenados en la sesión.
+     * @return El estado actualizado del Order con el nuevo tier añadido.
      */
-    public List<String> deleteElement(String elementTextBadge, HttpSession session) {
-        List<String> elements = getElements(session);
-        elements.remove(elementTextBadge);
-        return elements;
+    public List<List<String>> addTier(HttpSession session) {
+        List<List<String>> orderState = getOrderState(session);
+        orderState.add(new ArrayList<>());
+        return orderState;
     }
 
     /**
-     * Obtiene la lista de categorías (tiers) almacenados en la sesión.
-     * Si la lista no existe, se crea una nueva con un nivel inicial de 1 y se almacena en la sesión.
+     * Elimina el último tier del estado del Order en la sesión, siempre y cuando haya más de dos tiers.
+     * Asegura que al menos el tier 0 (elementos no asignados) y la primera categoría no se eliminen.
      *
      * @param session La sesión HTTP actual.
-     * @return Una lista de niveles almacenados en la sesión.
+     * @return El estado actualizado del Order con el último tier eliminado, si es posible.
      */
-    public List<Integer> getTiers(HttpSession session) {
-        List<Integer> tiers = (List<Integer>) session.getAttribute("tiers");
-        if (tiers == null) {
-            tiers = new ArrayList<>();
-            tiers.add(1);
+    public List<List<String>> deleteLastTier(HttpSession session) {
+        List<List<String>> orderState = getOrderState(session);
+        if (orderState.size() > 2) { // Mantiene tier 0 y al menos 1 categoría
+            orderState.remove(orderState.size() - 1);
         }
-        session.setAttribute("tiers", tiers);
-        return tiers;
+        return orderState;
     }
 
     /**
-     * Añade un nuevo nivel a la lista de categorías almacenados en la sesión.
-     * El nuevo nivel se establece como el siguiente número entero consecutivo.
+     * Obtiene el estado actual del Order de la sesión. Si no existe, inicializa un nuevo estado.
      *
      * @param session La sesión HTTP actual.
-     * @return La lista actualizada de niveles almacenados en la sesión.
+     * @return El estado actual del Order.
      */
-    public List<Integer> addTiers(HttpSession session) {
-        List<Integer> tiers = getTiers(session);
-        tiers.add(tiers.size() + 1);
-        return tiers;
+    public List<List<String>> getOrderState(HttpSession session) {
+        List<List<String>> orderState = (List<List<String>>) session.getAttribute("orderState");
+        if (orderState == null) {
+            orderState = new ArrayList<>();
+            // tier 0 el "sin asignar"
+            orderState.add(new ArrayList<>());
+            // tier 1
+            orderState.add(new ArrayList<>());
+            session.setAttribute("orderState", orderState);
+        }
+        return orderState;
+    }
+
+    /**
+     * Actualiza el estado de orden con una nueva organización de tiers y elementos.
+     *
+     * @param newOrderState La nueva organización de tiers y elementos.
+     * @param session La sesión HTTP actual.
+     * @return El nuevo estado del Order actualizado.
+     */
+    public List<List<String>> updateOrderState(List<List<String>> newOrderState, HttpSession session) {
+        session.setAttribute("orderState", newOrderState);
+        return newOrderState;
     }
 }
-

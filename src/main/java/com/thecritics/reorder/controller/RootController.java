@@ -1,6 +1,5 @@
 package com.thecritics.reorder.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpSession;
@@ -50,7 +51,7 @@ public class RootController {
     }
 
     /**
-     * Maneja las solicitudes GET a la ruta "/createOrder".
+     * Maneja las solicitudes GET para la vista de crear un nuevo Order.
      *
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
      * @param session La sesión HTTP actual.
@@ -58,65 +59,90 @@ public class RootController {
      */
     @GetMapping("/createOrder")
     public String createOrder(Model model, HttpSession session) {
-        List<Integer> tiers = orderService.getTiers(session);
-        List<String> elements = orderService.getElements(session);
-
-        model.addAttribute("tiers", tiers);
-        model.addAttribute("elements", elements);
+        List<List<String>> orderState = orderService.getOrderState(session);
+        model.addAttribute("orderState", orderState);
         return "createOrder";
     }
 
     /**
-     * Añade un nuevo elemento a la lista de elementos y actualiza el modelo con la lista actual.
+     * Maneja las solicitudes POST para añadir un elemento.
      *
-     * @param elementTextInput El texto del elemento a añadir. Es el nombre (atributo name) del input en createOrder.
+     * @param elementTextInput El texto del elemento a añadir.
      * @param session          La sesión HTTP actual.
-     * @param model            El objeto Modelo utilizado para pasar datos a la vista. La lista actualizada
-     *                         de elementos se añadirá al modelo con el nombre de atributo "elements".
-     * @return El nombre del fragmento de la vista a actualizar. En este caso, devuelve
-     *         "createOrder :: #elementsContainer", lo que significa que solo la parte de la
-     *         vista con ID "elementsContainer" debe ser actualizada. HTMX utilizará esta
-     *         respuesta para refrescar únicamente el contenido del contenedor especificado.
+     * @param model            El objeto Modelo utilizado para pasar datos a la vista.
+     * @return El nombre del fragmento de la vista "createOrder :: #elementsContainer".
      */
     @PostMapping("/createOrder/addElement")
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
-        List<String> elements = orderService.addElement(elementTextInput, session);
-        model.addAttribute("elements", elements);
+        List<List<String>> orderState = orderService.addElement(elementTextInput, session);
+        model.addAttribute("orderState", orderState);
         return "createOrder :: #elementsContainer";
     }
 
     /**
-     * Elimina un elemento de la lista de elementos y actualiza el modelo con la lista actualizada.
+     * Maneja las solicitudes POST para eliminar un elemento.
      *
-     * @param elementTextBadge El texto del elemento a eliminar. Es el nombre del badge en createOrder.
+     * @param elementTextBadge El texto del elemento a eliminar.
      * @param session          La sesión HTTP actual.
-     * @param model            El objeto Modelo utilizado para pasar datos a la vista. La lista actualizada
-     *                         de elementos se añadirá al modelo con el nombre de atributo "elements".
-     * @return El nombre del fragmento de la vista a actualizar. En este caso, devuelve
-     *         "createOrder :: #elementsContainer", lo que significa que solo la parte de la
-     *         vista con ID "elementsContainer" debe ser actualizada. HTMX utilizará esta
-     *         respuesta para refrescar únicamente el contenido del contenedor especificado.
+     * @param model            El objeto Modelo utilizado para pasar datos a la vista.
+     * @return El nombre del fragmento de la vista "createOrder :: #elementsContainer".
      */
     @PostMapping("/createOrder/deleteElement")
     public String deleteElement(@RequestParam String elementTextBadge, HttpSession session, Model model) {
-        List<String> elements = orderService.deleteElement(elementTextBadge, session);
-        model.addAttribute("elements", elements);
+        List<List<String>> orderState = orderService.deleteElement(elementTextBadge, session);
+        model.addAttribute("orderState", orderState);
         return "createOrder :: #elementsContainer";
     }
 
-
     /**
-     * Maneja la solicitud POST para añadir una nueva categoría a la lista de categorías en la sesión.
+     * Maneja las solicitudes POST para añadir un nuevo tier al Order.
      *
-     * @param model El modelo que se utiliza para pasar datos a la vista.
+     * @param model   El objeto Modelo utilizado para pasar datos a la vista.
      * @param session La sesión HTTP actual.
-     * @return El nombre de la vista fragmentada que se actualizará con las nuevas categorías.
+     * @return El nombre del fragmento de la vista "createOrder :: tiersContainer".
      */
     @PostMapping("/createOrder/addTier")
     public String addTier(Model model, HttpSession session) {
-        List<Integer> tiers = orderService.addTiers(session);
-        model.addAttribute("tiers", tiers);
+        List<List<String>> orderState = orderService.addTier(session);
+        model.addAttribute("orderState", orderState);
         return "createOrder :: tiersContainer";
     }
 
+    /**
+     * Maneja las solicitudes POST para eliminar el último tier del estado del Order.
+     *
+     * @param session La sesión HTTP actual.
+     * @param model   El objeto Modelo utilizado para pasar datos a la vista.
+     * @return El nombre del fragmento de la vista "createOrder :: tiersContainer".
+     */
+    @PostMapping("/createOrder/deleteLastTier")
+    public String deleteLastTier(HttpSession session, Model model) {
+        List<List<String>> orderState = orderService.deleteLastTier(session);
+        model.addAttribute("orderState", orderState);
+        return "createOrder :: tiersContainer";
+    }
+
+    /**
+     * Endpoint para actualizar el estado de orden (drag & drop).
+     * Se espera recibir un JSON que representa la nueva lista de tiers.
+     *
+     * @param orderStateJson El JSON que representa la nueva lista de tiers.
+     * @param session        La sesión HTTP actual.
+     * @return El nombre de la vista "createOrder" o "error" en caso de fallo.
+     */
+    @PostMapping("/createOrder/updateOrderState")
+    public String updateOrderState(@RequestParam String orderStateJson, HttpSession session) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            List<List<String>> newOrderState = mapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
+            if (newOrderState.isEmpty() || newOrderState.get(0) == null) {
+                return "error";
+            }
+            orderService.updateOrderState(newOrderState, session);
+            return "createOrder";
+        } catch (Exception e) {
+            log.error("Error actualizando estado", e);
+            return "error";
+        }
+    }
 }

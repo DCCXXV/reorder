@@ -1,50 +1,80 @@
 <div>
     <!-- Crear todo aquí esto estará incrustado en el index así que ya tiene todas la librerias y estilos-->
-    <span class="text-4xl font-bold">Crea tu Order</span>
-    <div class="my-8">
-        <form
-            class="mb-8"
-            hx-post="/createOrder/addElement"
-            hx-trigger="submit"
-            hx-target="#elementsContainer"
-            hx-swap="innerHTML"
-            id="elementForm">
-            <div class="join">
-                <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
-                    class="input join-item focus:outline-none" />
-                <button type="submit" class="btn btn-primary text-white join-item">Añadir</button>
-            </div>
-        </form>
+    <div class="flex flex-col items-center text-center">
+        <span class="text-4xl font-bold">Crea tu <em class="text-accent">Order</em></span>
+        <div class="my-8 flex flex-col items-center text-center">
+            <div class="mb-8 flex items-center text-center">
+                <form
+                    hx-post="/createOrder/addElement"
+                    hx-trigger="submit"
+                    hx-target="#elementsContainer"
+                    hx-swap="outerHTML"
+                    id="elementForm">
+                    <div class="join">
+                        <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
+                            class="input join-item focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral" />
+                        <button type="submit" class="btn btn-primary text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
+                    </div>
+                </form>
 
-        <div class="flex flex-wrap gap-4" id="elementsContainer" th:fragment="elementsContainer">
-            <span th:each="e : ${elements}" class="badge badge-soft badge-neutral align-middle font-bold p-4 text-xl text-center">
-                <!-- ignoren lo del th:attr escapar comillas es un caos en html-->
-                <i
-                    hx-post="/createOrder/deleteElement"
-                    th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'"
-                    hx-target="closest .badge"
-                    hx-swap="delete"
-                    hx-trigger="click"
-                    class="fa-solid fa-xmark element-cancel">
-                </i>
-                <span th:text="${e}">elemento</span>
-            </span>
+                <!-- fila para poner elementos al mismo nivel que el añadir elementos -->
+
+            </div>
+
+            <div id="elementsContainer" th:fragment="elementsContainer">
+                <span 
+                    th:each="e : ${orderState[0]}" 
+                    class="badge badge border-2 border-neutral p-4 text-xl mb-2 me-2"
+                    th:data-element="${e}">
+                    <i 
+                        class="fa-solid fa-xmark element-cancel"
+                        hx-post="/createOrder/deleteElement"
+                        hx-target="closest .badge"
+                        hx-swap="delete"
+                        hx-trigger="click"
+                        th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
+                    </i>
+              <span th:text="${e}">elemento</span>
+          </span>
+            </div>
         </div>
     </div>
-    <div class="grid grid-cols-1 gap-4 mb-8 mt-4" id="tiersContainer" th:fragment="tiersContainer">
-        
-        <div class="rounded-lg border-b-2 overflow-hidden" th:each="tier, iterStat : ${tiers}">
+    <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
+        <div class="list-group-item mb-4 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
             <div class="flex">
-                <div class="categoryLabel bg-accent flex flex-col gap-2 items-center justify-center w-16 h-24">
-                    <span class="text-neutral font-bold text-2xl" th:text="${iterStat.count}">1</span>
-                    <i class="fa-solid fa-grip text-neutral"></i>
-                </div>
-                <div class="flex-1 min-h-24 p-2 flex flex-wrap gap-2" th:id="'tier' + ${iterStat.count}">
-                    <!-- elementos -->
+                <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 h-24">
+                    <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
+                    <i 
+                        class="fa-solid fa-xmark mt-2 tdel"
+                        th:if="${tierIter.index == #lists.size(orderState)-1}"
+                        hx-post="/createOrder/deleteLastTier"
+                        hx-target="#tiersContainer"
+                        hx-swap="innerHTML"
+                        hx-trigger="click">
+                    </i>
+                    </div>
+                <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
+                    <span 
+                        th:each="e : ${tier}" 
+                        class="badge border-2 border-neutral p-4 text-xl mb-2 me-2"
+                        th:data-element="${e}">
+                        <i 
+                            class="fa-solid fa-xmark element-cancel"
+                            hx-post="/createOrder/deleteElement"
+                            hx-target="closest .badge"
+                            hx-swap="delete"
+                            hx-trigger="click"
+                            th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
+                        </i>
+                        <span th:text="${e}">elemento</span>
+                    </span>
+                    </span>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">
         <div 
             class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
             hx-post="/createOrder/addTier"
@@ -52,19 +82,93 @@
             hx-swap="innerHTML"
             id="addCategory">
 
-            <div class="tooltip tooltip-right tooltip-accent" data-tip="Añade una nueva categoría">
-                <span class="text-white font-bold text-2xl">
-                    <i class="fa-solid fa-plus"></i>
-                </span>
-            </div>
+            <span class="text-white font-bold text-2xl">
+                <i class="fa-solid fa-plus"></i>
+            </span>
         </div>
-
     </div>
     <script>
+        // dejo el js aquí porque solo se va a usar en esta vista
+
         document.body.addEventListener('htmx:afterSwap', function(event) {
             if (event.detail.target.id === 'elementsContainer') {
-                document.getElementById('elementTextInput').value = '';
+
+                // inicializar sortable en elementos sin asignar
+                Sortable.create(document.getElementById('elementsContainer'), {
+                    group: 'tierGroup',
+                    animation: 150,
+                    draggable: '.badge',
+                    onEnd: actualizarOrderState
+                });
+
+                // inicializar sortable en todas las categorías
+                document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                    Sortable.create(container, {
+                        group: 'tierGroup',
+                        animation: 150,
+                        draggable: '.badge',
+                        onEnd: actualizarOrderState
+                    });
+                });
+
+                if (event.detail.target.id === 'elementsContainer') {
+                    document.getElementById('elementTextInput').value = '';
+                }
             }
+
+            if (event.detail.target.id === 'tiersContainer') {
+                    document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                        Sortable.create(container, {
+                            group: 'tierGroup',
+                            animation: 150,
+                            draggable: '.badge',
+                            onEnd: actualizarOrderState
+                        });
+                    });
+
+                    document.querySelectorAll('.tdel').forEach(btn => {
+                        btn.removeEventListener('click', handleTierDelete);
+                        btn.addEventListener('click', handleTierDelete);
+                    });
+                }
         });
-    </script>
+        document.body.addEventListener('htmx:responseError', function(evt) {
+            evt.preventDefault(); // Evitar recarga
+            const error = evt.detail.error.message || "Error desconocido";
+            // por alguna razon siempre salta error, asi que le he quitado el alert que había
+        });
+
+        function actualizarOrderState() {
+            const orderState = [];
+            
+            // tier 0 (elementos sin asignar)
+            const defaultTier = [];
+            document.querySelectorAll("#elementsContainer .badge").forEach(el => {
+                const elementText = el.getAttribute("data-element");
+                if (elementText) defaultTier.push(elementText.trim()); // Evitar cadenas vacías
+            });
+            orderState.push(defaultTier);
+            
+            // tiers reales
+            document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                const tierElements = [];
+                container.querySelectorAll(".badge").forEach(el => {
+                    const elementText = el.getAttribute("data-element");
+                    if (elementText) tierElements.push(elementText.trim());
+                });
+                orderState.push(tierElements);
+            });
+            
+            // enviar solo si hay cambios
+            htmx.ajax('POST', '/createOrder/updateOrderState', {
+                values: { orderStateJson: JSON.stringify(orderState) },
+
+                // si se quita explota
+                onError: (err) => {
+                    console.error("Error actualizando estado:", err);
+                    alert("Error al guardar cambios. Intente de nuevo.");
+                }
+            });
+        }
+    </script> 
 </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-100" xmlns:th="http://www.thymeleaf.org"  data-theme="nord">
+<html class="h-100" xmlns:th="http://www.thymeleaf.org"  data-theme="emerald">
     <head>
         <link rel="stylesheet" th:href="@{/css/custom.css}" href="css/custom.css" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
@@ -8,7 +8,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+        
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     </head>
@@ -31,7 +32,7 @@
                             </li>
                         </ul>
                     </div>
-                    <a class="btn btn-ghost text-xl" href="/">ReOrder</a>
+                    <a class="btn btn-ghost text-xl" href="/"><em>ReOrder</em></a>
                 </div>
                 <div class="navbar-center hidden lg:flex">
                     <!-- ... -->
@@ -39,7 +40,7 @@
                 <div class="navbar-end">
                     <ul>
                         <li 
-                            class="btn btn-outline btn-primary"
+                            class="btn btn-ghost btn-accent"
                             tabindex="0"
                             hx-get="/createOrder"
                             hx-target="#pageContent"

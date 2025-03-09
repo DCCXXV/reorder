@@ -1,9 +1,8 @@
 <div>
-    <!-- Crear todo aquí esto estará incrustado en el index así que ya tiene todas la librerias y estilos-->
     <div class="flex flex-col items-center text-center">
         <span class="text-4xl font-bold">Crea tu <em class="text-accent">Order</em></span>
-        <div class="my-8 flex flex-col items-center text-center">
-            <div class="mb-8 flex items-center text-center">
+        <div class="my-6 flex flex-col items-center text-center w-full">
+            <div class="mb-6 flex items-center text-center">
                 <form
                     hx-post="/createOrder/addElement"
                     hx-trigger="submit"
@@ -20,11 +19,11 @@
                 <!-- fila para poner elementos al mismo nivel que el añadir elementos -->
 
             </div>
-
-            <div id="elementsContainer" th:fragment="elementsContainer">
+            <span class="text-xl mb-2">Elementos sin asignar a un <b><em>Tier</em></b></span>
+            <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 border-2 border-dashed w-full min-h-18 rounded p-4">
                 <span 
                     th:each="e : ${orderState[0]}" 
-                    class="badge badge border-2 border-neutral p-4 text-xl mb-2 me-2"
+                    class="badge badge border-2 border-neutral p-4 text-xl"
                     th:data-element="${e}">
                     <i 
                         class="fa-solid fa-xmark element-cancel"
@@ -34,15 +33,15 @@
                         hx-trigger="click"
                         th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
                     </i>
-                <span th:text="${e}">elemento</span>
-          </span>
+                    <span th:text="${e}">elemento</span>
+                </span>
             </div>
         </div>
     </div>
     <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
         <div class="list-group-item mb-4 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
             <div class="flex">
-                <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 h-24">
+                <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
                     <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
                     <i 
                         class="fa-solid fa-xmark mt-2 tdel"
@@ -56,7 +55,7 @@
                 <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                     <span 
                         th:each="e : ${tier}" 
-                        class="badge border-2 border-neutral p-4 text-xl mb-2 me-2"
+                        class="badge border-2 border-neutral p-4 text-xl"
                         th:data-element="${e}">
                         <i 
                             class="fa-solid fa-xmark element-cancel"

@@ -27,8 +27,14 @@ class OrderServiceTest {
     @Mock
     private HttpSession session;
 
+    /**
+     * Verifica que addElement añade un elemento a la primera lista del estado de la orden.
+     *
+     * <p>Configura un estado inicial con dos listas vacías y verifica que el elemento
+     * se añade correctamente a la primera lista.</p>
+     */
     @Test
-    void addElement() {
+    void testAddElementShouldAddElementToFirstList() {
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());
         initialState.add(new ArrayList<>());

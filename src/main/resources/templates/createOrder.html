@@ -7,8 +7,8 @@
                 <form
                     hx-post="/createOrder/addElement"
                     hx-trigger="submit"
-                    hx-target="#elementsContainer"
-                    hx-swap="outerHTML"
+                    hx-target="#pageContent"
+                    hx-swap="innerHTML"
                     id="elementForm">
                     <div class="join">
                         <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
@@ -48,7 +48,7 @@
                         class="fa-solid fa-xmark mt-2 tdel"
                         th:if="${tierIter.index == #lists.size(orderState)-1}"
                         hx-post="/createOrder/deleteLastTier"
-                        hx-target="#tiersContainer"
+                        hx-target="#pageContent"
                         hx-swap="innerHTML"
                         hx-trigger="click">
                     </i>
@@ -78,7 +78,7 @@
         <div 
             class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
             hx-post="/createOrder/addTier"
-            hx-target="#tiersContainer"
+            hx-target="#pageContent"
             hx-swap="innerHTML"
             id="addCategory">
 
@@ -92,37 +92,26 @@
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
             if (event.detail.target.id === 'elementsContainer') {
-
-                // inicializar sortable en elementos sin asignar
+                document.getElementById('elementTextInput').value = '';
+            } else {
                 Sortable.create(document.getElementById('elementsContainer'), {
-                    group: 'tierGroup',
-                    animation: 150,
-                    draggable: '.badge',
-                    onEnd: actualizarOrderState
-                });
-
-                if (event.detail.target.id === 'elementsContainer') {
-                    document.getElementById('elementTextInput').value = '';
-                }
-            }
-
-            if (event.detail.target.id === 'tiersContainer') {
-                document.querySelectorAll('.tdel').forEach(btn => {
-                    btn.removeEventListener('click', handleTierDelete);
-                    btn.addEventListener('click', handleTierDelete);
-                });
-            }
-
-            // inicializar sortable en todas las categorías
-            document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
-                Sortable.create(container, {
                     group: 'tierGroup',
                     animation: 150,
                     draggable: '.badge',
                     ghostClass: 'ghost-badge',
                     onEnd: actualizarOrderState
                 });
-            });
+                
+                document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                    Sortable.create(container, {
+                        group: 'tierGroup',
+                        animation: 150,
+                        draggable: '.badge',
+                        ghostClass: 'ghost-badge',
+                        onEnd: actualizarOrderState
+                    });
+                });
+            }
         });
         document.body.addEventListener('htmx:responseError', function(evt) {
             evt.preventDefault(); // Evitar recarga

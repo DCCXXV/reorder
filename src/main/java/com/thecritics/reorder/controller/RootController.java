@@ -76,7 +76,7 @@ public class RootController {
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
         List<List<String>> orderState = orderService.addElement(elementTextInput, session);
         model.addAttribute("orderState", orderState);
-        return "createOrder :: #elementsContainer";
+        return "createOrder";
     }
 
     /**
@@ -105,7 +105,7 @@ public class RootController {
     public String addTier(Model model, HttpSession session) {
         List<List<String>> orderState = orderService.addTier(session);
         model.addAttribute("orderState", orderState);
-        return "createOrder :: tiersContainer";
+        return "createOrder";
     }
 
     /**
@@ -119,7 +119,7 @@ public class RootController {
     public String deleteLastTier(HttpSession session, Model model) {
         List<List<String>> orderState = orderService.deleteLastTier(session);
         model.addAttribute("orderState", orderState);
-        return "createOrder :: tiersContainer";
+        return "createOrder";
     }
 
     /**

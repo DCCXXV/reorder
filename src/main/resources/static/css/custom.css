@@ -15,6 +15,10 @@
     cursor: pointer;
 }
 
+.ghost-badge {
+    filter: brightness(80%);
+}
+
 .element-cancel {
     display: inline-block;
     vertical-align: middle;
@@ -41,7 +45,6 @@
 
 .categoryLabel {
     transition: all 0.05s ease-in-out;
-    
 }
 
 .categoryLabel:hover {

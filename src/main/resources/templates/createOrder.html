@@ -34,7 +34,7 @@
                         hx-trigger="click"
                         th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
                     </i>
-              <span th:text="${e}">elemento</span>
+                <span th:text="${e}">elemento</span>
           </span>
             </div>
         </div>
@@ -101,36 +101,28 @@
                     onEnd: actualizarOrderState
                 });
 
-                // inicializar sortable en todas las categorías
-                document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
-                    Sortable.create(container, {
-                        group: 'tierGroup',
-                        animation: 150,
-                        draggable: '.badge',
-                        onEnd: actualizarOrderState
-                    });
-                });
-
                 if (event.detail.target.id === 'elementsContainer') {
                     document.getElementById('elementTextInput').value = '';
                 }
             }
 
             if (event.detail.target.id === 'tiersContainer') {
-                    document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
-                        Sortable.create(container, {
-                            group: 'tierGroup',
-                            animation: 150,
-                            draggable: '.badge',
-                            onEnd: actualizarOrderState
-                        });
-                    });
+                document.querySelectorAll('.tdel').forEach(btn => {
+                    btn.removeEventListener('click', handleTierDelete);
+                    btn.addEventListener('click', handleTierDelete);
+                });
+            }
 
-                    document.querySelectorAll('.tdel').forEach(btn => {
-                        btn.removeEventListener('click', handleTierDelete);
-                        btn.addEventListener('click', handleTierDelete);
-                    });
-                }
+            // inicializar sortable en todas las categorías
+            document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                Sortable.create(container, {
+                    group: 'tierGroup',
+                    animation: 150,
+                    draggable: '.badge',
+                    ghostClass: 'ghost-badge',
+                    onEnd: actualizarOrderState
+                });
+            });
         });
         document.body.addEventListener('htmx:responseError', function(evt) {
             evt.preventDefault(); // Evitar recarga
@@ -145,7 +137,7 @@
             const defaultTier = [];
             document.querySelectorAll("#elementsContainer .badge").forEach(el => {
                 const elementText = el.getAttribute("data-element");
-                if (elementText) defaultTier.push(elementText.trim()); // Evitar cadenas vacías
+                if (elementText) defaultTier.push(elementText.trim());
             });
             orderState.push(defaultTier);
             

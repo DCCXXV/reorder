@@ -9,6 +9,72 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-.bold {
-    font-weight: bold;
+.badge {
+    transition: all 0.05s ease-in-out;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.ghost-badge {
+    filter: brightness(80%);
+}
+
+.element-cancel {
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.15s ease-in-out;
+}
+
+.element-cancel:hover {
+    transform: rotateZ(-180deg);
+}
+
+.badge:hover {
+    filter: brightness(95%);
+}
+
+.badge:has(.element-cancel:hover) {
+    background-color: #FFF3F2 !important;
+    color: #FF5861 !important;
+    border-color: #FF5861 !important;
+    
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    filter: brightness(100%);
+}
+
+.categoryLabel {
+    transition: all 0.05s ease-in-out;
+}
+
+.categoryLabel:hover {
+    filter: brightness(95%);
+}
+
+.tdel {
+    cursor: pointer;
+    transition: all 0.05s ease;
+    transform: scale(1.5);
+}
+
+.tdel:hover {
+    transform: scale(1.8);
+}
+
+.handle {
+    transition: all 0.05s ease-in-out;
+    cursor: grab;
+}
+
+.handle:hover {
+    transform: scale(1.1);
+}
+
+#addCategory {
+    transition: all 0.05s ease;
+    cursor: pointer;
+}
+
+#addCategory:hover {
+    transform: scale(1.04);
 }

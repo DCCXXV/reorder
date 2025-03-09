@@ -70,7 +70,7 @@ public class RootController {
      * @param elementTextInput El texto del elemento a añadir.
      * @param session          La sesión HTTP actual.
      * @param model            El objeto Modelo utilizado para pasar datos a la vista.
-     * @return El nombre del fragmento de la vista "createOrder :: #elementsContainer".
+     * @return El nombre de la vista "createOrder".
      */
     @PostMapping("/createOrder/addElement")
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
@@ -99,7 +99,7 @@ public class RootController {
      *
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
      * @param session La sesión HTTP actual.
-     * @return El nombre del fragmento de la vista "createOrder :: tiersContainer".
+     * @returnEl nombre de la vista "createOrder".
      */
     @PostMapping("/createOrder/addTier")
     public String addTier(Model model, HttpSession session) {
@@ -113,7 +113,7 @@ public class RootController {
      *
      * @param session La sesión HTTP actual.
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
-     * @return El nombre del fragmento de la vista "createOrder :: tiersContainer".
+     * @return El nombre de la vista "createOrder".
      */
     @PostMapping("/createOrder/deleteLastTier")
     public String deleteLastTier(HttpSession session, Model model) {

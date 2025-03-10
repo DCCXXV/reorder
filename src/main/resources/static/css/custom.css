@@ -1,9 +1,17 @@
 @font-face {
     font-family: 'Plus Jakarta Sans';
     src: local('Plus Jakarta Sans'), url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+    font-optical-sizing: auto;
     font-style: normal;
     font-weight: 400;
 }
+
+.title-logo {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
 
 :root {
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -15,8 +23,10 @@
     cursor: pointer;
 }
 
-.ghost-badge {
-    filter: brightness(80%);
+.selected-badge {
+    background-color: #EFF8F3 !important;
+    color: #00A96E !important;
+    border-color: #00A96E !important;
 }
 
 .element-cancel {
@@ -30,7 +40,7 @@
 }
 
 .badge:hover {
-    filter: brightness(95%);
+    filter: brightness(97%);
 }
 
 .badge:has(.element-cancel:hover) {

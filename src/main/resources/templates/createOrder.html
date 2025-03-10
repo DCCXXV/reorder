@@ -90,19 +90,27 @@
         // dejo el js aquí porque solo se va a usar en esta vista
 
         Sortable.create(document.getElementById('elementsContainer'), {
+            multiDrag: true,
+            multiDragKey: 'CTRL',
+            selectedClass: 'selected-badge',
+            fallbackTolerance: 3,
             group: 'tierGroup',
             animation: 150,
             draggable: '.badge',
-            ghostClass: 'ghost-badge',
+            ghostClass: 'selected-badge',
             onEnd: actualizarOrderState
         });
         
         document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
             Sortable.create(container, {
+                multiDrag: true,
+                multiDragKey: 'CTRL',
+                selectedClass: 'selected-badge',
+                fallbackTolerance: 3,
                 group: 'tierGroup',
                 animation: 150,
                 draggable: '.badge',
-                ghostClass: 'ghost-badge',
+                ghostClass: 'selected-badge',
                 onEnd: actualizarOrderState
             });
         });

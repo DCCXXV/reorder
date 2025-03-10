@@ -116,8 +116,20 @@
         });
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
+            // eliminar el contenido del input cuando se hace submit
             if (event.detail.target.id === 'elementsContainer') {
                 document.getElementById('elementTextInput').value = '';
+            }
+
+            // scroll automático al ultimo tier cuando se sale de la parte visible
+            if (event.detail.target.id === 'pageContent') {
+                const addCategory = document.getElementById('addCategory');
+                if (addCategory) {
+                    addCategory.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'end'
+                    });
+                }
             }
         });
 

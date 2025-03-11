@@ -1,21 +1,17 @@
 package com.thecritics.reorder.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,16 +31,20 @@ class OrderServiceTest {
      */
     @Test
     void testAddElementShouldAddElementToFirstList() {
+        // 1. Arrange; creamos la las variables
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());
         initialState.add(new ArrayList<>());
-        when(session.getAttribute("orderState")).thenReturn(initialState);
 
         String elementText = "Nuevo elemento";
+
+        // 2. Act; ejecutamos lo que vamos a testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
         List<List<String>> result = orderService.addElement(elementText, session);
 
-        assertEquals(1, result.get(0).size());
-        assertEquals(elementText, result.get(0).get(0));
+        // 3. Assert; comprobamos si los resultados son los esperados
+        assertThat(result.get(0).size()).isEqualTo(1);
+        assertThat(result.get(0).get(0)).isEqualTo(elementText);
     }
 
     @Test

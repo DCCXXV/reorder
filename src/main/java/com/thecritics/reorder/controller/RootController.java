@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecritics.reorder.service.OrderService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -99,12 +100,14 @@ public class RootController {
      *
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
      * @param session La sesión HTTP actual.
+     * @param response La respuesta a la petición http.
      * @returnEl nombre de la vista "createOrder".
      */
     @PostMapping("/createOrder/addTier")
-    public String addTier(Model model, HttpSession session) {
+    public String addTier(Model model, HttpSession session, HttpServletResponse response) {
         List<List<String>> orderState = orderService.addTier(session);
         model.addAttribute("orderState", orderState);
+        response.setHeader("HX-Trigger", "tierAdded");
         return "createOrder";
     }
 

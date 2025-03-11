@@ -123,12 +123,16 @@
 
             // scroll automático al ultimo tier cuando se sale de la parte visible
             if (event.detail.target.id === 'pageContent') {
-                const addCategory = document.getElementById('addCategory');
-                if (addCategory) {
-                    addCategory.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'end'
-                    });
+                const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');
+                
+                if (isAddTierRequest) {
+                    const addCategory = document.getElementById('addCategory');
+                    if (addCategory) {
+                        addCategory.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
+                    }
                 }
             }
         });

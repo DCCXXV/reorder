@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.thecritics</groupId>
 	<artifactId>reorder</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.4.2</version>
 	<name>reorder</name>
 	<description>Proyecto para la asignatura de gestión de proyectos software</description>
 	<url/>
@@ -77,8 +77,8 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -109,6 +109,12 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>mariadb</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.24.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -73,6 +73,22 @@ class OrderServiceTest {
         assertThat(result.getFirst().size()).isEqualTo(0);
         assertThat(result.get(1).size()).isEqualTo(0);
     }
+    @Test
+    void addElementEmptyElementText() {
+        // 1. Arrange; creamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>()); //Tier 0
+        initialState.add(new ArrayList<>()); //Tier 1
+
+        String elementText = "";   //vacio
+
+        // 2. Act; ejecutamos lo que vamos a testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.addElement(elementText, session);
+
+        // 3. Assert; comprobamos si los resultados son los esperados
+        assertThat(result.getFirst().size()).isEqualTo(0);
+    }
 
     @Test
     void addTier() {
@@ -93,6 +109,7 @@ class OrderServiceTest {
 
     @Test
     void deleteLastTier() {
+
     }
 
     @Test

@@ -107,8 +107,32 @@ class OrderServiceTest {
        //assertThat(result.get(2)).isEmpty(); // la lista/fila  debe estar vacia vacia???
     }
 
-    @Test
     void deleteLastTier() {
+
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>());//Añadimos otra Tier
+        int size = initialState.size();
+
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+
+        assertThat(result.size()).isEqualTo(size-1); //Comparamos
+
+    }
+
+    @Test
+    void deleteElementWithSpecialCharacters(){
+
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        String elementText = "¡¡ \" Elemento a eliminar con carácteres especiales \" !!"; //Creamos un elemento
+        initialState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
+
+         when(session.getAttribute("orderState")).thenReturn(initialState);
+         List<List<String>> result = orderService.deleteElement(elementText, session);
+ 
+         assertThat(result.getFirst().size()).isEqualTo(0);
 
     }
 

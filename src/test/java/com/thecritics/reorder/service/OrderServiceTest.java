@@ -118,5 +118,16 @@ class OrderServiceTest {
 
     @Test
     void updateOrderState() {
+        
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>()); // lista 0
+        initialState.add(new ArrayList<>()); // lista 1
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> newState = new ArrayList<>();
+        initialState.add(new ArrayList<>()); // lista 0
+        List<List<String>> result = orderService.updateOrderState(newState, session);
+        assertThat(result).hasSize(1); // 
+
+
     }
 }

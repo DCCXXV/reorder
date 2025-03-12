@@ -53,6 +53,28 @@ public class OrderService {
         return orderState;
     }
 
+    /**  
+     * Elimina el último tier del estado del Order en la sesión guardando todos sus elementos en el tier 0
+     * (El de los unassigned) siempre y cuando haya más de dos tiers.
+     * Asegura que al menos el tier 0 (elementos no asignados) y la primera categoría no se eliminen.
+     * 
+     * @param session La sesión HTTP actual.
+     * @return El estado actualizado del Order con el último tier eliminado, si es posible.
+     */
+    public List<List<String>> keepElementsAndDeleteLastTier(HttpSession session) {
+        List<List<String>> orderState = getOrderState(session);
+        if (orderState.size() > 2) {
+            int n = orderState.size();
+            List<String> elements = orderState.get(n-1);
+
+            orderState.get(0).addAll(elements);
+            orderState.get(n-1).clear();
+
+            orderState.remove(n-1);
+        }
+        return orderState;
+    }
+
     /**
      * Elimina el último tier del estado del Order en la sesión, siempre y cuando haya más de dos tiers.
      * Asegura que al menos el tier 0 (elementos no asignados) y la primera categoría no se eliminen.

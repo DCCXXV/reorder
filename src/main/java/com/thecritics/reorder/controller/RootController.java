@@ -118,6 +118,20 @@ public class RootController {
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
      * @return El nombre de la vista "createOrder".
      */
+    @PostMapping("/createOrder/keepElementsAndDeleteLastTier")
+    public String keepElementsAndDeleteLastTier(HttpSession session, Model model) {
+        List<List<String>> orderState = orderService.keepElementsAndDeleteLastTier(session);
+        model.addAttribute("orderState", orderState);
+        return "createOrder";
+    }
+
+    /**
+     * Maneja las solicitudes POST para eliminar el último tier del estado del Order.
+     *
+     * @param session La sesión HTTP actual.
+     * @param model   El objeto Modelo utilizado para pasar datos a la vista.
+     * @return El nombre de la vista "createOrder".
+     */
     @PostMapping("/createOrder/deleteLastTier")
     public String deleteLastTier(HttpSession session, Model model) {
         List<List<String>> orderState = orderService.deleteLastTier(session);

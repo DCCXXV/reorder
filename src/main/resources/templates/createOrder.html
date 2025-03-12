@@ -12,7 +12,7 @@
                     <div class="join">
                         <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
                             class="input join-item focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral" />
-                        <button type="submit" class="btn btn-primary text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
+                        <button type="submit" class="btn btn-success text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
                     </div>
                 </form>
 
@@ -25,7 +25,7 @@
                     th:each="e : ${orderState[0]}" 
                     class="badge badge border-2 border-neutral p-4 text-xl"
                     th:data-element="${e}">
-                    <i 
+                    <i
                         class="fa-solid fa-xmark element-cancel"
                         hx-post="/createOrder/deleteElement"
                         hx-target="closest .badge"
@@ -43,15 +43,12 @@
             <div class="flex">
                 <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
                     <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
-                    <i 
-                        class="fa-solid fa-xmark mt-2 tdel"
+                    <i  
                         th:if="${tierIter.index == #lists.size(orderState)-1}"
-                        hx-post="/createOrder/deleteLastTier"
-                        hx-target="#pageContent"
-                        hx-swap="innerHTML"
-                        hx-trigger="click">
+                        class="fa-solid fa-xmark mt-2 tdel"
+                        onclick="deleteTierModal.showModal()">
                     </i>
-                    </div>
+                </div>
                 <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                     <span 
                         th:each="e : ${tier}" 
@@ -71,6 +68,41 @@
                 </div>
             </div>
         </div>
+
+        <dialog id="deleteTierModal" class="modal">
+            <div class="modal-box">
+                <h2 class="text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
+                <h3 class="text-lg py-6">Perderás los elementos que haya dentro.</h3>
+                <div class="flex gap-4 justify-end">
+                    <div class="modal-action m-0">
+                        <form method="dialog">
+                            <button
+                                class="btn">
+                                Cancelar
+                            </button>
+                        </form>
+                    </div>
+                    <button
+                        hx-post="/createOrder/keepElementsAndDeleteLastTier"
+                        hx-target="#pageContent"
+                        hx-swap="innerHTML"
+                        class="btn btn-success text-white">
+                        Conservar elementos
+                    </button> 
+                    <button
+                        hx-post="/createOrder/deleteLastTier"
+                        hx-target="#pageContent"
+                        hx-swap="innerHTML"
+                        class="btn btn-error">
+                        Confirmar
+                    </button> 
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>Clicar fuera</button>
+             </form>
+        </dialog>
+    
     </div>
 
     <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">
@@ -86,6 +118,7 @@
             </span>
         </div>
     </div>
+    
     <script>
         // dejo el js aquí porque solo se va a usar en esta vista
 

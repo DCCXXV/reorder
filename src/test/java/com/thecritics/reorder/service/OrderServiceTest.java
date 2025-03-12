@@ -37,7 +37,7 @@ class OrderServiceTest {
         initialState.add(new ArrayList<>());
 
         String elementText = "Nuevo elemento";
-
+        
         // 2. Act; ejecutamos lo que vamos a testear
         when(session.getAttribute("orderState")).thenReturn(initialState);
         List<List<String>> result = orderService.addElement(elementText, session);
@@ -65,11 +65,33 @@ class OrderServiceTest {
 
     @Test
     void addTier() {
+        // 1. Arrange; Creamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+
+         // 2. Act; Ejecutamos lo que vamos a Testear
+         when(session.getAttribute("orderState")).thenReturn(initialState);
+         List<List<String>> result = orderService.addTier(session); //Añadimos una tier
+
+          // 3. Assert; Comprobamos los resultado
+        assertThat(result.size()).isEqualTo(1); //Comparamos
 
     }
 
     @Test
     void deleteLastTier() {
+        // 1. Arrange; Creamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>());//Añadimos otra Tier
+        int size = initialState.size();
+
+        // 2. Act; Ejecutamos lo que vamos a Testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+
+        // 3. Assert; Comprobamos los resultado
+        assertThat(result.size()).isEqualTo(size-1); //Comparamos
+
     }
 
     @Test

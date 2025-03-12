@@ -65,7 +65,19 @@ class OrderServiceTest {
 
     @Test
     void addTier() {
+        // Arrange
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>()); // lista 0
+        initialState.add(new ArrayList<>()); // lista 1
 
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+
+        // Act
+        List<List<String>> result = orderService.addTier(session);
+
+        // Assert
+        assertThat(result).hasSize(3); // Se agregó una nueva lista
+       //assertThat(result.get(2)).isEmpty(); // la lista/fila  debe estar vacia vacia???
     }
 
     @Test

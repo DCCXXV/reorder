@@ -43,11 +43,13 @@
             <div class="flex">
                 <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
                     <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
-                    <i  
-                        th:if="${tierIter.index == #lists.size(orderState)-1}"
-                        class="fa-solid fa-xmark mt-2 tdel"
-                        onclick="deleteTierModal.showModal()">
-                    </i>
+
+                        <i
+                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1}"
+                            class="fa-solid fa-xmark mt-2 tdel"
+                            onclick="deleteTierModal.showModal()">
+                        </i>
+                    </span>
                 </div>
                 <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                     <span 
@@ -79,10 +81,11 @@
                             <button
                                 class="btn">
                                 Cancelar
-                            </button>
+                             </button>
                         </form>
                     </div>
-                    <button
+                    <button   
+                        th:if="${#lists.size(orderState[#lists.size(orderState) - 1]) > 0}"
                         hx-post="/createOrder/keepElementsAndDeleteLastTier"
                         hx-target="#pageContent"
                         hx-swap="innerHTML"
@@ -193,9 +196,9 @@
             
             // enviar solo si hay cambios
             htmx.ajax('POST', '/createOrder/updateOrderState', {
+                target: '#pageContent',
+                swap: 'innerHTML',
                 values: { orderStateJson: JSON.stringify(orderState) },
-
-                // gestión de error
                 onError: (err) => {
                     console.error("Error actualizando estado:", err);
                     alert("Error al guardar cambios. Intente de nuevo.");

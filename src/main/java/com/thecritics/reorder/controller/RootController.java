@@ -148,7 +148,7 @@ public class RootController {
      * @return El nombre de la vista "createOrder" o "error" en caso de fallo.
      */
     @PostMapping("/createOrder/updateOrderState")
-    public String updateOrderState(@RequestParam String orderStateJson, HttpSession session) {
+    public String updateOrderState(@RequestParam String orderStateJson, HttpSession session, Model model) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             List<List<String>> newOrderState = mapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
@@ -156,6 +156,7 @@ public class RootController {
                 return "error";
             }
             orderService.updateOrderState(newOrderState, session);
+            model.addAttribute("lastTierSize", newOrderState.getLast().size());
             return "createOrder";
         } catch (Exception e) {
             log.error("Error actualizando estado", e);

@@ -91,6 +91,25 @@ class OrderServiceTest {
     }
 
     @Test
+    void deleteElement_ShouldDeleteElementFromTheAssignedTier() {
+        //Inicializamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());
+        initialState.add(new ArrayList<>());
+
+        String elementText = "Elemento a eliminar";
+        initialState.get(1).add(elementText);
+
+        //Ejecutamos lo que vamos a Testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteElement(elementText, session);
+
+        //Comprobamos los resultados
+        assertThat(result.getFirst().size()).isEqualTo(0);
+        assertThat(result.get(1).size()).isEqualTo(0);
+    }
+
+    @Test
     void deleteElement_ShouldDeleteElementsWithSpecialCharacters(){
 
         List<List<String>> initialState = new ArrayList<>();

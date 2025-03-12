@@ -112,6 +112,7 @@ class OrderServiceTest {
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());//Añadimos una Tier
         initialState.add(new ArrayList<>());//Añadimos otra Tier
+        initialState.add(new ArrayList<>());//Añadimos una Tier
         int size = initialState.size();
 
         when(session.getAttribute("orderState")).thenReturn(initialState);
@@ -126,15 +127,35 @@ class OrderServiceTest {
 
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>());//Añadimos una Tier
         String elementText = "¡¡ \" Elemento a eliminar con carácteres especiales \" !!"; //Creamos un elemento
         initialState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
 
-         when(session.getAttribute("orderState")).thenReturn(initialState);
-         List<List<String>> result = orderService.deleteElement(elementText, session);
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteElement(elementText, session);
  
-         assertThat(result.getFirst().size()).isEqualTo(0);
+        assertThat(result.getFirst().size()).isEqualTo(0);
 
     }
+
+    @Test
+    void deleteTierWithElements(){
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        String elementText = "Nuevo Elemento";
+        List<List<String>> tier = initialState.getLast();
+        initialState.getLast().add(elementText); //Añadimos un elemento a esa Tier
+        int size = initialState.size();
+
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+
+        assertThat(tier.size()).isEqualTo(0);
+        assertThat(result.size()).isEqualTo(size-1); //Comparamos
+
+    }
+
 
     @Test
     void getOrderState() {

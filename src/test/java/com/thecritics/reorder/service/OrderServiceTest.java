@@ -30,11 +30,11 @@ class OrderServiceTest {
      * se añade correctamente a la primera lista.</p>
      */
     @Test
-    void testAddElementShouldAddElementToUnassignedTier() {
+    void addElement_ShouldAddElementToUnassignedTier() {
         // 1. Arrange; creamos las variables
         List<List<String>> initialState = new ArrayList<>();
-        initialState.add(new ArrayList<>()); //Tier 0
-        initialState.add(new ArrayList<>()); //Tier 1
+        initialState.add(new ArrayList<>()); // Tier 0
+        initialState.add(new ArrayList<>()); // Tier 1
 
         String elementText = "Nuevo elemento";
 
@@ -47,6 +47,22 @@ class OrderServiceTest {
         assertThat(result.getFirst().getFirst()).isEqualTo(elementText);
     }
 
+    @Test
+    void addElement_ShouldNotAddEmptyElementText() {
+        // 1. Arrange; creamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>()); //Tier 0
+        initialState.add(new ArrayList<>()); //Tier 1
+
+        String elementText = "";   //vacio
+
+        // 2. Act; ejecutamos lo que vamos a testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.addElement(elementText, session);
+
+        // 3. Assert; comprobamos si los resultados son los esperados
+        assertThat(result.getFirst().size()).isEqualTo(0);
+    }
 
     /**
      * Verificamos que se elimina un elemento de la assigned tier
@@ -56,7 +72,7 @@ class OrderServiceTest {
      * 
      */
     @Test
-    void testDeleteElementFromTheUnassignedTier() {
+    void deleteElement_ShouldDeleteElementFromTheUnassignedTier() {
         // 1. Arrange; Creamos las variables
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());//Añadimos la Unassigned Tier
@@ -73,25 +89,25 @@ class OrderServiceTest {
         assertThat(result.getFirst().size()).isEqualTo(0);
         assertThat(result.get(1).size()).isEqualTo(0);
     }
+
     @Test
-    void addElementEmptyElementText() {
-        // 1. Arrange; creamos las variables
+    void deleteElement_ShouldDeleteElementsWithSpecialCharacters(){
+
         List<List<String>> initialState = new ArrayList<>();
-        initialState.add(new ArrayList<>()); //Tier 0
-        initialState.add(new ArrayList<>()); //Tier 1
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        String elementText = "¡¡ \" Elemento a eliminar con carácteres especiales <br> \" !!"; //Creamos un elemento
+        initialState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
 
-        String elementText = "";   //vacio
-
-        // 2. Act; ejecutamos lo que vamos a testear
         when(session.getAttribute("orderState")).thenReturn(initialState);
-        List<List<String>> result = orderService.addElement(elementText, session);
+        List<List<String>> result = orderService.deleteElement(elementText, session);
 
-        // 3. Assert; comprobamos si los resultados son los esperados
         assertThat(result.getFirst().size()).isEqualTo(0);
+
     }
 
     @Test
-    void addTier() {
+    void addTier_ShouldAddTierToEnd() {
         // Arrange
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>()); // lista 0
@@ -107,7 +123,9 @@ class OrderServiceTest {
        //assertThat(result.get(2)).isEmpty(); // la lista/fila  debe estar vacia vacia???
     }
 
-    void deleteLastTier() {
+
+    @Test
+    void deleteLastTier_ShouldDeleteLastTierIfFirstTwoExist() {
 
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());//Añadimos una Tier
@@ -123,37 +141,20 @@ class OrderServiceTest {
     }
 
     @Test
-    void deleteElementWithSpecialCharacters(){
-
+    void deleteLastTier_ShouldDeleteAllElementsInTier(){
         List<List<String>> initialState = new ArrayList<>();
-        initialState.add(new ArrayList<>());//Añadimos una Tier
-        initialState.add(new ArrayList<>());//Añadimos una Tier
-        String elementText = "¡¡ \" Elemento a eliminar con carácteres especiales \" !!"; //Creamos un elemento
-        initialState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
-
-        when(session.getAttribute("orderState")).thenReturn(initialState);
-        List<List<String>> result = orderService.deleteElement(elementText, session);
- 
-        assertThat(result.getFirst().size()).isEqualTo(0);
-
-    }
-
-    @Test
-    void deleteTierWithElements(){
-        List<List<String>> initialState = new ArrayList<>();
-        initialState.add(new ArrayList<>());//Añadimos una Tier
-        initialState.add(new ArrayList<>());//Añadimos una Tier
+        initialState.add(new ArrayList<>()); // Tier 0
+        initialState.add(new ArrayList<>()); // Tier 1
         String elementText = "Nuevo Elemento";
-        List<List<String>> tier = initialState.getLast();
-        initialState.getLast().add(elementText); //Añadimos un elemento a esa Tier
+        List<String> tier = initialState.getLast();
+        initialState.getLast().add(elementText); // Añadimos un elemento a esa Tier
         int size = initialState.size();
 
         when(session.getAttribute("orderState")).thenReturn(initialState);
-        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+        List<List<String>> result = orderService.deleteLastTier(session); // Eliminamos la última Tier (con elemento)
 
-        assertThat(tier.size()).isEqualTo(0);
-        assertThat(result.size()).isEqualTo(size-1); //Comparamos
-
+        assertThat(tier.size()).isEqualTo(1);
+        assertThat(result.size()).isEqualTo(size-1);
     }
 
 

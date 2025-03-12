@@ -31,7 +31,7 @@ class OrderServiceTest {
      */
     @Test
     void testAddElementShouldAddElementToFirstList() {
-        // 1. Arrange; creamos la las variables
+        // 1. Arrange; creamos las variables
         List<List<String>> initialState = new ArrayList<>();
         initialState.add(new ArrayList<>());
         initialState.add(new ArrayList<>());
@@ -43,13 +43,24 @@ class OrderServiceTest {
         List<List<String>> result = orderService.addElement(elementText, session);
 
         // 3. Assert; comprobamos si los resultados son los esperados
-        assertThat(result.get(0).size()).isEqualTo(1);
-        assertThat(result.get(0).get(0)).isEqualTo(elementText);
+        assertThat(result.getFirst().size()).isEqualTo(1);
+        assertThat(result.getFirst().getFirst()).isEqualTo(elementText);
     }
 
     @Test
     void deleteElement() {
+        // 1. Arrange; Creamos las variables
+        List<List<String>> initialState = new ArrayList<>();
+        initialState.add(new ArrayList<>());//Añadimos una Tier
+        String elementText = "Elemento a eliminar"; //Creamos un elemento
+        initialState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
 
+        // 2. Act; Ejecutamos lo que vamos a Testear
+        when(session.getAttribute("orderState")).thenReturn(initialState);
+        List<List<String>> result = orderService.deleteElement(elementText, session);
+
+        // 3. Assert; Comprobamos los resultado
+        assertThat(result.getFirst().size()).isEqualTo(0);
     }
 
     @Test

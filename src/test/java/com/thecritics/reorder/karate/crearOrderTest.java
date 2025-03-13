@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class crearOrderTest {
     
     @Karate.Test
-    public Karate testTierList() {
+    public Karate testCreateOrder() {
         return Karate.run("classpath:features/createOrder.feature")
                     .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }

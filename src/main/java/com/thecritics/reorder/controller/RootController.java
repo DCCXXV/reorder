@@ -150,12 +150,17 @@ public class RootController {
     @PostMapping("/createOrder/updateOrderState")
     public String updateOrderState(@RequestParam String orderStateJson, HttpSession session, Model model) {
         try {
+            log.info("Recibido orderStateJson: {}", orderStateJson);
             ObjectMapper mapper = new ObjectMapper();
             List<List<String>> newOrderState = mapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
-            if (newOrderState.isEmpty() || newOrderState.get(0) == null) {
+            log.info("Enviado newOrderState: {}", newOrderState);
+
+            if (newOrderState.isEmpty()) {
                 return "error";
             }
+            
             orderService.updateOrderState(newOrderState, session);
+            model.addAttribute("orderState", newOrderState);
             model.addAttribute("lastTierSize", newOrderState.getLast().size());
             return "createOrder";
         } catch (Exception e) {

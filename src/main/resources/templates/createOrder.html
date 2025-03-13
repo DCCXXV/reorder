@@ -43,9 +43,16 @@
             <div class="flex">
                 <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
                     <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
-
                         <i
-                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1}"
+                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
+                            class="fa-solid fa-xmark mt-2 tdel"
+                            hx-post="/createOrder/deleteLastTier"
+                            hx-target="#pageContent"
+                            hx-swap="innerHTML"
+                            hx-trigger="click">
+                        </i>
+                        <i
+                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
                             class="fa-solid fa-xmark mt-2 tdel"
                             onclick="deleteTierModal.showModal()">
                         </i>
@@ -74,7 +81,7 @@
         <dialog id="deleteTierModal" class="modal">
             <div class="modal-box">
                 <h2 class="text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
-                <h3 class="text-lg py-6">Perderás los elementos que haya dentro.</h3>
+                <h3 class="text-lg py-6">Puedes conservar los elementos o borrarlos junto al <em>Tier</em>, esta acción es permanente.</h3>
                 <div class="flex gap-4 justify-end">
                     <div class="modal-action m-0">
                         <form method="dialog">
@@ -85,7 +92,6 @@
                         </form>
                     </div>
                     <button   
-                        th:if="${#lists.size(orderState[#lists.size(orderState) - 1]) > 0}"
                         hx-post="/createOrder/keepElementsAndDeleteLastTier"
                         hx-target="#pageContent"
                         hx-swap="innerHTML"
@@ -97,7 +103,7 @@
                         hx-target="#pageContent"
                         hx-swap="innerHTML"
                         class="btn btn-error">
-                        Confirmar
+                        Borrar elementos
                     </button> 
                 </div>
             </div>
@@ -105,7 +111,6 @@
                 <button>Clicar fuera</button>
              </form>
         </dialog>
-    
     </div>
 
     <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,7 +24,16 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class RootController {
 
+    private final ReorderApplication reorderApplication;
+
+    private final SecurityFilterChain filterChain;
+
     private static final Logger log = LogManager.getLogger(RootController.class);
+
+    RootController(SecurityFilterChain filterChain, ReorderApplication reorderApplication) {
+        this.filterChain = filterChain;
+        this.reorderApplication = reorderApplication;
+    }
 
     /**
      * Añade atributos comunes al modelo desde la sesión HTTP.
@@ -168,4 +179,19 @@ public class RootController {
             return "error";
         }
     }
+
+    @PostMapping("/createOrder/addTitle")
+    public  String addTittleOrder(@RequestParam String tituloTextInput, HttpSession session, Model model){
+        try{
+            log.info("Recibido");
+            orderService.addTitle(tituloTextInput, session);
+            model.addAttribute("title", tituloTextInput);
+            return "createOrder";
+
+        } catch(Exception e){
+            log.error("Error creando el título", e);
+            return "error";
+        }
+    }
+
 }

@@ -120,4 +120,15 @@ public class OrderService {
         session.setAttribute("orderState", newOrderState);
         return newOrderState;
     }
+
+
+    /**
+     * Añade un elemento al primer tier (sin asignar) del estado del Order en la sesión.
+     * @param titleText El texto del título a añadir.
+     * @param session La sesión HTTP actual.
+     */
+     public void addTitle(String titleText, HttpSession session) {
+       session.setAttribute("titleText", titleText);
+    }
+
 }

@@ -1,69 +1,41 @@
 <div>
-    <div class="flex flex-col items-center text-center">
-        <span class="text-4xl font-bold">Crea tu <em class="text-accent">Order</em></span>
-        <div class="my-6 flex flex-col items-center text-center w-full">
-            <div class="mb-6 flex items-center text-center">
-                <form
-                    hx-post="/createOrder/addElement"
-                    hx-trigger="submit"
-                    hx-target="#pageContent"
-                    hx-swap="innerHTML"
-                    id="elementForm">
-                    <div class="join">
-                        <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
-                            class="input join-item focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral" />
-                        <button type="submit" class="btn btn-success text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
-                    </div>
-                </form>
+    <div id="content">
+        <div class="flex flex-col items-center text-center">
+            <span class="text-4xl mb-6 font-bold">Crea tu <em class="text-accent">Order</em></span>
 
-                <!-- fila para poner elementos al mismo nivel que el añadir elementos -->
+            <div th:if="${title != null}" class="p-5 flex flex-col items-center text-center bg-base-200 rounded-2xl">
+                <span class="text-xl mt-3 mb-2 flex items-center text-center" th:text="${title}" ></span>
+            </div>
 
-            </div>
-            <span class="text-xl mb-2">Elementos sin asignar a un <b><em>Tier</em></b></span>
-            <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 border-2 border-dashed w-full min-h-18 rounded p-4">
-                <span 
-                    th:each="e : ${orderState[0]}" 
-                    class="badge badge border-2 border-neutral p-4 text-xl"
-                    th:data-element="${e}">
-                    <i
-                        class="fa-solid fa-xmark element-cancel"
-                        hx-post="/createOrder/deleteElement"
-                        hx-target="closest .badge"
-                        hx-swap="delete"
-                        hx-trigger="click"
-                        th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
-                    </i>
-                    <span th:text="${e}">elemento</span>
-                </span>
-            </div>
-        </div>
-    </div>
-    <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
-        <div class="list-group-item mb-4 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
-            <div class="flex">
-                <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
-                    <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
-                        <i
-                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
-                            class="fa-solid fa-xmark mt-2 tdel"
-                            hx-post="/createOrder/deleteLastTier"
-                            hx-target="#pageContent"
-                            hx-swap="innerHTML"
-                            hx-trigger="click">
-                        </i>
-                        <i
-                            th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
-                            class="fa-solid fa-xmark mt-2 tdel"
-                            onclick="deleteTierModal.showModal()">
-                        </i>
-                    </span>
+            <div class="mt-8 mb-6 flex flex-col items-center text-center w-full">
+                <div class="mb-6 flex items-center text-center">
+                    
+                    <form
+                        hx-post="/createOrder/addElement"
+                        hx-trigger="submit"
+                        hx-target="#pageContent"
+                        hx-swap="innerHTML"
+                        id="elementForm">
+                        <div class="join">
+                            <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
+                                class="input join-item focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral" />
+                            <button type="submit" class="btn btn-success text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
+                        </div>
+                    </form>
+
+                    <!-- fila para poner elementos al mismo nivel que el añadir elementos -->
+
                 </div>
-                <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
+
+                
+
+                <span class="text-xl mb-2">Elementos sin asignar a un <b><em>Tier</em></b></span>
+                <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 border-2 border-dashed w-full min-h-18 rounded p-4">
                     <span 
-                        th:each="e : ${tier}" 
-                        class="badge border-2 border-neutral p-4 text-xl"
+                        th:each="e : ${orderState[0]}" 
+                        class="badge badge border-2 border-neutral p-4 text-xl"
                         th:data-element="${e}">
-                        <i 
+                        <i
                             class="fa-solid fa-xmark element-cancel"
                             hx-post="/createOrder/deleteElement"
                             hx-target="closest .badge"
@@ -73,11 +45,63 @@
                         </i>
                         <span th:text="${e}">elemento</span>
                     </span>
-                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
+            <div class="list-group-item mb-4 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
+                <div class="flex">
+                    <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
+                        <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
+                            <i
+                                th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
+                                class="fa-solid fa-xmark mt-2 tdel"
+                                hx-post="/createOrder/deleteLastTier"
+                                hx-target="#pageContent"
+                                hx-swap="innerHTML"
+                                hx-trigger="click">
+                            </i>
+                            <i
+                                th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
+                                class="fa-solid fa-xmark mt-2 tdel"
+                                onclick="deleteTierModal.showModal()">
+                            </i>
+                        </span>
+                    </div>
+                    <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
+                        <span 
+                            th:each="e : ${tier}" 
+                            class="badge border-2 border-neutral p-4 text-xl"
+                            th:data-element="${e}">
+                            <i 
+                                class="fa-solid fa-xmark element-cancel"
+                                hx-post="/createOrder/deleteElement"
+                                hx-target="closest .badge"
+                                hx-swap="delete"
+                                hx-trigger="click"
+                                th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
+                            </i>
+                            <span th:text="${e}">elemento</span>
+                        </span>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">
+            <div 
+                class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
+                hx-post="/createOrder/addTier"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                id="addCategory">
+
+                <span class="text-white font-bold text-2xl">
+                    <i class="fa-solid fa-plus"></i>
+                </span>
+            </div>
+        </div>
         <dialog id="deleteTierModal" class="modal">
             <div class="modal-box">
                 <h2 class="text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
@@ -88,7 +112,7 @@
                             <button
                                 class="btn">
                                 Cancelar
-                             </button>
+                            </button>
                         </form>
                     </div>
                     <button   
@@ -109,22 +133,23 @@
             </div>
             <form method="dialog" class="modal-backdrop">
                 <button>Clicar fuera</button>
-             </form>
+            </form>
         </dialog>
     </div>
-
-    <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">
-        <div 
-            class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
-            hx-post="/createOrder/addTier"
-            hx-target="#pageContent"
-            hx-swap="innerHTML"
-            id="addCategory">
-
-            <span class="text-white font-bold text-2xl">
-                <i class="fa-solid fa-plus"></i>
-            </span>
-        </div>
+    <div id="bottom">
+        <form id="orderForm" class="py-6" hx-preserve>
+            <div class="flex gap-4">
+                <!-- Tiene que pedirse como requerido -->
+                <input type="text" placeholder="Título*" required class="input input-lg border-neutral">
+                <!--
+                hx-post="/createOrder/addTitle" 
+                hx-trigger="input"
+                hx-target="#feedback"
+                hx-swap="innerHTML"
+                -->
+                <input type="text" placeholder="Autor" class="input input-lg border-neutral"/>
+            </div>
+        </form>
     </div>
     
     <script>
@@ -157,11 +182,6 @@
         });
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
-            // eliminar el contenido del input cuando se hace submit
-            if (event.detail.target.id === 'elementsContainer') {
-                document.getElementById('elementTextInput').value = '';
-            }
-
             // scroll automático al ultimo tier cuando se sale de la parte visible
             if (event.detail.target.id === 'pageContent') {
                 const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');

@@ -6,7 +6,7 @@ Background:
   * def elementsContainer = '#elementsContainer'
   * def tiersContainer = '#tiersContainer'
 
-Scenario: [SISTEMA] Un Orderer Crea su Order usando todas las funcionalidades
+Scenario: [INTEGRATION] Crear Order
   # 1: El Orderer entra en la aplicación
   Given path '/createOrder'
   When method GET
@@ -35,7 +35,7 @@ Scenario: [SISTEMA] Un Orderer Crea su Order usando todas las funcionalidades
 
   # 5: El Orderer mueve un elemento al nuevo tier
   Given path '/createOrder/updateOrderState'
-  And request { orderStateJson: [["Matrix"], [], ["Inception"]] }
+  And form field orderStateJson = '[["Matrix"], [], ["Inception"]]'
   When method POST
   Then status 200
   And match response != "error"
@@ -44,9 +44,8 @@ Scenario: [SISTEMA] Un Orderer Crea su Order usando todas las funcionalidades
   Given path '/createOrder'
   When method GET
   Then status 200
-  And match elementsContainer contains 'Matrix'
-  And match tiersContainer contains '<div class="elemContTier">'
-  And match tiersContainer contains 'Inception'
+  * match html('#elementContainerTier1').text contains 'Matrix'
+  * match html('#elementContainerTier3').text contains 'Inception'
 
   # 7: El Orderer elimina un elemento
   Given path '/createOrder/deleteElement'

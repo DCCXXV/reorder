@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -99,9 +97,10 @@ public class RootController {
      */
     @PostMapping("/createOrder/deleteElement")
     public String deleteElement(@RequestParam String elementTextBadge, HttpSession session, Model model) {
+        log.debug(elementTextBadge);
         List<List<String>> orderState = orderService.deleteElement(elementTextBadge, session);
         model.addAttribute("orderState", orderState);
-        return "createOrder :: #elementsContainer";
+        return "createOrder";
     }
 
     /**
@@ -159,9 +158,9 @@ public class RootController {
     @PostMapping("/createOrder/updateOrderState")
     public String updateOrderState(@RequestParam String orderStateJson, HttpSession session, Model model) {
         try {
-            log.info("Recibido orderStateJson: {}", orderStateJson);
+            log.debug("Recibido orderStateJson: {}", orderStateJson);
             List<List<String>> newOrderState = objectMapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
-            log.info("Enviado newOrderState: {}", newOrderState);
+            log.debug("Enviado newOrderState: {}", newOrderState);
 
             if (newOrderState.isEmpty()) {
                 return "error";

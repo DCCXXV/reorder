@@ -20,16 +20,18 @@
 .badge {
     transition: all 0.05s ease-in-out;
     vertical-align: middle;
-    cursor: pointer;
+    cursor: grab;
 }
 
 .selected-badge {
     background-color: #EFF8F3 !important;
     color: #00A96E !important;
     border-color: #00A96E !important;
+    cursor: grabbing;
 }
 
 .element-cancel {
+    cursor: pointer;
     display: inline-block;
     vertical-align: middle;
     transition: transform 0.15s ease-in-out;
@@ -91,7 +93,7 @@
 
 #pageContent {
     position: relative;
-    min-height: 90vh;
+    min-height: 100vh;
 }
   
   

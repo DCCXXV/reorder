@@ -5,7 +5,7 @@ function fn() {
     if (!env) {
         env = 'dev';
     }
-
+    
     var config = {
         env: env,
         myVarName: 'someValue',

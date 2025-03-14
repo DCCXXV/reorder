@@ -27,22 +27,16 @@
 
                 </div>
 
-                
-
                 <span class="text-xl mb-2">Elementos sin asignar a un <b><em>Tier</em></b></span>
                 <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 border-2 border-dashed w-full min-h-18 rounded p-4">
                     <span 
                         th:each="e : ${orderState[0]}" 
                         class="badge badge border-2 border-neutral p-4 text-xl"
                         th:data-element="${e}">
-                        <i
-                            class="fa-solid fa-xmark element-cancel"
-                            hx-post="/createOrder/deleteElement"
-                            hx-target="closest .badge"
-                            hx-swap="delete"
-                            hx-trigger="click"
-                            th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
-                        </i>
+                        <form hx-post="/createOrder/deleteElement" hx-target="closest .badge" hx-swap="delete">
+                            <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                            <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                        </form>
                         <span th:text="${e}">elemento</span>
                     </span>
                 </div>
@@ -73,14 +67,10 @@
                             th:each="e : ${tier}" 
                             class="badge border-2 border-neutral p-4 text-xl"
                             th:data-element="${e}">
-                            <i 
-                                class="fa-solid fa-xmark element-cancel"
-                                hx-post="/createOrder/deleteElement"
-                                hx-target="closest .badge"
-                                hx-swap="delete"
-                                hx-trigger="click"
-                                th:attr="hx-vals='{&quot;elementTextBadge&quot;: &quot;' + ${e} + '&quot;}'">
-                            </i>
+                            <form hx-post="/createOrder/deleteElement" hx-target="closest .badge" hx-swap="delete">
+                                <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                                <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                            </form>                            
                             <span th:text="${e}">elemento</span>
                         </span>
                         </span>

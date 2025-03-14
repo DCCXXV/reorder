@@ -173,7 +173,23 @@ class OrderServiceTest {
     }
 
     @Test
-    void getOrderState() {
+    void getOrderState_ShouldGetOrderWithElementsAndTiersCorrectly() {
+        //Arrange
+        List<List<String>> initialOrderState = new ArrayList<>();
+        initialOrderState.add(new ArrayList<>());
+
+        initialOrderState.add(Arrays.asList("Plátano", "Manzana")); //Tier 0
+        initialOrderState.add(Arrays.asList("Naranja", "Pera")); //Tier 1
+
+        //Act
+        when(session.getAttribute("orderState")).thenReturn(initialOrderState);
+        List<List<String>> result = orderService.getOrderState(session);
+
+        //Assert
+        for (int i = 0; i < initialOrderState.size(); i++){
+            assertThat(result.get(i)).isEqualTo(initialOrderState.get(i));
+        }
+
     }
 
     @Test

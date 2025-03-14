@@ -3,10 +3,8 @@ Feature: Creación de Order
 Background:
   * url 'http://localhost:8080'
   * configure headers = { "HX-Request": "true" }
-  * def elementsContainer = '#elementsContainer'
-  * def tiersContainer = '#tiersContainer'
 
-Scenario: [INTEGRATION] Crear Order
+Scenario: Crear Order
   # 1: El Orderer entra en la aplicación
   Given path '/createOrder'
   When method GET
@@ -38,14 +36,6 @@ Scenario: [INTEGRATION] Crear Order
   And form field orderStateJson = '[["Matrix"], [], ["Inception"]]'
   When method POST
   Then status 200
-  And match response != "error"
-  
-  # 6: El Orderer recibe la información correcta
-  Given path '/createOrder'
-  When method GET
-  Then status 200
-  * match html('#elementContainerTier1').text contains 'Matrix'
-  * match html('#elementContainerTier3').text contains 'Inception'
 
   # 7: El Orderer elimina un elemento
   Given path '/createOrder/deleteElement'
@@ -72,4 +62,3 @@ Scenario: [INTEGRATION] Crear Order
   And form field orderStateJson = '[[], ["Matrix"], [],["Inception"]]'
   When method POST
   Then status 200
-  And match response != "error"

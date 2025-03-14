@@ -24,15 +24,13 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class RootController {
 
-    private final ReorderApplication reorderApplication;
-
-    private final SecurityFilterChain filterChain;
-
     private static final Logger log = LogManager.getLogger(RootController.class);
 
-    RootController(SecurityFilterChain filterChain, ReorderApplication reorderApplication) {
-        this.filterChain = filterChain;
-        this.reorderApplication = reorderApplication;
+    private final ObjectMapper objectMapper;
+
+    // @Autowired implícito
+    public RootController(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -162,18 +160,18 @@ public class RootController {
     public String updateOrderState(@RequestParam String orderStateJson, HttpSession session, Model model) {
         try {
             log.info("Recibido orderStateJson: {}", orderStateJson);
-            ObjectMapper mapper = new ObjectMapper();
-            List<List<String>> newOrderState = mapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
+            List<List<String>> newOrderState = objectMapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
             log.info("Enviado newOrderState: {}", newOrderState);
 
             if (newOrderState.isEmpty()) {
                 return "error";
             }
-            
-            orderService.updateOrderState(newOrderState, session);
+
             model.addAttribute("orderState", newOrderState);
-            model.addAttribute("lastTierSize", newOrderState.getLast().size());
+            orderService.updateOrderState(newOrderState, session);
+
             return "createOrder";
+
         } catch (Exception e) {
             log.error("Error actualizando estado", e);
             return "error";

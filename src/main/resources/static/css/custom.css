@@ -1,20 +1,21 @@
 @font-face {
-    font-family: 'Plus Jakarta Sans';
-    src: local('Plus Jakarta Sans'), url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+    font-family: 'IBM Plex Sans';
+    src: local('IBM Plex Sans'), url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
     font-optical-sizing: auto;
     font-style: normal;
     font-weight: 400;
 }
 
 .title-logo {
-    font-family: "Bebas Neue", sans-serif;
+    font-family: "Playfair Display", serif;
+    font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-  }
+}
   
 
 :root {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'IBM Plex Sans', sans;
 }
 
 .badge {
@@ -24,9 +25,9 @@
 }
 
 .selected-badge {
-    background-color: #EFF8F3 !important;
-    color: #00A96E !important;
-    border-color: #00A96E !important;
+    background-color: #142238 !important;
+    color: #3ABDF7 !important;
+    border-color: #3ABDF7 !important;
     cursor: grabbing;
 }
 
@@ -46,9 +47,9 @@
 }
 
 .badge:has(.element-cancel:hover) {
-    background-color: #FFF3F2 !important;
-    color: #FF5861 !important;
-    border-color: #FF5861 !important;
+    background-color: #201F31 !important;
+    color: #FB7085 !important;
+    border-color: #FB7085 !important;
     
     transform: scale(1.05);
     transition: transform 0.3s ease;
@@ -57,10 +58,12 @@
 
 .categoryLabel {
     transition: all 0.05s ease-in-out;
+    background-color: #142238 !important;
+    border: 2px solid #142238 !important;
 }
 
 .categoryLabel:hover {
-    filter: brightness(95%);
+    transform: scale(1.03);
 }
 
 .tdel {
@@ -89,6 +92,8 @@
 
 #addCategory:hover {
     transform: scale(1.04);
+    border: 2px solid #3ABDF7 !important;
+    background-color: #142238 !important;
 }
 
 #pageContent {
@@ -96,11 +101,9 @@
     min-height: 100vh;
 }
   
-  
 #bottom {
     position: absolute;
     bottom: 0;
     width: 100%;
     height: 2.5rem;
 }
-

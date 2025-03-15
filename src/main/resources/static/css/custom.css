@@ -30,6 +30,10 @@
     cursor: grabbing;
 }
 
+.fallback-badge {
+    opacity: 0 !important;
+}
+
 .element-cancel {
     cursor: pointer;
     display: inline-block;

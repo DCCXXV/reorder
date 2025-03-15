@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,19 +22,20 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class RootController {
 
-    private final ReorderApplication reorderApplication;
-
-    private final SecurityFilterChain filterChain;
-
     private static final Logger log = LogManager.getLogger(RootController.class);
 
     private final ObjectMapper objectMapper;
 
+    @Autowired
+    private OrderService orderService;
+
+    private final int MAX_CHARACTERS = 30;
+    private final int MAX_ELEMENTS = 500;
+    private final int MAX_TIERS = 50;
+
     // @Autowired implícito
-    public RootController(ObjectMapper objectMapper, SecurityFilterChain filterChain, ReorderApplication reorderApplication) {
+    public RootController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.filterChain = filterChain;
-        this.reorderApplication = reorderApplication;
     }
 
     /**
@@ -51,9 +50,6 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
-
-    @Autowired
-    private OrderService orderService;
 
     /**
      * Maneja las solicitudes GET a la ruta raíz "/".
@@ -93,7 +89,7 @@ public class RootController {
         List<List<String>> orderState = orderService.getOrderState(session);
         String trimmed = elementTextInput.trim();
 
-        if (trimmed.length() > 30) {
+        if (trimmed.length() > MAX_CHARACTERS) {
             model.addAttribute("errorMessage", "¡El elemento debe tener menos de 30 caracteres!");
         } else {
             if (trimmed.isEmpty()) {
@@ -103,7 +99,20 @@ public class RootController {
                 if (exists) {
                     model.addAttribute("errorMessage", "¡El elemento ya existe!");
                 } else {
-                    orderState.get(0).add(trimmed);
+                    Integer elementCount = (Integer) session.getAttribute("elementCount");
+
+                    if (elementCount == null) {
+                        session.setAttribute("elementCount", 1);
+                    } else {
+                        elementCount++;
+                        session.setAttribute("elementCount", elementCount);
+                    }
+
+                    if (elementCount < MAX_ELEMENTS) {
+                        orderState.get(0).add(trimmed);
+                    } else {
+                        model.addAttribute("errorMessage", "¡Máximo número de elementos superado (500)!");
+                    }
                 }
             }
         }
@@ -138,9 +147,16 @@ public class RootController {
      */
     @PostMapping("/createOrder/addTier")
     public String addTier(Model model, HttpSession session, HttpServletResponse response) {
-        List<List<String>> orderState = orderService.addTier(session);
-        model.addAttribute("orderState", orderState);
-        response.setHeader("HX-Trigger", "tierAdded");
+        List<List<String>> orderState = orderService.getOrderState(session);
+
+        if (orderState.size() > MAX_TIERS) {
+            model.addAttribute("errorToastMessage", "No se pueden añadir más de 50 Tiers");
+        } else {
+            orderService.addTier(session);
+            model.addAttribute("orderState", orderState);
+            response.setHeader("HX-Trigger", "tierAdded");
+        }
+        
         return "createOrder";
     }
 
@@ -201,7 +217,7 @@ public class RootController {
             return "error";
         }
     }
-
+    /*
     @PostMapping("/createOrder/addTitle")
     public  String addTittleOrder(@RequestParam String tituloTextInput, HttpSession session, Model model){
         try{
@@ -214,6 +230,5 @@ public class RootController {
             log.error("Error creando el título", e);
             return "error";
         }
-    }
-
+    }*/
 }

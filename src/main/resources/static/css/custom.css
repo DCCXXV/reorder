@@ -12,7 +12,6 @@
     font-weight: 400;
     font-style: normal;
 }
-  
 
 :root {
     font-family: 'IBM Plex Sans', sans;
@@ -25,9 +24,9 @@
 }
 
 .selected-badge {
-    background-color: #142238 !important;
-    color: #3ABDF7 !important;
-    border-color: #3ABDF7 !important;
+    background-color: #171F38 !important;
+    color: #818CF8 !important;
+    border-color: #818CF8 !important;
     cursor: grabbing;
 }
 
@@ -58,8 +57,8 @@
 
 .categoryLabel {
     transition: all 0.05s ease-in-out;
-    background-color: #142238 !important;
-    border: 2px solid #142238 !important;
+    background-color: #171F38 !important;
+    border: 2px solid #171F38 !important;
 }
 
 .categoryLabel:hover {
@@ -92,12 +91,12 @@
 
 #addCategory:hover {
     transform: scale(1.04);
-    border: 2px solid #3ABDF7 !important;
-    background-color: #142238 !important;
+    border: 2px solid #818CF8 !important;
+    background-color: #171F38 !important;
 }
 
 .errorMessage {
-    background-color: #201F31 !important;
+    background-color: #171F38 !important;
 }
 
 html, body {

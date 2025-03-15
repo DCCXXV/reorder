@@ -20,14 +20,14 @@
                     </div>
                 </div>
                 <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
-                    <div class="list-group-item mb-1 rounded border-b-2 border-base-300" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
+                    <div class="list-group-item mb-2 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
                         <div class="flex">
                             <div class="categoryLabel border-t-2 border-s-2 border-e-2 border-base-300 rounded bg-base-300 flex flex-col items-center justify-center w-12 sm:w-16 min-h-20 sm:min-h-24">
                                 <div class="flex flex-col items-center justify-center h-full gap-3">
                                     <span class="font-bold text-xl sm:text-2xl" th:text="${tierIter.index}">?</span>
                                     <i
                                         th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
-                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-error"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
                                         hx-post="/createOrder/deleteLastTier"
                                         hx-target="#pageContent"
                                         hx-swap="innerHTML"
@@ -35,7 +35,7 @@
                                     </i>
                                     <i
                                         th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
-                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-error"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
                                         onclick="deleteTierModal.showModal()">
                                     </i>
                                 </div>
@@ -43,7 +43,7 @@
                             <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                                 <span 
                                     th:each="e : ${tier}" 
-                                    class="badge badge-soft badge-primary p-3 sm:p-4 text-base sm:text-xl"
+                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl"
                                     th:data-element="${e}">
                                     <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                                         <input type="hidden" name="elementTextBadge" th:value="${e}" />
@@ -125,12 +125,11 @@
                     <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error" th:text="${errorMessage}"></div>
                 </div>
             </form>
-            
         </div>
-        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 w-full min-h-36 rounded p-4 sm:p-4">
+        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-4 sm:p-4">
             <span 
                 th:each="e : ${orderState[0]}" 
-                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-primary"
+                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary"
                 th:data-element="${e}">
                 <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                     <input type="hidden" name="elementTextBadge" th:value="${e}" />
@@ -140,7 +139,10 @@
             </span>
         </div>
     </div>
-    
+    <div th:if="${errorToastMessage != null}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${errorToastMessage}"></span>Error desconocido</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>    
     <script>
         // dejo el js aquí porque solo se va a usar en esta vista
 

@@ -82,7 +82,20 @@ public class RootController {
      */
     @PostMapping("/createOrder/addElement")
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
-        List<List<String>> orderState = orderService.addElement(elementTextInput, session);
+        List<List<String>> orderState = orderService.getOrderState(session);
+        String trimmed = elementTextInput.trim();
+        
+        if (trimmed.isEmpty()) {
+            model.addAttribute("errorMessage", "¡El elemento no puede estar vacío!");
+        } else {
+            boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
+            if (exists) {
+                model.addAttribute("errorMessage", "¡El elemento ya existe!");
+            } else {
+                orderState.get(0).add(trimmed);
+            }
+        }
+        
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }

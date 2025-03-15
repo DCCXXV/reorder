@@ -96,10 +96,8 @@
     background-color: #142238 !important;
 }
 
-.content {
-    min-height: 100dvh;
-    display: grid;
-    grid-template-rows: 1fr auto;
+.errorMessage {
+    background-color: #201F31 !important;
 }
 
 html, body {
@@ -110,7 +108,7 @@ html, body {
 .content {
     display: grid;
     grid-template-rows: 1fr auto;
-    min-height: 85vh; 
+    min-height: 87vh; 
 }
 
 /*

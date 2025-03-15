@@ -102,7 +102,8 @@ public class RootController {
                     Integer elementCount = (Integer) session.getAttribute("elementCount");
 
                     if (elementCount == null) {
-                        session.setAttribute("elementCount", 1);
+                        elementCount = 1;
+                        session.setAttribute("elementCount", elementCount);
                     } else {
                         elementCount++;
                         session.setAttribute("elementCount", elementCount);

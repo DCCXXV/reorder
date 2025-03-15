@@ -23,12 +23,12 @@ jobs:
 
       # Iniciar la aplicación Spring Boot en segundo plano (necesario para Karate)
       - name: Iniciar aplicación Spring Boot
-        run: mvn spring-boot:start &
+        run: mvn spring-boot:run &
         # '&' al final ejecuta el proceso en segundo plano
 
       # Ejecutar tests (incluyendo Karate)
       - name: Ejecutar tests
-        run: mvn -B verify
+        run: mvn verify
 
       # Detener la aplicación
       - name: Detener aplicación

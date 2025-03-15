@@ -3,11 +3,18 @@ package com.thecritics.reorder.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+
+import com.thecritics.reorder.controller.RootController;
+
 import jakarta.servlet.http.HttpSession;
 
 @Service
 public class OrderService {
+
+    private static final Logger log = LogManager.getLogger(RootController.class);
 
     /**
      * Añade un elemento al primer tier (sin asignar) del estado del Order en la sesión.
@@ -18,9 +25,15 @@ public class OrderService {
      */
     public List<List<String>> addElement(String elementText, HttpSession session) {
         List<List<String>> orderState = getOrderState(session);
-        if (!elementText.trim().isEmpty()) {
-            // tier 0 es sin asignar
-            orderState.get(0).add(elementText.trim());
+
+        String trimmed = elementText.trim();
+        if (!trimmed.isEmpty()) {
+            boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
+            if (!exists) {
+                orderState.get(0).add(trimmed);
+            } else {
+                log.debug("El elemento ya existe: " + trimmed);
+            }
         }
         return orderState;
     }

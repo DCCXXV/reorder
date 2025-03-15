@@ -1,172 +1,182 @@
-<div>
-    <div id="content">
-        <div class="flex flex-col items-center text-center">
-            <span class="text-4xl mb-6 font-bold">Crea tu <em class="text-accent">Order</em></span>
+<div class="px-2 sm:px-8 content">
+    <div>
+        <section>
+            <div>
+                <div class="flex flex-col items-center text-center">
+                    <div class="mb-6 flex flex-col w-full">
+                        <form id="orderForm" class="w-full md:w-auto md:max-w-3xl" hx-preserve>
+                            <div class="flex flex-col sm:flex-row gap-4 text-start">
+                                <div class="flex flex-col w-full sm:w-1/2">
+                                    <label for="titleInput" class="mb-1 ms-2 text-sm font-medium">Título<em class="text-error">*</em></label>
+                                    <input id="titleInput" type="text" placeholder="Título del Order" required class="input input-md sm:input-lg focus:outline-none border-neutral w-full">
+                                </div>
+                                
+                                <div class="flex flex-col w-full sm:w-1/2">
+                                    <label for="authorInput" class="mb-1 ms-2 text-sm font-medium">Autor</label>
+                                    <input id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
+                    <div class="list-group-item mb-2 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
+                        <div class="flex">
+                            <div class="categoryLabel border-t-2 border-s-2 border-e-2 border-base-300 rounded bg-base-300 flex flex-col items-center justify-center w-12 sm:w-16 min-h-20 sm:min-h-24">
+                                <div class="flex flex-col items-center justify-center h-full gap-3">
+                                    <span class="font-bold text-xl sm:text-2xl" th:text="${tierIter.index}">?</span>
+                                    <i
+                                        th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
+                                        hx-post="/createOrder/deleteLastTier"
+                                        hx-target="#pageContent"
+                                        hx-swap="innerHTML"
+                                        hx-trigger="click">
+                                    </i>
+                                    <i
+                                        th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
+                                        onclick="deleteTierModal.showModal()">
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
+                                <span 
+                                    th:each="e : ${tier}" 
+                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl"
+                                    th:data-element="${e}">
+                                    <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                                        <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                                        <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                                    </form>                            
+                                    <span th:text="${e}">elemento</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div th:if="${title != null}" class="p-5 flex flex-col items-center text-center bg-base-200 rounded-2xl">
-                <span class="text-xl mt-3 mb-2 flex items-center text-center" th:text="${title}" ></span>
-            </div>
-
-            <div class="mt-8 mb-6 flex flex-col items-center text-center w-full">
-                <div class="mb-6 flex items-center text-center">
-                    
-                    <form
-                        hx-post="/createOrder/addElement"
-                        hx-trigger="submit"
+                <div class="tooltip tooltip-right tooltip-neutral w-12 sm:w-16 font-bold" data-tip="Añade un nuevo Tier">
+                    <div 
+                        class="rounded-lg flex bg-neutral items-center justify-center w-12 sm:w-16 h-20 sm:h-24" 
+                        hx-post="/createOrder/addTier"
                         hx-target="#pageContent"
                         hx-swap="innerHTML"
-                        id="elementForm">
-                        <div class="join">
-                            <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
-                                class="input join-item focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral" />
-                            <button type="submit" class="btn btn-success text-white join-item border-e-2 border-t-2 border-b-2 border-neutral">Añadir</button>
-                        </div>
-                    </form>
+                        id="addCategory">
 
-                    <!-- fila para poner elementos al mismo nivel que el añadir elementos -->
-
+                        <span class="text-white font-bold text-xl sm:text-2xl">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                    </div>
                 </div>
-
-                <span class="text-xl mb-2">Elementos sin asignar a un <b><em>Tier</em></b></span>
-                <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 border-2 border-dashed w-full min-h-18 rounded p-4">
-                    <span 
-                        th:each="e : ${orderState[0]}" 
-                        class="badge badge border-2 border-neutral p-4 text-xl"
-                        th:data-element="${e}">
-                        <form hx-post="/createOrder/deleteElement" hx-target="closest .badge" hx-swap="delete">
-                            <input type="hidden" name="elementTextBadge" th:value="${e}" />
-                            <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
-                        </form>
-                        <span th:text="${e}">elemento</span>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
-            <div class="list-group-item mb-4 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
-                <div class="flex">
-                    <div class="categoryLabel border-t-2 border-s-2 border-e-2 rounded bg-accent flex flex-col items-center justify-center w-16 min-h-24">
-                        <span class="text-neutral font-bold text-2xl" th:text="${tierIter.index}">?</span>
-                            <i
-                                th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
-                                class="fa-solid fa-xmark mt-2 tdel"
+                <dialog id="deleteTierModal" class="modal">
+                    <div class="modal-box">
+                        <h2 class="text-lg sm:text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
+                        <h3 class="text-base sm:text-lg py-4 sm:py-6">Puedes conservar los elementos o borrarlos junto al <em>Tier</em>, esta acción es permanente.</h3>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end">
+                            <div class="modal-action m-0">
+                                <form method="dialog" class="w-full">
+                                    <button class="btn w-full sm:w-auto">
+                                        Cancelar
+                                    </button>
+                                </form>
+                            </div>
+                            <button   
+                                hx-post="/createOrder/keepElementsAndDeleteLastTier"
+                                hx-target="#pageContent"
+                                hx-swap="innerHTML"
+                                class="btn btn-success w-full sm:w-auto">
+                                Conservar elementos
+                            </button> 
+                            <button
                                 hx-post="/createOrder/deleteLastTier"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
-                                hx-trigger="click">
-                            </i>
-                            <i
-                                th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
-                                class="fa-solid fa-xmark mt-2 tdel"
-                                onclick="deleteTierModal.showModal()">
-                            </i>
-                        </span>
+                                class="btn btn-error w-full sm:w-auto">
+                                Borrar elementos
+                            </button> 
+                        </div>
                     </div>
-                    <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
-                        <span 
-                            th:each="e : ${tier}" 
-                            class="badge border-2 border-neutral p-4 text-xl"
-                            th:data-element="${e}">
-                            <form hx-post="/createOrder/deleteElement" hx-target="closest .badge" hx-swap="delete">
-                                <input type="hidden" name="elementTextBadge" th:value="${e}" />
-                                <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
-                            </form>                            
-                            <span th:text="${e}">elemento</span>
-                        </span>
-                        </span>
-                    </div>
-                </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <button>Clicar fuera</button>
+                    </form>
+                </dialog>
             </div>
-        </div>
-
-        <div class="tooltip tooltip-right tooltip-accent w-16" data-tip="Añade una nueva categoría">
-            <div 
-                class="rounded-lg flex bg-neutral items-center justify-center w-16 h-24" 
-                hx-post="/createOrder/addTier"
+        </section>
+    </div>
+    <div class="bg-base-100 p-2" id="elementsBottom">
+        <div class="my-4 sm:my-4 flex w-full">
+            <form
+                hx-post="/createOrder/addElement"
+                hx-trigger="submit"
                 hx-target="#pageContent"
                 hx-swap="innerHTML"
-                id="addCategory">
-
-                <span class="text-white font-bold text-2xl">
-                    <i class="fa-solid fa-plus"></i>
-                </span>
-            </div>
-        </div>
-        <dialog id="deleteTierModal" class="modal">
-            <div class="modal-box">
-                <h2 class="text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
-                <h3 class="text-lg py-6">Puedes conservar los elementos o borrarlos junto al <em>Tier</em>, esta acción es permanente.</h3>
-                <div class="flex gap-4 justify-end">
-                    <div class="modal-action m-0">
-                        <form method="dialog">
-                            <button
-                                class="btn">
-                                Cancelar
-                            </button>
-                        </form>
+                id="elementForm"
+                class="w-full sm:input-lg md:w-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                    <div class="join">
+                        <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
+                            class="input input-md sm:input-lg join-item w-full focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral text-left pl-3"
+                            style="font-size: 16px; text-align: left;" />
+                        <button type="submit" class="btn btn-md sm:btn-lg btn-neutral join-item border-e-2 border-t-2 border-b-2 border-neutral">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
                     </div>
-                    <button   
-                        hx-post="/createOrder/keepElementsAndDeleteLastTier"
-                        hx-target="#pageContent"
-                        hx-swap="innerHTML"
-                        class="btn btn-success text-white">
-                        Conservar elementos
-                    </button> 
-                    <button
-                        hx-post="/createOrder/deleteLastTier"
-                        hx-target="#pageContent"
-                        hx-swap="innerHTML"
-                        class="btn btn-error">
-                        Borrar elementos
-                    </button> 
+                    <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error" th:text="${errorMessage}"></div>
                 </div>
-            </div>
-            <form method="dialog" class="modal-backdrop">
-                <button>Clicar fuera</button>
             </form>
-        </dialog>
+        </div>
+        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-4 sm:p-4">
+            <span 
+                th:each="e : ${orderState[0]}" 
+                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary"
+                th:data-element="${e}">
+                <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                    <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                    <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                </form>
+                <span th:text="${e}">elemento</span>
+            </span>
+        </div>
     </div>
-    <div id="bottom">
-        <form id="orderForm" class="py-6" hx-preserve>
-            <div class="flex gap-4">
-                <!-- Tiene que pedirse como requerido -->
-                <input type="text" placeholder="Título*" required class="input input-lg border-neutral">
-                <!--
-                hx-post="/createOrder/addTitle" 
-                hx-trigger="input"
-                hx-target="#feedback"
-                hx-swap="innerHTML"
-                -->
-                <input type="text" placeholder="Autor" class="input input-lg border-neutral"/>
-            </div>
-        </form>
-    </div>
-    
+    <div th:if="${errorToastMessage != null}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${errorToastMessage}"></span>Error desconocido</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>    
     <script>
         // dejo el js aquí porque solo se va a usar en esta vista
 
+        // asegurar tamaño adecuado para inputs en móvil
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.style.fontSize = '16px';  // previene zoom en iOS ¿?
+        });
+
         Sortable.create(document.getElementById('elementsContainer'), {
             multiDrag: true,
-            multiDragKey: 'CTRL',
+            multiDragKey: 'none',
             selectedClass: 'selected-badge',
             fallbackTolerance: 3,
             group: 'tierGroup',
             animation: 150,
             draggable: '.badge',
             ghostClass: 'selected-badge',
+            touchStartThreshold: 10,
+            clone: false,
             onEnd: actualizarOrderState
         });
         
         document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
             Sortable.create(container, {
                 multiDrag: true,
-                multiDragKey: 'CTRL',
+                multiDragKey: 'none',
                 selectedClass: 'selected-badge',
                 fallbackTolerance: 3,
                 group: 'tierGroup',
                 animation: 150,
                 draggable: '.badge',
                 ghostClass: 'selected-badge',
+                touchStartThreshold: 10,
+                clone: false,
                 onEnd: actualizarOrderState
             });
         });
@@ -195,7 +205,9 @@
             const defaultTier = [];
             document.querySelectorAll("#elementsContainer .badge").forEach(el => {
                 const elementText = el.getAttribute("data-element");
-                if (elementText) defaultTier.push(elementText.trim());
+                if (elementText && !defaultTier.includes(elementText.trim())) {
+                    defaultTier.push(elementText.trim());
+                }
             });
             orderState.push(defaultTier);
             
@@ -204,7 +216,9 @@
                 const tierElements = [];
                 container.querySelectorAll(".badge").forEach(el => {
                     const elementText = el.getAttribute("data-element");
-                    if (elementText) tierElements.push(elementText.trim());
+                    if (elementText && !tierElements.includes(elementText.trim())) {
+                        tierElements.push(elementText.trim());
+                    }
                 });
                 orderState.push(tierElements);
             });

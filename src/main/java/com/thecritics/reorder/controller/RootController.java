@@ -26,6 +26,13 @@ public class RootController {
 
     private final ObjectMapper objectMapper;
 
+    @Autowired
+    private OrderService orderService;
+
+    private final int MAX_CHARACTERS = 30;
+    private final int MAX_ELEMENTS = 500;
+    private final int MAX_TIERS = 50;
+
     // @Autowired implícito
     public RootController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -43,9 +50,6 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
-
-    @Autowired
-    private OrderService orderService;
 
     /**
      * Maneja las solicitudes GET a la ruta raíz "/".
@@ -82,7 +86,37 @@ public class RootController {
      */
     @PostMapping("/createOrder/addElement")
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
-        List<List<String>> orderState = orderService.addElement(elementTextInput, session);
+        List<List<String>> orderState = orderService.getOrderState(session);
+        String trimmed = elementTextInput.trim();
+
+        if (trimmed.length() > MAX_CHARACTERS) {
+            model.addAttribute("errorMessage", "¡El elemento debe tener menos de 30 caracteres!");
+        } else {
+            if (trimmed.isEmpty()) {
+                model.addAttribute("errorMessage", "¡El elemento no puede estar vacío!");
+            } else {
+                boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
+                if (exists) {
+                    model.addAttribute("errorMessage", "¡El elemento ya existe!");
+                } else {
+                    Integer elementCount = (Integer) session.getAttribute("elementCount");
+
+                    if (elementCount == null) {
+                        session.setAttribute("elementCount", 1);
+                    } else {
+                        elementCount++;
+                        session.setAttribute("elementCount", elementCount);
+                    }
+
+                    if (elementCount < MAX_ELEMENTS) {
+                        orderState.get(0).add(trimmed);
+                    } else {
+                        model.addAttribute("errorMessage", "¡Máximo número de elementos superado (500)!");
+                    }
+                }
+            }
+        }
+        
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }
@@ -113,9 +147,16 @@ public class RootController {
      */
     @PostMapping("/createOrder/addTier")
     public String addTier(Model model, HttpSession session, HttpServletResponse response) {
-        List<List<String>> orderState = orderService.addTier(session);
-        model.addAttribute("orderState", orderState);
-        response.setHeader("HX-Trigger", "tierAdded");
+        List<List<String>> orderState = orderService.getOrderState(session);
+
+        if (orderState.size() > MAX_TIERS) {
+            model.addAttribute("errorToastMessage", "No se pueden añadir más de 50 Tiers");
+        } else {
+            orderService.addTier(session);
+            model.addAttribute("orderState", orderState);
+            response.setHeader("HX-Trigger", "tierAdded");
+        }
+        
         return "createOrder";
     }
 
@@ -176,7 +217,7 @@ public class RootController {
             return "error";
         }
     }
-
+    /*
     @PostMapping("/createOrder/addTitle")
     public  String addTittleOrder(@RequestParam String tituloTextInput, HttpSession session, Model model){
         try{
@@ -189,6 +230,5 @@ public class RootController {
             log.error("Error creando el título", e);
             return "error";
         }
-    }
-
+    }*/
 }

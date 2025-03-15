@@ -11,11 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout del código
       - name: Checkout código
         uses: actions/checkout@v4
 
-      # 2. Configurar Java (ej: Java 21 para Spring Boot 3.x)
       - name: Configurar JDK 21
         uses: actions/setup-java@v4
         with:
@@ -23,11 +21,21 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Construir y ejecutar tests con Maven
-      - name: Build y tests
+      # Iniciar la aplicación Spring Boot en segundo plano (necesario para Karate)
+      - name: Iniciar aplicación Spring Boot
+        run: mvn spring-boot:start &
+        # '&' al final ejecuta el proceso en segundo plano
+
+      # Ejecutar tests (incluyendo Karate)
+      - name: Ejecutar tests
         run: mvn -B verify
 
-      # 4. Subir artefactos (JAR)
+      # Detener la aplicación
+      - name: Detener aplicación
+        if: always()
+        run: mvn spring-boot:stop
+
+      # Subir artefactos
       - name: Subir JAR
         uses: actions/upload-artifact@v4
         with:

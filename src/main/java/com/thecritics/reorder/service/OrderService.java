@@ -25,6 +25,7 @@ public class OrderService {
      */
     public List<List<String>> addElement(String elementText, HttpSession session) {
         List<List<String>> orderState = getOrderState(session);
+
         String trimmed = elementText.trim();
         if (!trimmed.isEmpty()) {
             boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
@@ -36,7 +37,6 @@ public class OrderService {
         }
         return orderState;
     }
-    
 
     /**
      * Elimina un elemento del estado del Order en la sesión.

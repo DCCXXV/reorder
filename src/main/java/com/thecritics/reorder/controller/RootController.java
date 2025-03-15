@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,13 +24,19 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class RootController {
 
+    private final ReorderApplication reorderApplication;
+
+    private final SecurityFilterChain filterChain;
+
     private static final Logger log = LogManager.getLogger(RootController.class);
 
     private final ObjectMapper objectMapper;
 
     // @Autowired implícito
-    public RootController(ObjectMapper objectMapper) {
+    public RootController(ObjectMapper objectMapper, SecurityFilterChain filterChain, ReorderApplication reorderApplication) {
         this.objectMapper = objectMapper;
+        this.filterChain = filterChain;
+        this.reorderApplication = reorderApplication;
     }
 
     /**
@@ -84,15 +92,19 @@ public class RootController {
     public String addElement(@RequestParam String elementTextInput, HttpSession session, Model model) {
         List<List<String>> orderState = orderService.getOrderState(session);
         String trimmed = elementTextInput.trim();
-        
-        if (trimmed.isEmpty()) {
-            model.addAttribute("errorMessage", "¡El elemento no puede estar vacío!");
+
+        if (trimmed.length() > 30) {
+            model.addAttribute("errorMessage", "¡El elemento debe tener menos de 30 caracteres!");
         } else {
-            boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
-            if (exists) {
-                model.addAttribute("errorMessage", "¡El elemento ya existe!");
+            if (trimmed.isEmpty()) {
+                model.addAttribute("errorMessage", "¡El elemento no puede estar vacío!");
             } else {
-                orderState.get(0).add(trimmed);
+                boolean exists = orderState.stream().anyMatch(tier -> tier.contains(trimmed));
+                if (exists) {
+                    model.addAttribute("errorMessage", "¡El elemento ya existe!");
+                } else {
+                    orderState.get(0).add(trimmed);
+                }
             }
         }
         

@@ -105,7 +105,7 @@
         </section>
     </div>
     <div class="bg-base-100 p-2" id="elementsBottom">
-        <div class="my-8 sm:my-4 flex w-full">
+        <div class="my-4 sm:my-4 flex w-full">
             <form
                 hx-post="/createOrder/addElement"
                 hx-trigger="submit"
@@ -151,7 +151,7 @@
 
         Sortable.create(document.getElementById('elementsContainer'), {
             multiDrag: true,
-            multiDragKey: 'CTRL',
+            multiDragKey: 'none',
             selectedClass: 'selected-badge',
             fallbackTolerance: 3,
             group: 'tierGroup',
@@ -159,13 +159,14 @@
             draggable: '.badge',
             ghostClass: 'selected-badge',
             touchStartThreshold: 10,
+            clone: false,
             onEnd: actualizarOrderState
         });
         
         document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
             Sortable.create(container, {
                 multiDrag: true,
-                multiDragKey: 'CTRL',
+                multiDragKey: 'none',
                 selectedClass: 'selected-badge',
                 fallbackTolerance: 3,
                 group: 'tierGroup',
@@ -173,6 +174,7 @@
                 draggable: '.badge',
                 ghostClass: 'selected-badge',
                 touchStartThreshold: 10,
+                clone: false,
                 onEnd: actualizarOrderState
             });
         });
@@ -201,7 +203,9 @@
             const defaultTier = [];
             document.querySelectorAll("#elementsContainer .badge").forEach(el => {
                 const elementText = el.getAttribute("data-element");
-                if (elementText) defaultTier.push(elementText.trim());
+                if (elementText && !defaultTier.includes(elementText.trim())) {
+                    defaultTier.push(elementText.trim());
+                }
             });
             orderState.push(defaultTier);
             
@@ -210,7 +214,9 @@
                 const tierElements = [];
                 container.querySelectorAll(".badge").forEach(el => {
                     const elementText = el.getAttribute("data-element");
-                    if (elementText) tierElements.push(elementText.trim());
+                    if (elementText && !tierElements.includes(elementText.trim())) {
+                        tierElements.push(elementText.trim());
+                    }
                 });
                 orderState.push(tierElements);
             });

@@ -51,7 +51,7 @@
     color: #FB7085 !important;
     border-color: #FB7085 !important;
     
-    transform: scale(1.05);
+    transform: scale(1.03);
     transition: transform 0.3s ease;
     filter: brightness(100%);
 }
@@ -73,7 +73,7 @@
 }
 
 .tdel:hover {
-    transform: scale(1.8);
+    filter: brightness(80%);
 }
 
 .handle {

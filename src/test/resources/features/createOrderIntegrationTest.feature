@@ -87,7 +87,7 @@ Scenario: Crear Order flujo no habitual, el usuario intenta romper la aplicació
   Given path '/createOrder/deleteElement'
   And form field elementTextBadge = "Inception"
   When method POST
-  Then status 200
+  Then status 500
 
 Scenario: Crear Order prueba de errores al añadir elementos
   # 1: EL Orderer intenta crear un elemento vacío

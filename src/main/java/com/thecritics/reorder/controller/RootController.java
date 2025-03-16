@@ -191,7 +191,17 @@ public class RootController {
      */
     @PostMapping("/createOrder/deleteLastTier")
     public String deleteLastTier(HttpSession session, Model model) {
-        List<List<String>> orderState = orderService.deleteLastTier(session);
+        List<List<String>> orderState = orderService.getOrderState(session);
+        Integer elementCount = (Integer) session.getAttribute("elementCount");
+
+        if (elementCount != null){
+            int n  = orderState.size();
+            List<String> elements = orderState.get(n - 1);
+            elementCount -= elements.size();
+            session.setAttribute("elementCount", elementCount);
+        }   
+        
+        orderState = orderService.deleteLastTier(session);
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }

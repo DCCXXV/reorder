@@ -77,17 +77,17 @@ Scenario: Crear Order flujo habitual
   And match response !contains 'elementContainerTier2'
 
 Scenario: Crear Order flujo no habitual, el usuario intenta romper la aplicación
-  # 1: El Orderer entra en la aplicación
-  Given path '/createOrder'
-  When method GET
-  Then status 200
-  And match response contains 'Crear Order'
-
-  # 2: EL Orderer fuerza una llamada a /createOrder/deleteTier
+  # 1: EL Orderer fuerza una llamada a /createOrder/deleteTier
   Given path '/createOrder/deleteLastTier'
   When method POST
   Then status 200
   And match response contains 'elementContainerTier1'
+
+  # 2: El Orderer fuerza una llamada para eliminar un elemento que no existe
+  Given path '/createOrder/deleteElement'
+  And form field elementTextBadge = "Inception"
+  When method POST
+  Then status 200
 
 Scenario: Crear Order prueba de errores al añadir elementos
   # 1: EL Orderer intenta crear un elemento vacío

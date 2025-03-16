@@ -135,6 +135,11 @@ public class RootController {
         log.debug(elementTextBadge);
         List<List<String>> orderState = orderService.deleteElement(elementTextBadge, session);
         model.addAttribute("orderState", orderState);
+
+        Integer elementCount = (Integer) session.getAttribute("elementCount");
+        elementCount--;
+        session.setAttribute("elementCount", elementCount);
+
         return "createOrder";
     }
 

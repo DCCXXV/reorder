@@ -1,5 +1,7 @@
 <div class="px-2 sm:px-8 content">
     <div>
+        <!-- para comprobar si la vista es correcta-->
+        <title hidden>Crear Order</title>
         <section>
             <div>
                 <div class="flex flex-col items-center text-center">
@@ -104,7 +106,7 @@
             </div>
         </section>
     </div>
-    <div class="bg-base-100 p-2" id="elementsBottom">
+    <div class="bg-base-100" id="elementsBottom">
         <div class="my-4 sm:my-4 flex w-full">
             <form
                 hx-post="/createOrder/addElement"
@@ -118,7 +120,7 @@
                         <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
                             class="input input-md sm:input-lg join-item w-full focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral text-left pl-3"
                             style="font-size: 16px; text-align: left;" />
-                        <button type="submit" class="btn btn-md sm:btn-lg btn-neutral join-item border-e-2 border-t-2 border-b-2 border-neutral">
+                        <button type="submit "aria-label="Añadir elemento" class="btn btn-md sm:btn-lg btn-neutral join-item border-e-2 border-t-2 border-b-2 border-neutral">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>

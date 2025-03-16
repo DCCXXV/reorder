@@ -113,6 +113,8 @@ public class RootController {
                         orderState.get(0).add(trimmed);
                     } else {
                         model.addAttribute("errorMessage", "¡Máximo número de elementos superado (500)!");
+                        elementCount--;
+                        session.setAttribute("elementCount", elementCount);
                     }
                 }
             }
@@ -135,6 +137,11 @@ public class RootController {
         log.debug(elementTextBadge);
         List<List<String>> orderState = orderService.deleteElement(elementTextBadge, session);
         model.addAttribute("orderState", orderState);
+
+        Integer elementCount = (Integer) session.getAttribute("elementCount");
+        elementCount--;
+        session.setAttribute("elementCount", elementCount);
+
         return "createOrder";
     }
 
@@ -184,7 +191,17 @@ public class RootController {
      */
     @PostMapping("/createOrder/deleteLastTier")
     public String deleteLastTier(HttpSession session, Model model) {
-        List<List<String>> orderState = orderService.deleteLastTier(session);
+        List<List<String>> orderState = orderService.getOrderState(session);
+        Integer elementCount = (Integer) session.getAttribute("elementCount");
+
+        if (elementCount != null){
+            int n  = orderState.size();
+            List<String> elements = orderState.get(n - 1);
+            elementCount -= elements.size();
+            session.setAttribute("elementCount", elementCount);
+        }   
+        
+        orderState = orderService.deleteLastTier(session);
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }

@@ -9,7 +9,7 @@ Scenario: Crear Order
   Given path '/createOrder'
   When method GET
   Then status 200
-  And match response contains 'Order'
+  And match response contains 'Crear Order'
 
   # 2: El Orderer añade un elemento
   Given path '/createOrder/addElement'

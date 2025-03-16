@@ -154,7 +154,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void deleteLastTier_ShouldDeleteTierAndAllElementsInTier(){
+    void deleteLastTier_ShouldDeleteLastTierAndAllElementsInTier(){
         // configurar estado inicial
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>()); // Tier 0  (unassigned)

@@ -138,6 +138,19 @@ class OrderServiceTest {
         assertThat(result).hasSize(3);
     }
 
+    @Test
+    void deleteTier_ShouldNotDeleteFirtTwoTiers(){
+        List<List<String>> initialOrderState = new ArrayList<>();
+        initialOrderState.add(new ArrayList<>()); // Tier 0
+        initialOrderState.add(new ArrayList<>()); // Tier 1
+
+        int numberOfTiers = initialOrderState.size();
+        when(session.getAttribute("orderState")).thenReturn(initialOrderState);
+
+        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+
+       assertThat(result).hasSize(2);
+    }
 
     @Test
     void deleteLastTier_ShouldDeleteLastTierIfFirstTwoExist() {

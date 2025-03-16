@@ -113,6 +113,8 @@ public class RootController {
                         orderState.get(0).add(trimmed);
                     } else {
                         model.addAttribute("errorMessage", "¡Máximo número de elementos superado (500)!");
+                        elementCount--;
+                        session.setAttribute("elementCount", elementCount);
                     }
                 }
             }

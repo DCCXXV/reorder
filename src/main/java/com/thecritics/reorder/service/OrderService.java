@@ -109,6 +109,7 @@ public class OrderService {
      * @param session La sesión HTTP actual.
      * @return El estado actual del Order.
      */
+    @SuppressWarnings("unchecked")
     public List<List<String>> getOrderState(HttpSession session) {
         List<List<String>> orderState = (List<List<String>>) session.getAttribute("orderState");
         if (orderState == null) {

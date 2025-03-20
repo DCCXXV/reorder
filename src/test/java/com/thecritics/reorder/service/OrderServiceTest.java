@@ -144,7 +144,6 @@ class OrderServiceTest {
         initialOrderState.add(new ArrayList<>()); // Tier 0
         initialOrderState.add(new ArrayList<>()); // Tier 1
 
-        int numberOfTiers = initialOrderState.size();
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
 
         List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier

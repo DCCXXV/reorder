@@ -1,0 +1,9 @@
+<div class="flex flex-col mt-10 items-center">
+    <p class="text-4xl">Se han encontrado (<span th:text="${orderList.size}"></span>) elementos con título "<b><span th:text="${title}"></span></b>"</p>
+    <h2 class="text-5xl mt-5">Order List</h2>
+    <ul>
+        <li th:each="order : ${orderList}">
+            <span th:text="${order.title}"></span>
+        </li>
+    </ul>
+</div>

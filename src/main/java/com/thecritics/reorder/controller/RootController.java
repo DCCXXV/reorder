@@ -273,9 +273,10 @@ public class RootController {
         return orderState;
     }
 
-    @PostMapping("/searchByTitle")
+    @PostMapping("/search")
     public String searchByTitle(@RequestParam String title, Model model, HttpSession session) {
         model.addAttribute("title", title);
-        return "searchByTitle";
+        model.addAttribute("orderList", orderService.getOrdersByTitle(title));
+        return "search";
     }
 }

@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.thecritics.reorder.controller.RootController;
+import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.repository.OrderRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -15,6 +18,9 @@ import jakarta.servlet.http.HttpSession;
 public class OrderService {
 
     private static final Logger log = LogManager.getLogger(RootController.class);
+
+    @Autowired
+    OrderRepository orderRepository;
 
     /**
      * Añade un elemento al primer tier (sin asignar) del estado del Order en la sesión.
@@ -136,11 +142,33 @@ public class OrderService {
     }
 
     /**
+     * Guarda un Order con el título, autor y contenido especificados.
+     *
+     * @param title  El título de Order.
+     * @param author El autor de Order. Si está vacío, se establece como "Anónimo".
+     * @param content El contenido del Order, organizado en tiers y elementos.
+     * @return Order guardado, incluyendo su ID asignado.
+     */
+    public Order saveOrder(String title, String author, List<List<String>> content) {
+        Order order = new Order();
+        order.setContent(content);
+        order.setTitle(title);
+        order.setAuthor((author=="")? "Anónimo" : author);
+
+        Order savedOrder = orderRepository.save(order);
+
+        return savedOrder;
+    }
+
+
+    /**
      * Añade un título a la sessión.
      * @param titleText El texto del título a añadir.
      * @param session La sesión HTTP actual.
      */
+    /*
      public void addTitle(String titleText, HttpSession session) {
         session.setAttribute("titleText", titleText);
-    }
+    }*/
 }
+

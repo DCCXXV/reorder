@@ -1,5 +1,6 @@
 package com.thecritics.reorder.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,8 @@ import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class RootController {
@@ -235,6 +238,43 @@ public class RootController {
             return "error";
         }
     }
+
+    /**
+     * Endpoint para publicar un Order, guardándola en la base de datos.
+     *
+     * @param title   El título del Order.
+     * @param author  El autor del Order.
+     * @param session La sesión HTTP actual, utilizada para obtener el estado del Order.
+     * @return El nombre de la vista "index".
+     */
+    @PostMapping("/createOrder/PublishOrder")
+    public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session, Model model) {
+        if (title == "" || title == null) {
+            return "error";
+        }
+
+        List<List<String>> orderState = orderService.getOrderState(session);
+        orderService.saveOrder(title, author, orderState);
+        orderState = clearOrder(orderState);
+        
+        model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+
+        return "index";
+    }
+
+    /**
+     * Limpia el estado del Order, removiendo todos los elementos y restableciendo los tiers iniciales.
+     *
+     * @param orderState El estado del Order a limpiar.
+     * @return El estado del Order limpio, con dos tiers vacíos.
+     */
+    public List<List<String>> clearOrder(List<List<String>> orderState) {
+        orderState.clear();
+        orderState.add(new ArrayList<>());
+        orderState.add(new ArrayList<>());
+        return orderState;
+    }
+    
     /*
     @PostMapping("/createOrder/addTitle")
     public  String addTittleOrder(@RequestParam String tituloTextInput, HttpSession session, Model model){

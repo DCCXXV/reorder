@@ -12,6 +12,9 @@ import java.util.List;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.repository.OrderRepository;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,13 +26,13 @@ class OrderServiceTest {
 
     @Mock
     private HttpSession session;
+    
+    @Mock
+    private OrderRepository orderRepository;
 
-    /**
-     * Verifica que addElement añade un elemento a la tier no ordenada del estado del Order.
-     *
-     * <p>Configura un estado inicial con dos tier vacías y verifica que el elemento
-     * se añade correctamente a la primera lista.</p>
-     */
+    @Mock
+    private Order order;
+
     @Test
     void addElement_ShouldAddElementToUnassignedTier() {
         // 1. Arrange; creamos las variables
@@ -65,13 +68,6 @@ class OrderServiceTest {
         assertThat(result.getFirst().size()).isEqualTo(0);
     }
 
-    /**
-     * Verificamos que se elimina un elemento de la assigned tier
-     * 
-     * <p>Configura un estado inicial con dos tier vacías y verifica que el elemento
-     * se elimina correctamente de la assigned tier.</p>
-     * 
-     */
     @Test
     void deleteElement_ShouldDeleteElementFromTheUnassignedTier() {
         // 1. Arrange; Creamos las variables
@@ -184,26 +180,25 @@ class OrderServiceTest {
 
     @Test
     void getOrderState_ShouldGetOrderWithElementsAndTiersCorrectly() {
-        //Arrange
+        // Arrange
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>());
-
-        initialOrderState.add(Arrays.asList("Plátano", "Manzana")); //Tier 0
-        initialOrderState.add(Arrays.asList("Naranja", "Pera")); //Tier 1
-
-        //Act
+        initialOrderState.add(Arrays.asList("Plátano", "Manzana"));
+        initialOrderState.add(Arrays.asList("Naranja", "Pera"));
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
+
+        // Act
         List<List<String>> result = orderService.getOrderState(session);
 
-        //Assert
+        // Assert
         for (int i = 0; i < initialOrderState.size(); i++){
             assertThat(result.get(i)).isEqualTo(initialOrderState.get(i));
         }
-
     }
 
     @Test
     void updateOrderState_ShouldUpdateSessionAttributeAndReturnUpdatedState() {
+        // Arrange
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(Arrays.asList("Manzana", "Pera"));        // Tier 0
         initialOrderState.add(Arrays.asList("Naranja"));                // Tier 1
@@ -212,14 +207,71 @@ class OrderServiceTest {
         newOrderState.add(Arrays.asList("Naranja", "Pera", "Sandía"));  // nuevo Tier 0
         newOrderState.add(Arrays.asList("Manzana", "Limón"));           // nuevo Tier 1
         newOrderState.add(Arrays.asList());                             // nuevo Tier 2
-                
+        
+        // Act    
         // Actualizamos el Order del estado inicial al nuevo
         List<List<String>> result = orderService.updateOrderState(newOrderState, session);
         
+        // Assert
         verify(session).setAttribute("orderState", newOrderState);
         assertThat(result).isSameAs(newOrderState);
         assertThat(result).hasSize(3);
         assertThat(result.get(0)).containsExactly("Naranja", "Pera", "Sandía");
         assertThat(result.get(1)).containsExactly("Manzana", "Limón");
+    }
+
+    @Test
+    void saveOrder_ShouldSetAuthorToAnonymous_WhenAuthorIsEmpty() {
+        // Arrange
+        String title = "Top frutas";
+        String author = "";     
+        List<List<String>> content = new ArrayList<>();
+        content.add(Arrays.asList("Plátano", "Manzana")); 
+        content.add(Arrays.asList("Naranja", "Pera")); 
+
+        Order expectedOrder = new Order();
+
+        expectedOrder.setId(2L);
+        expectedOrder.setTitle(title);
+        expectedOrder.setAuthor("Anónimo");
+        expectedOrder.setContent(content);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(expectedOrder);
+
+        // Act
+        Order savedOrder = orderService.saveOrder(title, author, content);
+
+        // Assert
+        assertThat(savedOrder.getAuthor()).isEqualTo("Anónimo");
+        verify(orderRepository, times(1)).save(any(Order.class));
+    }
+
+    @Test
+    void saveOrder_ShouldSaveOrderWithTitleAuthorAndContentCorrectly() {
+        // Arrange
+        String title = "TOP FRUTAS";
+        String author = "Sara";
+        List<List<String>> content = new ArrayList<>();
+        content.add(Arrays.asList("Manzana", "Pera"));
+        content.add(Arrays.asList("Naranja"));
+
+        Order expectedOrder = new Order();
+        expectedOrder.setId(1L);
+        expectedOrder.setTitle(title);
+        expectedOrder.setAuthor(author);
+        expectedOrder.setContent(content);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(expectedOrder);
+
+        // Act
+        Order savedOrder = orderService.saveOrder(title, author, content);
+
+        // Assert
+        assertThat(savedOrder).isNotNull();
+        assertThat(savedOrder.getId()).isEqualTo(1L);
+        assertThat(savedOrder.getTitle()).isEqualTo(title);
+        assertThat(savedOrder.getAuthor()).isEqualTo(author);
+        assertThat(savedOrder.getContent()).isEqualTo(content);
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
 }

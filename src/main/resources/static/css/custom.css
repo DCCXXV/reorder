@@ -104,10 +104,19 @@
 }
 
 html, body {
-    margin: 0;
     height: 100%;
+    margin: 0;
 }
-  
+body {
+    display: flex;
+    flex-direction: column;
+}
+#pageContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 .content {
     display: grid;
     grid-template-rows: 1fr auto;

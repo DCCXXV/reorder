@@ -25,38 +25,39 @@
     </head>
     <body>
         <header>
-            <div class="navbar bg-base-100">
+            <div class="navbar bg-base-100 border-b-4 border-base-200">
                 <div class="navbar-start">
-                    <a class="p-2" href="/"><span class=" text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
-                    <!--
                     <div class="dropdown">
-                        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden bg-base-200 py-6">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path
                                     stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
                         </div>
-                        <ul class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                            
-                            <li 
-                                tabindex="0"
-                                hx-get="/createOrder"
-                                hx-target="#pageContent"
-                                hx-swap="innerHTML">
-                                <a>Crear Order</a>
-                            </li>
-                           
+                        <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow">
+                            <li class="gap-2">
+                                <a
+                                    hx-get="/createOrder"
+                                    hx-target="#pageContent"
+                                    hx-swap="innerHTML"
+                                    class="py-3 text-lg">Crear Order
+                                </a>
+                                <a class="py-3 text-lg">Buscar Orders</a>
+                            </li>  
                         </ul>
                     </div>
-                     -->
+                    <a class="p-2" href="/"><span class=" text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
                 </div>
-                <div class="navbar-center hidden lg:flex">
-                    <!-- ... -->
-                </div>
-                <div class="navbar-end">
-                    <!--
+                <div class="navbar-center hidden md:flex">
+                    <u>
+                        <label class="input input-lg input-ghost bg-base-200 md:w-128">
+                            <input type="search" required placeholder="Busca Orders por título" id="navbarSearch"/>
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </label>
+                    </u>
+                </div>  
+                <div class="navbar-end hidden lg:flex">
                     <ul>
-
                         <li 
-                            class="btn btn-ghost btn-accent"
+                            class="btn btn-outline btn-secondary"
                             tabindex="0"
                             hx-get="/createOrder"
                             hx-target="#pageContent"
@@ -64,21 +65,26 @@
                             <a>Crear Order</a>
                         </li>
                     </ul>
-                    -->
                 </div>
             </div>
         </header>
-        <main>
-            <span 
-                hx-get="/createOrder" 
-                hx-trigger="load" 
-                hx-target="#pageContent"
-            >
-            </span>
-            <div class="p-2" id="pageContent">
-
+        <main class="flex-1 overflow-hidden">
+            <div class="h-full" id="pageContent">
+                <div class="flex items-center justify-center h-full p-4">
+                    <div class="w-full max-w-3xl px-4 bg-base-200 p-4 rounded-xl">
+                        <div class="form-control">
+                            <label class="flex items-center gap-4 flex-col sm:flex-row">
+                                <input type="text" class="w-full input input-lg border-2 border-secondary input-ghost bg-base-100 input-xl input-bordered" placeholder="Busca un Order..." />
+                                <button class="btn btn-xl btn-secondary w-full sm:w-auto mt-2 sm:mt-0">
+                                    Buscar
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+          </main>
         <footer>
 
         </footer>

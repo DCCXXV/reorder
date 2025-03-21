@@ -1,9 +1,36 @@
-<div class="flex flex-col mt-10 items-center">
-    <p class="text-4xl">Se han encontrado (<span th:text="${orderList.size}"></span>) elementos con título "<b><span th:text="${title}"></span></b>"</p>
-    <h2 class="text-5xl mt-5">Order List</h2>
-    <ul>
-        <li th:if="${orderList != null}" th:each="order : ${orderList}">
-            <span th:text="${order.title}"></span>
-        </li>
-    </ul>
+<div class="flex flex-col mt-4 items-center mx-4">
+    <title hidden th:text="${title} + ' - Búsqueda | ReOrder'"></title>
+    <label class="input input-xl input-ghost bg-base-200 flex sm:hidden w-full mb-4 rounded-xl">
+        <form 
+                hx-post="/search"
+                hx-trigger="submit"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                id="searchByTitle"
+            >
+            <i class="fa-solid fa-magnifying-glass me-3"></i>
+            <input class="w-140" type="search" required placeholder="Buscar de nuevo" id="navbarSearch" name="keyword"/>
+        </form>
+    </label>
+    
+    <div class="mb-6 p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
+        <p class="text-2xl">Resultados de <b><span class="text-secondary" th:text="${title}"></span></b></p>
+        <p style="filter: brightness(70%);"><span th:text="${orderList.size}"></span> order<span th:if="${orderList.size != 1}">s</span> encontrado<span th:if="${orderList.size != 1}">s</span></p>
+        <div class="flex flex-col mt-6 gap-4">
+            <div th:if="${orderList != null}" th:each="order : ${orderList}" class="bg-base-100 p-4 rounded">
+                <div class="flex justify-between">
+                    <div class="text-secondary text-xl" th:text="${order.title}"></div>
+                    <div class="text-lg" th:text="'@' + ${order.author}"></div>
+                </div>
+                <div class="mt-4">
+                    <span 
+                        th:each="e : ${order.content[1]}" 
+                        class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
+                        <span th:text="${e}">elemento</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>

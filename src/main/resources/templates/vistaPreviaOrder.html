@@ -1,34 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vista Principal</title>
-    <script src="https://unpkg.com/htmx.org@1.9.5"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-6">
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold mb-4">Buscar</h1>
-        <input 
-            type="text" 
-            id="search" 
-            class="w-full p-2 border rounded-lg" 
-            placeholder="Escribe para buscar..."
-            hx-get="/buscar" 
-            hx-trigger="keyup changed delay:300ms" 
-            hx-target="#resultados">
-        <div id="resultados" class="mt-4"></div>
-    </div>
 
-    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
-        <h2 class="text-xl font-bold" id="order-title">Título de la Orden</h2>
-        <p class="text-gray-700" id="order-author">Autor: Nombre del Autor</p>
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6 flex-col justify-between h-40">
+    <div class="flex justify-between">
+         <h2 class="text-xl font-bold" id="order-title">Título del Order</h2>
+         <p class="text-gray-700" id="order-author">Autor: Nombre del Autor</p>
+    </div>
         <ul class="list-disc list-inside mt-4" id="order-items">
             <li>Elemento 1</li>
             <li>Elemento 2</li>
             <li>Elemento 3</li>
         </ul>
     </div>
-</body>
-</html>
+

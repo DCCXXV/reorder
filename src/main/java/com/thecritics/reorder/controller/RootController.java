@@ -19,8 +19,6 @@ import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @Controller
 public class RootController {
@@ -274,19 +272,10 @@ public class RootController {
         orderState.add(new ArrayList<>());
         return orderState;
     }
-    
-    /*
-    @PostMapping("/createOrder/addTitle")
-    public  String addTittleOrder(@RequestParam String tituloTextInput, HttpSession session, Model model){
-        try{
-            log.info("Recibido");
-            orderService.addTitle(tituloTextInput, session);
-            model.addAttribute("title", tituloTextInput);
-            return "createOrder";
 
-        } catch(Exception e){
-            log.error("Error creando el título", e);
-            return "error";
-        }
-    }*/
+    @PostMapping("/searchByTitle")
+    public String searchByTitle(@RequestParam String title, Model model, HttpSession session) {
+        model.addAttribute("title", title);
+        return "searchByTitle";
+    }
 }

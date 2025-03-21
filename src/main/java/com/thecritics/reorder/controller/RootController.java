@@ -249,6 +249,10 @@ public class RootController {
      */
     @PostMapping("/createOrder/PublishOrder")
     public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session, Model model) {
+        if (title == "" || title == null) {
+            return "error";
+        }
+
         List<List<String>> orderState = orderService.getOrderState(session);
         orderService.saveOrder(title, author, orderState);
         orderState = clearOrder(orderState);

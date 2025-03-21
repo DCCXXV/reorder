@@ -4,7 +4,7 @@ Background:
   * url 'http://localhost:8080'
 
 Scenario: Crear Order flujo habitual
-  # 1: El Orderer entra en la aplicación
+  # 1: El Orderer entra en la vista de crear Order
   Given path '/createOrder'
   When method GET
   Then status 200

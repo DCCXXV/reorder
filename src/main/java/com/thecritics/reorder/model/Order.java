@@ -2,6 +2,8 @@ package com.thecritics.reorder.model;
 
 import java.util.List;
 
+import com.thecritics.reorder.model.ListOfListsConverter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -23,8 +25,7 @@ import lombok.NoArgsConstructor;
 public class Order implements Transferable<Order.Transfer>{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
-    @SequenceGenerator(name = "gen", sequenceName = "gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
     
     @Convert(converter = ListOfListsConverter.class)

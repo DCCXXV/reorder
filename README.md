@@ -42,23 +42,22 @@ ReOrder está dirigido a personas que disfrutan creando listas, compartiendo sus
 ### ⚙️ Backend
 - Framework para el desarrollo de la aplicación: ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 - Gestión de dependencias y construcción del proyecto: ![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white)
-- **H2**: Base de datos en memoria para desarrollo y testing: 
+- **H2**: Base de datos en memoria para desarrollo y testing: ![H2](https://img.shields.io/badge/h2-%230f1ef3.svg?style=for-the-badge&logo=Codeforces&logoColor=white)
 - Base de datos para producción: ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
 ### 🧰 Herramientas de Desarrollo
-- Editor de código: ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+- Editor de código: ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=vscodium&logoColor=white)
 - Para el control de versiones y gestión de ramas: ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
-- Herramienta opcional para interactuar con la base de datos: ![DBeaver](https://img.shields.io/badge/-DBeaver-2D5A72?logo=dbeaver&logoColor=white)
+- Herramienta opcional para interactuar con la base de datos: ![DBeaver](https://img.shields.io/badge/DBeaver-%232d5a72.svg?style=for-the-badge&logo=dbeaver&logoColor=white)
 
 ### 🧪 Testing
-- **JUnit 5 + Mockito**: Pruebas de unidad: ![JUnit5](https://img.shields.io/badge/junit-%23E33332?logo=junit5&logoColor=white) meter mockito
-- **Spring Test**: Pruebas de integración 
-- **Karate + TestContainers**: Pruebas de sistema.
+- **JUnit 5 + Mockito**: Pruebas de unidad: ![JUnit5](https://img.shields.io/badge/junit5-%23E33332.svg?style=for-the-badge&logo=junit5&logoColor=white) ![Mockito](https://img.shields.io/badge/mockito-%236ea61f.svg?style=for-the-badge)
+- **Karate + TestContainers**: Pruebas de integración: ![Karate](https://img.shields.io/badge/Karate-black?style=for-the-badge&logo=keras&badgeColor=010101) ![TestContainers](https://img.shields.io/badge/Test_Containers-%232aafac.svg?style=for-the-badge&logo=square&logoColor=white)
 ### 🔄 Integración Continua (CI)
-- **GitHub Actions**: Para la automatización de pruebas y despliegues.
+- Para la automatización de pruebas y despliegues: ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ### 🚀 Deployment
-- **Railway**: Plataforma para el despliegue de la aplicación.
+- **Railway**: Plataforma para el despliegue de la aplicación. ![Railway](https://img.shields.io/badge/railway-%239E137B.svg?style=for-the-badge&logo=railway&logoColor=white)
 
 ---
 

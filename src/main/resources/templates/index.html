@@ -57,7 +57,7 @@
                                     id="searchByTitle"
                                 >
                                 <i class="fa-solid fa-magnifying-glass me-3"></i>
-                                <input class="w-140" type="search" required placeholder="Busca Orders por título" id="navbarSearch" name="keyword"/>
+                                <input class="w-140" type="search" required placeholder="Busca Orders por título" id="navbarSearch" name="keyword" th:value="${query != null ? query : ''}"/>
                             </form>
                         </label>
                     </u>
@@ -91,8 +91,8 @@
                             >
                             <div class="form-control">
                                 <label class="flex items-center gap-4 flex-col sm:flex-row">
-                                    <input type="text" class="w-full input input-lg border-2 border-secondary input-ghost bg-base-100 input-xl input-bordered" placeholder="Busca un Order..." name = "keyword" />
-                                    <button class="btn btn-xl btn-secondary w-full sm:w-auto mt-2 sm:mt-0" type = "submit">
+                                    <input id="contentSearch" type="text" class="w-full input input-lg border-2 border-secondary input-ghost bg-base-100 input-xl input-bordered" placeholder="Busca un Order..." name="keyword" />
+                                    <button class="btn btn-xl btn-secondary w-full sm:w-auto mt-2 sm:mt-0" type="submit">
                                         Buscar
                                         <i class="fa-solid fa-magnifying-glass"></i>
                                     </button>

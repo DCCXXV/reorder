@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>{
-    List<Order> findByTitleContainingIgnoreCase(String keyword);
+    List<Order> findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(String keyword);
 }

@@ -161,6 +161,6 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByTitle(String title) {
-        return orderRepository.findByTitleContainingIgnoreCase(title);
+        return orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
     }
 }

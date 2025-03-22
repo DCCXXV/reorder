@@ -275,7 +275,7 @@ public class RootController {
 
     @PostMapping("/search")
     public String searchByTitle(@RequestParam String keyword, Model model, HttpSession session) {
-        model.addAttribute("title", keyword);
+        model.addAttribute("query", keyword);
         model.addAttribute("orderList", orderService.getOrdersByTitle(keyword));
         return "search";
     }

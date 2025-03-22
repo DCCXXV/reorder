@@ -9,7 +9,7 @@
                 id="searchByTitle"
             >
             <i class="fa-solid fa-magnifying-glass me-3"></i>
-            <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="keyword" th:value="${query != null ? query : ''}"/>
+            <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="query" th:value="${query != null ? query : ''}"/>
         </form>
     </label>
     
@@ -55,16 +55,15 @@
         </div>
     </div>
     <script>
-    document.addEventListener("htmx:afterSwap", function (event) {
-        if (event.target.id === "pageContent") {
-            const contentSearch = document.querySelector("#contentSearch");
-            const navbarSearch = document.querySelector("#navbarSearch");
+        document.addEventListener("htmx:afterSwap", function (event) {
+            if (event.target.id === "pageContent") {
+                const contentSearch = document.querySelector("#contentSearch");
+                const navbarSearch = document.querySelector("#navbarSearch");
 
-            if (contentSearch && navbarSearch) {
-                navbarSearch.value = contentSearch.value;
+                if (contentSearch && navbarSearch) {
+                    navbarSearch.value = contentSearch.value;
+                }
             }
-        }
-    });
-</script>
-
+        });
+    </script>
 </div>

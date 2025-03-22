@@ -163,4 +163,13 @@ public class OrderService {
     public List<Order> getOrdersByTitle(String title) {
         return orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
     }
+
+    /**
+     * Busca órdenes por título y retorna los primeros 5 resultados
+     * @param title Texto de búsqueda
+     * @return Lista de órdenes que coinciden con la búsqueda
+     */
+    public List<Order> searchOrdersByTitle(String title) {
+        return orderRepository.findTop5ByTitleContainingIgnoreCase(title);
+    }
 }

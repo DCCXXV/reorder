@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -289,9 +290,9 @@ public class RootController {
     }
 
     @PostMapping("/search")
-    public String searchByTitle(@RequestParam String keyword, Model model, HttpSession session) {
-        model.addAttribute("query", keyword);
-        model.addAttribute("orderList", orderService.getOrdersByTitle(keyword));
+    public String searchByTitle(@RequestParam String query, Model model, HttpSession session) {
+        model.addAttribute("query", query);
+        model.addAttribute("orderList", orderService.getOrdersByTitle(query));
         return "search";
     }
 }

@@ -1,5 +1,8 @@
 package com.thecritics.reorder.controller;
 
+import static org.mockito.ArgumentMatchers.floatThat;
+import static org.mockito.ArgumentMatchers.isNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,6 +77,7 @@ public class RootController {
     @GetMapping("/createOrder")
     public String createOrder(Model model, HttpSession session) {
         List<List<String>> orderState = orderService.getOrderState(session);
+        model.addAttribute("publishEnabled", false);
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }
@@ -226,6 +231,16 @@ public class RootController {
                 return "error";
             }
 
+            int i = 1;
+            boolean elementsFound = false;
+            while (!elementsFound && i < newOrderState.size()) {
+                if (newOrderState.get(i).size() > 0) {
+                    elementsFound = true;
+                }
+                i++;
+            }
+
+            model.addAttribute("publishEnabled", elementsFound);
             model.addAttribute("orderState", newOrderState);
             orderService.updateOrderState(newOrderState, session);
 
@@ -247,17 +262,18 @@ public class RootController {
      */
     @PostMapping("/createOrder/PublishOrder")
     public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session, Model model) {
-        if (title == "" || title == null) {
+        if (title == null || title.isEmpty()) {
             return "error";
         }
 
         List<List<String>> orderState = orderService.getOrderState(session);
+
         orderService.saveOrder(title, author, orderState);
         orderState = clearOrder(orderState);
-        
+
         model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
 
-        return "index";
+        return "redirect:/";
     }
 
     /**

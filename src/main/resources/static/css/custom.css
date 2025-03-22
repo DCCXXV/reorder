@@ -66,17 +66,17 @@
 }
 
 .categoryLabel:hover {
-    transform: scale(1.03);
+    filter: brightness(90%);
 }
 
 .tdel {
     cursor: pointer;
-    transition: all 0.05s ease;
+    transition: all 0.08s ease-in-out;
     transform: scale(1.5);
 }
 
 .tdel:hover {
-    filter: brightness(80%);
+    color: #FB7085 !important;
 }
 
 .handle {
@@ -115,7 +115,7 @@ html, body {
 }
 
 /*
-#elementsBottom {
+.stickyElementBox {
     position: sticky;
     bottom: 0;
     z-index: 10;

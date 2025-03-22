@@ -18,8 +18,15 @@
                                         <input name="author" id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
                                     </div>
                                 </div>
-                                    <div class="mt-4 md:mt-0 md:self-end">
+                                <div class="mt-4 md:mt-0 md:self-end">
                                     <button class="btn btn-secondary w-full p-6">Publicar</button>
+                                    <!--
+                                    <button 
+                                        th:class="${publishEnabled} ? 'btn btn-lg btn-secondary w-full p-6' : 'btn btn-lg btn-neutral w-full p-6'" 
+                                        th:disabled="${!publishEnabled}">
+                                        Publicar
+                                    </button>
+                                    -->            
                                 </div>
                             </div>
                         </form>

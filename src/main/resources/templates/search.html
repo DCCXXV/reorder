@@ -1,0 +1,70 @@
+<div class="flex flex-col mt-4 items-center mx-4">
+    <title hidden th:text="${query} + ' - Búsqueda | ReOrder'"></title>
+    <label class="input input-xl input-ghost bg-base-200 flex md:hidden w-full mb-4 rounded-xl">
+        <form 
+                hx-post="/search"
+                hx-trigger="submit"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                id="searchByTitle"
+            >
+            <i class="fa-solid fa-magnifying-glass me-3"></i>
+            <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="keyword" th:value="${query != null ? query : ''}"/>
+        </form>
+    </label>
+    
+    <div class="mb-6 p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
+        <p class="text-2xl">Resultados de <b><span class="text-secondary" th:text="${query}"></span></b></p>
+        <p style="filter: brightness(70%);"><span th:text="${orderList.size}"></span> order<span th:if="${orderList.size != 1}">s</span> encontrado<span th:if="${orderList.size != 1}">s</span></p>
+        <div class="flex flex-col mt-6 gap-4">
+            <div th:if="${orderList != null}" th:each="order : ${orderList}" class="bg-base-100 p-4 rounded">
+
+                <div class="flex justify-between">
+                    <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
+                    <div class="text-lg" th:text="'@' + ${order.author}"></div>
+                </div>
+
+                <div class="mt-4 flex">
+                    <span
+                        th:each="e, iterStat : ${order.content[1]}"
+                        th:if="${iterStat.index < 3}"
+                        class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1"
+                    >
+                        <span th:text="${e}">elemento</span>
+                    </span>
+                </div>
+                <!--
+                <div class="mt-4 flex flex-col" th:if="${order != null and order.content != null}">
+                    <div
+                        th:each="tier, tierStat : ${order.content}"
+                        class="flex flex-col"
+                        th:if="${tier != null and tierStat.index < 4}"
+                    >
+                        <div class="flex">
+                            <span
+                                th:each="e : ${tier}"
+                                class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1"
+                            >
+                                <span th:text="${e}">elemento</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("htmx:afterSwap", function (event) {
+        if (event.target.id === "pageContent") {
+            const contentSearch = document.querySelector("#contentSearch");
+            const navbarSearch = document.querySelector("#navbarSearch");
+
+            if (contentSearch && navbarSearch) {
+                navbarSearch.value = contentSearch.value;
+            }
+        }
+    });
+</script>
+
+</div>

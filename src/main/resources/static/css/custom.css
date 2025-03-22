@@ -107,11 +107,11 @@ html, body {
     margin: 0;
     height: 100%;
 }
-  
+
 .content {
     display: grid;
     grid-template-rows: 1fr auto;
-    min-height: 87vh; 
+    min-height: 93vh; 
 }
 
 /*

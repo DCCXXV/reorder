@@ -160,15 +160,7 @@ public class OrderService {
         return savedOrder;
     }
 
-
-    /**
-     * Añade un título a la sessión.
-     * @param titleText El texto del título a añadir.
-     * @param session La sesión HTTP actual.
-     */
-    /*
-     public void addTitle(String titleText, HttpSession session) {
-        session.setAttribute("titleText", titleText);
-    }*/
+    public List<Order> getOrdersByTitle(String title) {
+        return orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+    }
 }
-

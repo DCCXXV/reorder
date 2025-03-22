@@ -3,6 +3,7 @@ package com.thecritics.reorder.model;
 import java.util.List;
 
 import com.thecritics.reorder.model.ListOfListsConverter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -27,6 +28,10 @@ public class Order implements Transferable<Order.Transfer>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
+    @CreationTimestamp
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP")
+    private java.sql.Timestamp createdAt;
     
     @Convert(converter = ListOfListsConverter.class)
     @Lob

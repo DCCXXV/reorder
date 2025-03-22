@@ -1,1 +1,2 @@
-Proyecto para la asignatura de Gestión de proyectos software y metodologías de desarrollo.
+<img src="resources/ReOrder.gif" alt="Banner de ReOrder">
+

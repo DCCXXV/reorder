@@ -2,6 +2,7 @@ package com.thecritics.reorder.model;
 
 import java.util.List;
 
+import com.thecritics.reorder.model.ListOfListsConverter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
@@ -25,8 +26,7 @@ import lombok.NoArgsConstructor;
 public class Order implements Transferable<Order.Transfer>{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "gen")
-    @SequenceGenerator(name = "gen", sequenceName = "gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
     @CreationTimestamp

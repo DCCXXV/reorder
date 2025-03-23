@@ -20,7 +20,6 @@
 .badge {
     transition: all 0.05s ease-in-out;
     vertical-align: middle;
-    cursor: grab;
 }
 
 .selected-badge {
@@ -111,6 +110,11 @@
     background-color: #171F38 !important;
 }
 
+.searchItem:hover {
+    border-radius: 7px !important;
+    background-color: rgb(39, 47, 71) !important;
+}
+
 .errorMessage {
     background-color: #171F38 !important;
 }
@@ -124,6 +128,12 @@ html, body {
     display: grid;
     grid-template-rows: 1fr auto;
     min-height: 93vh; 
+}
+
+.infoOrder{
+    border-radius: 7px;
+    background-color: #171F38;
+    padding: 17px;
 }
 
 /*

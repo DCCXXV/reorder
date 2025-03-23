@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -290,9 +291,17 @@ public class RootController {
     }
 
     @PostMapping("/search")
-    public String searchByTitle(@RequestParam String query, Model model, HttpSession session) {
+    public String searchByTitle(@RequestParam String query, Model model) {
         model.addAttribute("query", query);
         model.addAttribute("orderList", orderService.getOrdersByTitle(query));
         return "search";
     }
+
+
+    @GetMapping("/order/{id}")
+    public String getOrderDetail(@PathVariable Integer id, Model model) {
+    model.addAttribute("order", orderService.getOrderById(id));
+    return "orderDetail"; 
+}
+
 }

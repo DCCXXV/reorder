@@ -16,6 +16,7 @@ import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -273,5 +274,101 @@ class OrderServiceTest {
         assertThat(savedOrder.getAuthor()).isEqualTo(author);
         assertThat(savedOrder.getContent()).isEqualTo(content);
         verify(orderRepository, times(1)).save(any(Order.class));
+    }
+
+    @Test
+    void getOrdersByTitle_ShouldReturnOrdersWhenTitleExists() {
+        // Arrange
+        String title = "Top frutas";
+        Order order1 = new Order();
+        order1.setId(1L);
+        order1.setTitle(title);
+        order1.setAuthor("Alonso");
+
+        Order order2 = new Order();
+        order2.setId(2L);
+        order2.setTitle("Top frutas favoritas");
+        order2.setAuthor("Julia");
+
+        List<Order> Orders = Arrays.asList(order1, order2);
+
+        when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)).thenReturn(Orders);
+
+        // Act
+        List<Order> result = orderService.getOrdersByTitle(title);
+
+        // Assert
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactly(order1, order2);
+        verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+    }
+
+    @Test
+    void getOrdersByTitle_ShouldReturnEmptyListWhenTitleNotExists() {
+        // Arrange
+        String title = "Título inexistente";
+        when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)).thenReturn(new ArrayList<>());
+
+        // Act
+        List<Order> result = orderService.getOrdersByTitle(title);
+
+        // Assert
+        assertThat(result).isEmpty();
+        verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+    }
+
+    @Test
+    void getOrdersByTitle_ShouldReturnAllOrdersWhenTitleIsEmpty() {
+        // Arrange
+        Order order1 = new Order();
+        order1.setId(1L);
+        order1.setTitle("Top frutas");
+
+        Order order2 = new Order();
+        order2.setId(2L);
+        order2.setTitle("Top videojuegos");
+
+        List<Order> mockOrders = Arrays.asList(order1, order2);
+
+        when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("")).thenReturn(mockOrders);
+
+        // Act
+        List<Order> result = orderService.getOrdersByTitle("");
+
+        // Assert
+        assertThat(result).hasSize(2);
+        verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("");
+    }
+
+    @Test
+    void getOrdersByTitle_ShouldReturnMatchingOrders() {
+        // Arrange
+        String query = "op";
+
+        List<Order> expectedOrders = new ArrayList<>();
+        Order order1 = new Order();
+        order1.setTitle("Top frutas");
+
+        Order order2 = new Order();
+        order2.setTitle("Opciones favoritas");
+
+        Order order3 = new Order();
+        order3.setTitle("Frutas");
+
+        expectedOrders.add(order1);
+        expectedOrders.add(order2);
+        
+
+        when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(query)).thenReturn(expectedOrders);
+
+        // Act
+        List<Order> result = orderService.getOrdersByTitle(query);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result).hasSize(2); 
+        assertThat(result).containsExactlyElementsOf(expectedOrders); 
+
+        verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(query);
     }
 }

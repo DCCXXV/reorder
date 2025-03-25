@@ -61,7 +61,10 @@ public class OrderRepositoryTest {
         Order order2 = new Order();
         order2.setAuthor("Jane Doe");
         order2.setTitle("Ranking de verduras");
+        
         List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
 
         content2.get(1).add("Pimiento");
         order2.setContent(content2);
@@ -92,6 +95,8 @@ public class OrderRepositoryTest {
         order2.setAuthor("Jane Doe");
         order2.setTitle("Ranking de verduras");
         List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
 
         content2.get(1).add("Pimiento");
         order2.setContent(content2);
@@ -121,6 +126,8 @@ public class OrderRepositoryTest {
         order2.setAuthor("Jane Doe");
         order2.setTitle("Ranking de verduras");
         List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
 
         content2.get(1).add("Pimiento");
         order2.setContent(content2);

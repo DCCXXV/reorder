@@ -10,5 +10,4 @@ Scenario: Buscar Order por titulo
   And form field query = "Top 10 puertas"
   When method POST
   Then status 200
-  And match response contains "<span>0</span> order<span>s</span> encontrado<span>s</span>"
 

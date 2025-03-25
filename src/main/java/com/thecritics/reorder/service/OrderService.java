@@ -172,4 +172,9 @@ public class OrderService {
     public List<Order> searchOrdersByTitle(String title) {
         return orderRepository.findTop5ByTitleContainingIgnoreCase(title);
     }
+
+
+    public Order getOrderById(Integer id){
+       return orderRepository.findById(id);
+    }
 }

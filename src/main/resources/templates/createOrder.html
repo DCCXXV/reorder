@@ -60,7 +60,7 @@
                             <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                                 <span 
                                     th:each="e : ${tier}" 
-                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl"
+                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-grab"
                                     th:data-element="${e}">
                                     <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                                         <input type="hidden" name="elementTextBadge" th:value="${e}" />
@@ -146,7 +146,7 @@
         <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-2 sm:p-4 mb-8">
             <span 
                 th:each="e : ${orderState[0]}" 
-                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary"
+                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary cursor-grab"
                 th:data-element="${e}">
                 <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                     <input type="hidden" name="elementTextBadge" th:value="${e}" />

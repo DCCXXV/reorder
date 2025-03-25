@@ -66,17 +66,17 @@
 }
 
 .categoryLabel:hover {
-    transform: scale(1.03);
+    filter: brightness(90%);
 }
 
 .tdel {
     cursor: pointer;
-    transition: all 0.05s ease;
+    transition: all 0.08s ease-in-out;
     transform: scale(1.5);
 }
 
 .tdel:hover {
-    filter: brightness(80%);
+    color: #FB7085 !important;
 }
 
 .handle {
@@ -99,6 +99,18 @@
     background-color: #171F38 !important;
 }
 
+.searchAutocompleteItem {
+    padding: 12px;
+    margin-top: 8px !important;
+    border: 2px solid #0C1425 !important;
+
+}
+
+.searchAutocompleteItem:hover {
+    border-radius: 7px !important;
+    background-color: #171F38 !important;
+}
+
 .errorMessage {
     background-color: #171F38 !important;
 }
@@ -115,7 +127,7 @@ html, body {
 }
 
 /*
-#elementsBottom {
+.stickyElementBox {
     position: sticky;
     bottom: 0;
     z-index: 10;

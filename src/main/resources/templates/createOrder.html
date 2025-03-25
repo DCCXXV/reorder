@@ -18,8 +18,14 @@
                                         <input name="author" id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
                                     </div>
                                 </div>
-                                    <div class="mt-4 md:mt-0 md:self-end">
-                                    <button class="btn btn-secondary w-full p-6">Publicar</button>
+                                <div class="mt-4 md:mt-0 md:self-end">
+                                    <button id="publishButton"  
+                                        th:with="hasElements=${orderState != null && orderState.size() > 1 &&
+                                        (!orderState.get(1).isEmpty() || (orderState.size() > 2 && !orderState.get(2).isEmpty()))}"
+                                        class="btn btn-secondary w-full p-6"
+                                        th:disabled="${!hasElements}">
+                                        Publicar
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -199,8 +205,15 @@
         });
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
-            // scroll automático al ultimo tier cuando se sale de la parte visible
             if (event.detail.target.id === 'pageContent') {
+                const isDeleteElementRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteElement');
+                const isDeleteTierRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteLastTier');
+                const isDeleteTierKeepingElementsRequest = event.detail.pathInfo.requestPath.includes('/createOrder/keepElementsAndDeleteLastTier');
+
+                if (isDeleteElementRequest || isDeleteTierRequest || isDeleteTierKeepingElementsRequest) {
+                    actualizarOrderState();
+                }
+                
                 const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');
                 
                 if (isAddTierRequest) {
@@ -239,7 +252,9 @@
                 });
                 orderState.push(tierElements);
             });
-            
+
+            actualizarEstadoBotonPublicar(orderState);
+
             // enviar solo si hay cambios
             htmx.ajax('POST', '/createOrder/updateOrderState', {
                 target: '#pageContent',
@@ -251,5 +266,13 @@
                 }
             });
         }
+
+        function actualizarEstadoBotonPublicar(orderState) {
+            const publishButton = document.getElementById("publishButton");
+            if (!publishButton) return;
+            const hasElementsInTiers = orderState.slice(1).some(tier => tier.length > 0);
+            publishButton.disabled = !hasElementsInTiers;
+        }
+
     </script> 
 </div>

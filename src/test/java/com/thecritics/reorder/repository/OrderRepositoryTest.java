@@ -44,4 +44,101 @@ public class OrderRepositoryTest {
         assertThat(retrievedOrder.getTitle()).isEqualTo(inputOrder.getTitle());
         assertThat(retrievedOrder.getContent()).isEqualTo(inputOrder.getContent());
     }
+
+    @Test
+    void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDesc() {
+        Order order1 = new Order();
+        order1.setAuthor("John Doe");
+        order1.setTitle("Ranking de frutas");
+
+        List<List<String>> content1 = new ArrayList<>();
+        content1.add(new ArrayList<>());
+        content1.add(new ArrayList<>());
+
+        content1.get(1).add("Manzana");
+        order1.setContent(content1);
+
+        Order order2 = new Order();
+        order2.setAuthor("Jane Doe");
+        order2.setTitle("Ranking de verduras");
+        
+        List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
+
+        content2.get(1).add("Pimiento");
+        order2.setContent(content2);
+
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        List<Order> orders = orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("frutas");
+
+        assertThat(orders).hasSize(1);
+        assertThat(orders.get(0).getTitle()).isEqualTo("Ranking de frutas");
+    }
+
+    @Test
+    void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDescEmpty() {
+        Order order1 = new Order();
+        order1.setAuthor("John Doe");
+        order1.setTitle("Ranking de frutas");
+
+        List<List<String>> content1 = new ArrayList<>();
+        content1.add(new ArrayList<>());
+        content1.add(new ArrayList<>());
+
+        content1.get(1).add("Manzana");
+        order1.setContent(content1);
+
+        Order order2 = new Order();
+        order2.setAuthor("Jane Doe");
+        order2.setTitle("Ranking de verduras");
+        List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
+
+        content2.get(1).add("Pimiento");
+        order2.setContent(content2);
+
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        List<Order> orders = orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("carne");
+
+        assertThat(orders).isEmpty();
+    }
+
+    @Test
+    void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDescMultiple() {
+        Order order1 = new Order();
+        order1.setAuthor("John Doe");
+        order1.setTitle("Ranking de frutas");
+
+        List<List<String>> content1 = new ArrayList<>();
+        content1.add(new ArrayList<>());
+        content1.add(new ArrayList<>());
+
+        content1.get(1).add("Manzana");
+        order1.setContent(content1);
+
+        Order order2 = new Order();
+        order2.setAuthor("Jane Doe");
+        order2.setTitle("Ranking de verduras");
+        List<List<String>> content2 = new ArrayList<>();
+        content2.add(new ArrayList<>());
+        content2.add(new ArrayList<>());
+
+        content2.get(1).add("Pimiento");
+        order2.setContent(content2);
+
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+
+        List<Order> orders = orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("ranking");
+
+        assertThat(orders).hasSize(2);
+        assertThat(orders.get(0).getTitle()).isEqualTo("Ranking de verduras");
+        assertThat(orders.get(1).getTitle()).isEqualTo("Ranking de frutas");
+    }
 }

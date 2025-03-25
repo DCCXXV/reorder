@@ -1,0 +1,20 @@
+<!-- fragments/search.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="empty"></div>
+    <div th:fragment="autocomplete">
+        <div th:if="${orders != null && !orders.isEmpty()}" class="autocomplete-container">
+            <div th:each="order : ${orders}"
+                 class="searchAutocompleteItem"
+                 onclick="selectSearchQuery(this.getAttribute('data-value'))"
+                 th:data-value="${order.title}">
+                <span th:text="${order.title}"></span>
+            </div>
+        </div>
+        <div th:if="${orders.isEmpty()}" class="p-2">
+            No se encontraron resultados
+        </div>
+    </div>
+</body>
+</html>

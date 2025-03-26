@@ -11,11 +11,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.repository.CrudRepository;
 
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -274,4 +276,56 @@ class OrderServiceTest {
         assertThat(savedOrder.getContent()).isEqualTo(content);
         verify(orderRepository, times(1)).save(any(Order.class));
     }
+
+    private static class OrderRepository {
+
+        public OrderRepository() {
+        }
+    }
+    @Test
+void getOrderById_ShouldReturnOrderWhenExists() {
+    // Arrange: Configuramos los datos de prueba
+    long orderId = 1L;
+    String title = "Top frutas";
+    Order order1 = new Order();
+    order1.setId(orderId);
+    order1.setTitle(title);
+    order1.setAuthor("Sara");
+
+    // Simulamos la respuesta del repositorio cuando se busca el ID de la orden
+    List<Order> orders = Arrays.asList(order1);
+    when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)).thenReturn(orders);
+
+    // Act: Ejecutamos el método bajo prueba para obtener la orden por ID
+    Order result = orderService.getOrdersByTitle(title).stream()
+            .filter(order -> order.getId().equals(orderId))
+            .findFirst()
+            .orElse(null);
+
+    // Assert: Verificamos que los datos obtenidos coinciden con los esperados
+    assertThat(result).isNotNull(); // La orden no debe ser nula
+    assertThat(result.getId()).isEqualTo(orderId); // El ID debe coincidir
+    assertThat(result.getTitle()).isEqualTo("Top frutas"); // El título debe coincidir
+    assertThat(result.getAuthor()).isEqualTo("Sara"); // El autor debe coincidir
+
+    // Verificamos que el método del repositorio fue llamado exactamente una vez
+    verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+}
+
+@Test
+void getOrderById_ShouldThrowExceptionWhenOrderNotExists() {
+    // Arrange: Configuramos un título de orden que no existe
+    String title = "Título inexistente";
+    when(orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title)).thenReturn(new ArrayList<>()); // Simulamos que no existe ninguna orden con el título
+
+    // Act: Ejecutamos el método bajo prueba para obtener la orden por ID
+    List<Order> result = orderService.getOrdersByTitle(title);
+
+    // Assert: Verificamos que la lista de resultados está vacía
+    assertThat(result).isEmpty();
+
+    // Verificamos que el método del repositorio fue llamado exactamente una vez
+    verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+}
+    
 }

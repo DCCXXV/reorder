@@ -26,43 +26,59 @@
     </head>
     <body>
         <header>
-            <div class="navbar bg-base-100 shadow-md">
+            <div class="navbar bg-base-100 shadow-md relative">
                 <div class="navbar-start">
                     <div class="dropdown">
                         <div tabindex="0" role="button" class="btn btn-ghost lg:hidden bg-base-200 py-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
+                            </svg>
                         </div>
                         <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow">
                             <li class="gap-2">              
                                 <a class="py-3 text-lg"
-                                        tabindex="0"
-                                        hx-get="/createOrder"
-                                        hx-target="#pageContent"
-                                        hx-swap="innerHTML">
-                                        Crear Order</a>
+                                   tabindex="0"
+                                   hx-get="/createOrder"
+                                   hx-target="#pageContent"
+                                   hx-swap="innerHTML"
+                                   hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                                   >
+                                    Crear Order</a>
                                 <a class="py-3 text-lg" href="/">Buscar Orders</a>
                             </li>  
                         </ul>
                     </div>
-                    <a class="p-2" href="/"><span class=" text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
+                    <a class="p-2" href="/"><span class="text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
                 </div>
-                <div class="navbar-center hidden md:flex">
-                    <u>
-                        <label class="input input-lg input-ghost bg-base-200 w-156">
-                            <form 
+                <div class="navbar-center hidden md:flex relative">
+                    <div class="relative w-156">
+                        <label class="input input-lg input-ghost bg-base-200 w-full flex items-center">
+                            <form
+                                class="flex items-center w-full"  
                                 hx-post="/search"
                                 hx-trigger="submit"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
                                 th:attrappend="hx-push-url=@{/search(query=${query})}"
                                 id="searchByTitle">
-                                <i class="fa-solid fa-magnifying-glass me-3"></i>
-                                <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="query" th:value="${query != null ? query : ''}"/>
-                            </form>                        
+
+                                <i class="fa-solid fa-magnifying-glass me-3 flex-shrink-0"></i>
+                                <input id="headerContentSearch"
+                                    class="flex-grow bg-transparent focus:outline-none"
+                                    type="search"
+                                    required
+                                    placeholder="Buscar Orders..."
+                                    name="query"
+                                    hx-get="/api/search/autocomplete"
+                                    hx-trigger="keyup changed delay:300ms"
+                                    hx-target="#order-search-results1"
+                                    th:value="${query != null ? query : ''}"/>
+                            </form>
                         </label>
-                    </u>
-                </div>  
+                        <div id="order-search-results1" class="absolute z-[1] mt-1 bg-base-200 rounded-lg w-full max-w-full shadow-lg"></div>
+                    </div>
+                </div>
+
                 <div class="navbar-end hidden lg:flex">
                     <ul>
                         <li 
@@ -70,12 +86,14 @@
                             tabindex="0"
                             hx-get="/createOrder"
                             hx-target="#pageContent"
-                            hx-swap="innerHTML">
+                            hx-swap="innerHTML"
+                            hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
                             <a>Crear Order</a>
                         </li>
                     </ul>
                 </div>
             </div>
+           
         </header>
         <main class="flex-1 overflow-hidden">
             <div class="h-full" id="pageContent" hx-history="restore">
@@ -120,18 +138,40 @@
     
         </footer>
         <script>
-            function selectSearchQuery(query) {
-                const navbarSearch = document.getElementById('navbarSearch');
-                const orderSearchInput = document.getElementById('orderSearchInput');
-                
-                if (navbarSearch) navbarSearch.value = query;
-                if (orderSearchInput) orderSearchInput.value = query;
-                
-                const searchForm = document.getElementById('searchByTitle');
-                if (searchForm) {
-                    htmx.trigger(searchForm, 'submit');
+                document.addEventListener("DOMContentLoaded", function() {
+                    const resultsContainer = document.getElementById("order-search-results1");
+                    if (!resultsContainer) return;
+
+                    resultsContainer.addEventListener("click", function(event) {
+                        if (event.target && event.target.matches(".autocomplete-option")) {
+                            let selectedValue = event.target.dataset.value;
+                            let redirectUrl = `/search?query=${encodeURIComponent(selectedValue)}`;
+
+                            const headerInput = document.getElementById("headerContentSearch");
+                            if (headerInput) {
+                                headerInput.value = "";
+                            }
+                            resultsContainer.innerHTML = "";
+
+                            window.location.href = redirectUrl;
+                        }
+                    });
+                });
+
+                function selectSearchQuery(query) {
+                    const headerSearchInput = document.getElementById('headerContentSearch');
+                    const orderSearchInput = document.getElementById('orderSearchInput');
+
+                    if (headerSearchInput) headerSearchInput.value = query;
+                    if (orderSearchInput) orderSearchInput.value = query;
+
+                    const searchForm = document.getElementById('searchByTitle');
+                    if (searchForm) {
+                        const inputInsideForm = searchForm.querySelector('input[name="query"]');
+                        if (inputInsideForm) inputInsideForm.value = query;
+                        htmx.trigger(searchForm, 'submit');
+                    }
                 }
-            }
         </script>  
     </body>
 </html>

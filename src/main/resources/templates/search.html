@@ -41,12 +41,17 @@
     </div>
     <script>
         document.addEventListener("htmx:afterSwap", function (event) {
-            if (event.target.id === "pageContent") {
-                const contentSearch = document.querySelector("#contentSearch");
-                const navbarSearch = document.querySelector("#navbarSearch");
+            if (event.detail.target.id === "pageContent") {
+                const headerResultsDiv = document.getElementById('order-search-results1');
+                if (headerResultsDiv) {
+                    headerResultsDiv.innerHTML = ''; 
+                }
 
-                if (contentSearch && navbarSearch) {
-                    navbarSearch.value = contentSearch.value;
+                const mobileSearchInput = document.querySelector("#contentSearch"); 
+                const headerSearchInput = document.getElementById("headerContentSearch");
+
+                if (mobileSearchInput && headerSearchInput) {
+                    headerSearchInput.value = mobileSearchInput.value;
                 }
             }
         });

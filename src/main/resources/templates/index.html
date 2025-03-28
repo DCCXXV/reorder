@@ -56,8 +56,10 @@
                                     hx-target="#pageContent"
                                     hx-swap="innerHTML"
                                     id="searchByTitle"
-                                >
-                                <i class="fa-solid fa-magnifying-glass me-3"></i>
+                                >                           
+                                    <button type="submit" class="p-2">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
                                 <input class="w-140" type="search" required placeholder="Busca Orders por título" id="navbarSearch" name="query" th:value="${query != null ? query : ''}"/>
                             </form>
                         </label>

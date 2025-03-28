@@ -1,18 +1,41 @@
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
+    <!--
+    <div class="mt-10">
+        <button class="btn rounded-pill bg-base-200 p-4"
+                th:attr="hx-get=@{/order/{id}(id=${originalOrder.id}, fromQuery=${searchQuery})}"
+                hx-target="#pageContent"
+                hx-swap="innerHTML">
+            <i class="fa-solid fa-chevron-left me-2"></i>
+            Volver al Order Original
+        </button>
+    </div>-->
+    <label class="input input-xl input-ghost bg-base-200 flex md:hidden w-full mb-4 rounded-xl mt-0">
+        <form 
+                hx-post="/search"
+                hx-trigger="submit"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                id="searchByTitle"
+            >
+            <i class="fa-solid fa-magnifying-glass me-3"></i>
+            <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="query" th:value="${query != null ? query : ''}"/>
+        </form>
+    </label>
     <form id="reOrderForm" class="w-full" hx-preserve action="/reorder/PublishOrder" method="post">
-        <div class="flex p-1">
+        <div class="flex">
             <input type="text"
                    name="rtitle"
                    placeholder="Título del ReOrder"
                    required
-                   class="mt-15 text-4xl font-bold text-secondary bg-transparent border-none focus:outline-none w-full p-0"
-                   aria-label="Título del Order">
+                   class="mt-4 text-4xl font-bold text-secondary bg-transparent border-none focus:outline-none w-full p-0"
+                   aria-label="Título del Order"
+            >
         </div>
     
         <div class="flex justify-between p-1 items-center">
             <input type="text"
                    name="rauthor"
-                   placeholder="Anónimo"
+                   placeholder="@Anónimo"
                    class="mt-1 mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
                    style="filter: brightness(80%);" 
                    aria-label="Autor del Order"> 

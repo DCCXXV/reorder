@@ -20,7 +20,7 @@
             <div th:if="${orderList != null}" th:each="order : ${orderList}" 
                 class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
                 tabindex="0"
-                th:attr="hx-get=@{/order/{id}(id=${order.id})}"
+                th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
                 hx-target="#pageContent"
                 hx-swap="innerHTML"
                 th:attrappend="hx-push-url=@{/order/{id}(id=${order.id})}">

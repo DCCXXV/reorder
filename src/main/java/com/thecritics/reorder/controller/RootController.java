@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.service.OrderService;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -289,17 +290,26 @@ public class RootController {
     }
     
     @GetMapping("/order/{id}")
-    public String getOrderDetail(@PathVariable Integer id, Model model) {
+    public String getOrderDetail(@PathVariable Integer id, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model) {
         model.addAttribute("order", orderService.getOrderById(id));
-        return "order"; 
+        if (fromQuery != null && !fromQuery.isEmpty()) {
+            model.addAttribute("searchQuery", fromQuery);
+        }
+        return "order";
     }
 
     @GetMapping("/reorder")
-        public String reorder(@RequestParam Integer idInput, Model model , HttpSession session) {
-        List<List<String>> reOrderState = orderService.getOrderById(idInput).getContent();
+        public String reorder(@RequestParam Integer idInput, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model , HttpSession session) {
+        Order originalOrder = orderService.getOrderById(idInput);
+        List<List<String>> reOrderState = originalOrder.getContent();
 
         session.setAttribute("reOrderState",  reOrderState);
         model.addAttribute("reOrderState", reOrderState);
+
+        model.addAttribute("originalOrder", originalOrder);
+        if (fromQuery != null && !fromQuery.isEmpty()) {
+            model.addAttribute("searchQuery", fromQuery);
+        }
 
         model.addAttribute("publishEnabled", false);
 

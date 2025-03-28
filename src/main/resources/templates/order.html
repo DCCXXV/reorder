@@ -1,5 +1,21 @@
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
-    <div class = "flex p-1"><span th:text="${order.title}" class="mt-15 text-4xl font-bold text-secondary"></span></div>
+    <title hidden th:text="${order.title} + ' | ReOrder'"></title>
+    <!--
+    <div th:if="${searchQuery != null}" class="mt-10">
+        <input type="hidden" id="originalQueryInput" name="query" th:value="${searchQuery}" />
+
+        <button class="btn rounded-pill bg-base-200 p-4"
+                hx-post="/search"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                hx-include="#originalQueryInput"
+                >
+            <i class="fa-solid fa-chevron-left me-2"></i>
+            Volver a Resultados
+        </button>
+    </div>
+    -->
+    <div class = "flex p-1"><span th:text="${order.title}" class="mt-4 text-4xl font-bold text-secondary"></span></div>
     <div class="flex justify-between p-1 items-center">
         <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
         <form

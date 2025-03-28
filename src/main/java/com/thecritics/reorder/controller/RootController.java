@@ -301,7 +301,10 @@ public class RootController {
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable Integer id, Model model) {
     model.addAttribute("order", orderService.getOrderById(id));
-    return "orderDetail"; 
-}
+    return "orderDetail"; }
 
+
+    @GetMapping("/register")
+    public String registerUser() {
+    return "register"; }
 }

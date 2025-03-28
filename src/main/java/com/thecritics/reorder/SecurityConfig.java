@@ -12,7 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    	@Autowired
+    @Autowired
 	private Environment env;
 
     @Bean

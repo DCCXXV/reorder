@@ -168,6 +168,39 @@ public class OrderService {
     }
 
     /**
+     * Obtiene el estado actual del Order de la sesión. Si no existe, inicializa un nuevo estado.
+     *
+     * @param session La sesión HTTP actual.
+     * @return El estado actual del Order.
+     */
+    @SuppressWarnings("unchecked")
+    public List<List<String>> getReOrderState(HttpSession session) {
+        List<List<String>> reOrderState = (List<List<String>>) session.getAttribute("reOrderState");
+        if (reOrderState == null) {
+            reOrderState = new ArrayList<>();
+            // tier 0 el "sin asignar"
+            reOrderState.add(new ArrayList<>());
+            // tier 1
+            reOrderState.add(new ArrayList<>());
+            session.setAttribute("reOrderState", reOrderState);
+        }
+        return reOrderState;
+    }
+
+    /**
+     * Actualiza el estado de orden con una nueva organización de tiers y elementos.
+     *
+     * @param newReOrderState La nueva organización de tiers y elementos.
+     * @param session La sesión HTTP actual.
+     * @return El nuevo estado del Order actualizado.
+     */
+    public List<List<String>> updateReOrderState(
+            List<List<String>> newReOrderState, HttpSession session) {
+        session.setAttribute("reOrderState", newReOrderState);
+        return newReOrderState;
+    }
+
+    /**
      * Busca órdenes por título (ignorando mayúsculas y minúsculas) y las ordena por fecha de
      * creación descendente.
      *
@@ -214,11 +247,11 @@ public class OrderService {
     }
 
     public List<List<String>> getOrderContent (HttpSession session){
-        Order oder = (Order) session.getAttribute("order");
-        if (oder == null) {
-            System.out.println("oder es null, se crea uno nuevo");
+        Order order = (Order) session.getAttribute("order");
+        if (order == null) {
+            System.out.println("order es null, se crea uno nuevo");
         }
-        List<List<String>> orderContent = oder.getContent();
+        List<List<String>> orderContent = order.getContent();
         return orderContent;
     }
 }

@@ -59,7 +59,7 @@
                                 hx-trigger="submit"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
-                                th:attrappend="hx-push-url=@{/search(query=${query})}"
+                                hx-push-url="false"
                                 id="searchByTitle">
 
                                 <i class="fa-solid fa-magnifying-glass me-3 flex-shrink-0"></i>

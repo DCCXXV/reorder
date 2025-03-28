@@ -288,6 +288,11 @@ public class RootController {
         model.addAttribute("orderList", orderService.getOrdersByTitle(query));
         return "search";
     }
+
+    @GetMapping("/search")
+    public String searchRefresh( Model model) {
+        return "redirect:/";
+    }
     
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable Integer id, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model) {

@@ -59,7 +59,7 @@
                                 hx-trigger="submit"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
-                                th:attrappend="hx-push-url=@{/search(query=${query})}"
+                                hx-push-url="/search"
                                 id="searchByTitle">
 
                                 <i class="fa-solid fa-magnifying-glass me-3 flex-shrink-0"></i>
@@ -120,6 +120,8 @@
                                     hx-post="/search"
                                     hx-target="#pageContent"
                                     hx-include="#orderSearchInput"
+                                    hx-push-url="/search"
+
                                 >
                                     Buscar
                                     <i class="fa-solid fa-magnifying-glass"></i>

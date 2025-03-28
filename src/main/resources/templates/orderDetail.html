@@ -5,8 +5,13 @@
                 mt-10 sm:mt-5 md:mt-8 lg:mt-12 infoOrder">
     -->
         <div class = "flex p-1"><span th:text="${order.title}" class="mt-15 text-4xl font-bold text-secondary"></span></div>
-        <div class = "flex p-1"><span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span></div>
-    <!--
+        <div class="flex p-1 items-center">
+            <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
+            <button class="btn btn-secondary btn-sm ml-auto"
+                hx-get="/reorder"
+                hx-target="#pageContent"
+                hx-swap="innerHTML">Reorder</button>
+        </div>    <!--
     </div>
     -->
     <div class="list-group-item mb-2 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${order.content}" th:if="${tierIter.index > 0}">

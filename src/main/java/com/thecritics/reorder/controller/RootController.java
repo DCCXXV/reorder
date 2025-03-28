@@ -231,15 +231,6 @@ public class RootController {
             if (newOrderState.isEmpty()) {
                 return "error";
             }
-            /*
-            int i = 1;
-            boolean elementsFound = false;
-            while (!elementsFound && i < newOrderState.size()) {
-                if (newOrderState.get(i).size() > 0) {
-                    elementsFound = true;
-                }
-                i++;
-            }*/
 
             //model.addAttribute("publishEnabled", elementsFound);
             model.addAttribute("orderState", newOrderState);
@@ -296,12 +287,77 @@ public class RootController {
         model.addAttribute("orderList", orderService.getOrdersByTitle(query));
         return "search";
     }
-
-
+    
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable Integer id, Model model) {
-    model.addAttribute("order", orderService.getOrderById(id));
-    return "orderDetail"; 
-}
+        model.addAttribute("order", orderService.getOrderById(id));
+        return "order"; 
+    }
 
+    @GetMapping("/reorder")
+        public String reorder(@RequestParam Integer idInput, Model model , HttpSession session) {
+        List<List<String>> reOrderState = orderService.getOrderById(idInput).getContent();
+
+        session.setAttribute("reOrderState",  reOrderState);
+        model.addAttribute("reOrderState", reOrderState);
+
+        model.addAttribute("publishEnabled", false);
+
+        return "reorder";
+    }
+
+    /**
+     * Endpoint para actualizar el estado de orden (drag & drop).
+     * Se espera recibir un JSON que representa la nueva lista de tiers.
+     *
+     * @param orderStateJson El JSON que representa la nueva lista de tiers.
+     * @param session        La sesión HTTP actual.
+     * @return El nombre de la vista "createOrder" o "error" en caso de fallo.
+     */
+    @PostMapping("/reorder/updateOrderState")
+    public String reorderUpdateOrderState(@RequestParam String reOrderStateJson, HttpSession session, Model model) {
+        try {
+            log.debug("Recibido reOrderStateJson: {}", reOrderStateJson);
+            List<List<String>> newOrderState = objectMapper.readValue(reOrderStateJson, new TypeReference<List<List<String>>>() {});
+            log.debug("Enviado newOrderState: {}", newOrderState);
+
+            if (newOrderState.isEmpty()) {
+                return "error";
+            }
+
+            //model.addAttribute("publishEnabled", elementsFound);
+            model.addAttribute("reOrderState", newOrderState);
+            orderService.updateReOrderState(newOrderState, session);
+
+            return "reorder";
+
+        } catch (Exception e) {
+            log.error("Error actualizando estado", e);
+            return "error";
+        }
+    }
+
+    /**
+     * Endpoint para publicar un Order, guardándola en la base de datos.
+     *
+     * @param title   El título del Order.
+     * @param author  El autor del Order.
+     * @param session La sesión HTTP actual, utilizada para obtener el estado del Order.
+     * @return El nombre de la vista "index".
+     */
+    @PostMapping("/reorder/PublishOrder")
+    public String reorderPublishOrder(@RequestParam String rtitle, @RequestParam String rauthor, HttpSession session, Model model) {
+        if (rtitle == null || rtitle.isEmpty()) {
+            return "error";
+        }
+
+        List<List<String>> reOrderState = orderService.getReOrderState(session);
+        
+        orderService.saveOrder(rtitle, rauthor, reOrderState);
+        reOrderState = clearOrder(reOrderState);
+
+        model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+
+        return "redirect:/";
+    }
 }

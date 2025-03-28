@@ -1,0 +1,116 @@
+<div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
+    <form id="reOrderForm" class="w-full" hx-preserve action="/reorder/PublishOrder" method="post">
+        <div class="flex p-1">
+            <input type="text"
+                   name="rtitle"
+                   placeholder="Título del ReOrder"
+                   required
+                   class="mt-15 text-4xl font-bold text-secondary bg-transparent border-none focus:outline-none w-full p-0"
+                   aria-label="Título del Order">
+        </div>
+    
+        <div class="flex justify-between p-1 items-center">
+            <input type="text"
+                   name="rauthor"
+                   placeholder="Anónimo"
+                   class="mt-1 mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
+                   style="filter: brightness(80%);" 
+                   aria-label="Autor del Order"> 
+    
+            <div class="mt-4 md:mt-0 md:self-end">
+                <button id="publishButton"
+                        type="submit"
+                        th:with="hasElements=${reOrderState != null && reOrderState.size() > 1 &&
+                        (!reOrderState.get(1).isEmpty() || (reOrderState.size() > 2 && !reOrderState.get(2).isEmpty()))}"
+                        class="btn btn-secondary btn-md mb-6"
+                        th:disabled="${!hasElements}">
+                    Publicar
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="list-group-item mb-2 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${reOrderState}" th:if="${tierIter.index > 0}">
+        <div class="flex">
+            <div class="categoryLabel border-t-2 border-s-2 border-e-2 border-base-300 rounded bg-base-300 flex flex-col items-center justify-center w-12 sm:w-16 min-h-20 sm:min-h-24">
+                <div class="flex flex-col items-center justify-center h-full gap-3">
+                    <span class="font-bold text-xl sm:text-2xl" th:text="${tierIter.index}">?</span>
+                </div>
+            </div>
+            <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r" th:id="'elementContainerTier' + ${tierIter.index}">
+                <span 
+                    th:each="e : ${tier}" 
+                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-default"
+                    th:data-element="${e}">                          
+                    <span th:text="${e}">elemento</span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <script>
+       document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+            Sortable.create(container, {
+                invertSwap: true, 
+                removeCloneOnHide: true,
+                multiDrag: true,
+                multiDragKey: 'none',
+                selectedClass: 'selected-badge',
+                fallbackClass: 'fallback-badge',
+                fallbackTolerance: 1,
+                group: 'tierGroup',
+                animation: 150,
+                draggable: '.badge',
+                ghostClass: 'selected-badge',
+                touchStartThreshold: 10,
+                clone: false,
+                onEnd: actualizarReOrderState
+            });
+        });
+
+        function actualizarReOrderState() {
+            const reOrderState = [];
+            
+            // tier 0 (elementos sin asignar)
+            const defaultTier = [];
+            document.querySelectorAll("#elementsContainer .badge").forEach(el => {
+                const elementText = el.getAttribute("data-element");
+                if (elementText && !defaultTier.includes(elementText.trim())) {
+                    defaultTier.push(elementText.trim());
+                }
+            });
+            reOrderState.push(defaultTier);
+            
+            // tiers reales
+            document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                const tierElements = [];
+                container.querySelectorAll(".badge").forEach(el => {
+                    const elementText = el.getAttribute("data-element");
+                    if (elementText && !tierElements.includes(elementText.trim())) {
+                        tierElements.push(elementText.trim());
+                    }
+                });
+                reOrderState.push(tierElements);
+            });
+
+            actualizarEstadoBotonPublicar(reOrderState);
+
+            // enviar solo si hay cambios
+            htmx.ajax('POST', '/reorder/updateOrderState', {
+                target: '#pageContent',
+                swap: 'innerHTML',
+                values: { reOrderStateJson: JSON.stringify(reOrderState) },
+                onError: (err) => {
+                    console.error("Error actualizando estado:", err);
+                    alert("Error al guardar cambios. Intente de nuevo.");
+                }
+            });
+        }
+
+        function actualizarEstadoBotonPublicar(reOrderState) {
+            const publishButton = document.getElementById("publishButton");
+            if (!publishButton) return;
+            const hasElementsInTiers = reOrderState.slice(1).some(tier => tier.length > 0);
+            publishButton.disabled = !hasElementsInTiers;
+        }
+    </script>
+</div>

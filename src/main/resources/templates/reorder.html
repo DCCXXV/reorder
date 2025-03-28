@@ -1,0 +1,278 @@
+<div class="px-2 sm:px-8 content">
+    <div>
+        <!-- para comprobar si la vista es correcta-->
+        <title hidden>Crear Order | ReOrder</title>
+        <section>
+            <div class="my-4">
+                <div class="flex items-center text-center w-full">
+                    <div class="mb-6 w-full">
+                        <form id="orderForm" class="w-full" hx-preserve action="/createOrder/PublishOrder" method="post">
+                            <div class="flex flex-col md:flex-row text-start w-full gap-4">
+                                <div class="flex flex-col md:flex-row gap-4 flex-grow">
+                                    <div class="flex flex-col w-full md:w-1/2">
+                                        <label for="titleInput" class="mb-1 ms-2 text-sm">Título<em class="text-error">*</em></label>
+                                        <input name="title" id="titleInput" type="text" placeholder="Título del Order" required class="input input-md sm:input-lg focus:outline-none border-neutral w-full">
+                                    </div>
+                                    <div class="flex flex-col w-full md:w-1/2">
+                                        <label for="authorInput" class="mb-1 ms-2 text-sm">Autor</label>
+                                        <input name="author" id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
+                                    </div>
+                                </div>
+                                <div class="mt-4 md:mt-0 md:self-end">
+                                    <button id="publishButton"  
+                                        th:with="hasElements=${orderState != null && orderState.size() > 1 &&
+                                        (!orderState.get(1).isEmpty() || (orderState.size() > 2 && !orderState.get(2).isEmpty()))}"
+                                        class="btn btn-secondary w-full p-6"
+                                        th:disabled="${!hasElements}">
+                                        Publicar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="toast" th:if="${errorToast != null}">
+                        <div class="alert alert-success">
+                            <span th:text="${errorToast}">New message arrived.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
+                    <div class="list-group-item mb-2 rounded border-b-2 border-neutral" th:each="tier, tierIter : ${orderState}" th:if="${tierIter.index > 0}">
+                        <div class="flex">
+                            <div class="categoryLabel border-t-2 border-s-2 border-e-2 border-base-300 rounded bg-base-300 flex flex-col items-center justify-center w-12 sm:w-16 min-h-20 sm:min-h-24">
+                                <div class="flex flex-col items-center justify-center h-full gap-3">
+                                    <span class="font-bold text-xl sm:text-2xl" th:text="${tierIter.index}">?</span>
+                                    <i
+                                        th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
+                                        hx-post="/createOrder/deleteLastTier"
+                                        hx-target="#pageContent"
+                                        hx-swap="innerHTML"
+                                        hx-trigger="click">
+                                    </i>
+                                    <i
+                                        th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size > 0}"
+                                        class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
+                                        onclick="deleteTierModal.showModal()">
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
+                                <span 
+                                    th:each="e : ${tier}" 
+                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-grab"
+                                    th:data-element="${e}">
+                                    <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                                        <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                                        <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                                    </form>                            
+                                    <span th:text="${e}">elemento</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tooltip tooltip-right tooltip-neutral w-12 sm:w-16 font-bold" data-tip="Añade un nuevo Tier">
+                    <div 
+                        class="rounded-lg flex bg-neutral items-center justify-center w-12 sm:w-16 h-20 sm:h-24" 
+                        hx-post="/createOrder/addTier"
+                        hx-target="#pageContent"
+                        hx-swap="innerHTML"
+                        id="addCategory">
+
+                        <span class="text-white font-bold text-xl sm:text-2xl">
+                            <i class="fa-solid fa-plus"></i>
+                        </span>
+                    </div>
+                </div>
+                <dialog id="deleteTierModal" class="modal">
+                    <div class="modal-box">
+                        <h2 class="text-lg sm:text-xl font-bold">¿Estás seguro de borrar el <em>Tier</em>?</h2>
+                        <h3 class="text-base sm:text-lg py-4 sm:py-6">Puedes conservar los elementos o borrarlos junto al <em>Tier</em>, esta acción es permanente.</h3>
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end">
+                            <div class="modal-action m-0">
+                                <form method="dialog" class="w-full">
+                                    <button class="btn w-full sm:w-auto">
+                                        Cancelar
+                                    </button>
+                                </form>
+                            </div>
+                            <button   
+                                hx-post="/createOrder/keepElementsAndDeleteLastTier"
+                                hx-target="#pageContent"
+                                hx-swap="innerHTML"
+                                class="btn btn-success w-full sm:w-auto">
+                                Conservar elementos
+                            </button> 
+                            <button
+                                hx-post="/createOrder/deleteLastTier"
+                                hx-target="#pageContent"
+                                hx-swap="innerHTML"
+                                class="btn btn-error w-full sm:w-auto">
+                                Borrar elementos
+                            </button> 
+                        </div>
+                    </div>
+                    <form method="dialog" class="modal-backdrop">
+                        <button>Clicar fuera</button>
+                    </form>
+                </dialog>
+            </div>
+        </section>
+    </div>
+    <div class="bg-base-100" id="elementsBottom">
+        <div class="my-4 sm:my-4 flex w-full">
+            <form
+                hx-post="/createOrder/addElement"
+                hx-trigger="submit"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                id="elementForm"
+                class="w-full sm:input-lg md:w-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                    <div class="join">
+                        <input type="text" name="elementTextInput" id="elementTextInput" placeholder="Escribe un elemento"
+                            class="input input-md sm:input-lg join-item w-full focus:outline-none border-s-2 border-t-2 border-b-2 border-neutral text-left pl-3"
+                            style="font-size: 16px; text-align: left;" />
+                        <button type="submit "aria-label="Añadir elemento" class="btn btn-md sm:btn-lg btn-neutral join-item border-e-2 border-t-2 border-b-2 border-neutral">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error rounded-lg" th:text="${errorMessage}"></div>
+                </div>
+            </form>
+        </div>
+        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-2 sm:p-4 mb-8">
+            <span 
+                th:each="e : ${orderState[0]}" 
+                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary cursor-grab"
+                th:data-element="${e}">
+                <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                    <input type="hidden" name="elementTextBadge" th:value="${e}" />
+                    <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
+                </form>
+                <span th:text="${e}">elemento</span>
+            </span>
+        </div>
+    </div>
+    <div th:if="${errorToastMessage != null}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <span th:text="${errorToastMessage}"></span>Error desconocido</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>    
+    <script>
+        // dejo el js aquí porque solo se va a usar en esta vista
+
+        // asegurar tamaño adecuado para inputs en móvil
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.style.fontSize = '16px';  // previene zoom en iOS ¿?
+        });
+
+        Sortable.create(document.getElementById('elementsContainer'), {
+            invertSwap: true, 
+            removeCloneOnHide: true,
+            multiDrag: true,
+            multiDragKey: 'none',
+            selectedClass: 'selected-badge',
+            fallbackClass: 'fallback-badge',
+            fallbackTolerance: 1,
+            group: 'tierGroup',
+            animation: 150,
+            draggable: '.badge',
+            ghostClass: 'selected-badge',
+            touchStartThreshold: 10,
+            clone: false,
+            onEnd: actualizarOrderState
+        });
+        
+        document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+            Sortable.create(container, {
+                invertSwap: true, 
+                removeCloneOnHide: true,
+                multiDrag: true,
+                multiDragKey: 'none',
+                selectedClass: 'selected-badge',
+                fallbackClass: 'fallback-badge',
+                fallbackTolerance: 1,
+                group: 'tierGroup',
+                animation: 150,
+                draggable: '.badge',
+                ghostClass: 'selected-badge',
+                touchStartThreshold: 10,
+                clone: false,
+                onEnd: actualizarOrderState
+            });
+        });
+
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+            if (event.detail.target.id === 'pageContent') {
+                const isDeleteElementRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteElement');
+                const isDeleteTierRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteLastTier');
+                const isDeleteTierKeepingElementsRequest = event.detail.pathInfo.requestPath.includes('/createOrder/keepElementsAndDeleteLastTier');
+
+                if (isDeleteElementRequest || isDeleteTierRequest || isDeleteTierKeepingElementsRequest) {
+                    actualizarOrderState();
+                }
+                
+                const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');
+                
+                if (isAddTierRequest) {
+                    const addCategory = document.getElementById('addCategory');
+                    if (addCategory) {
+                        addCategory.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
+                    }
+                }
+            }
+        });
+
+        function actualizarOrderState() {
+            const orderState = [];
+            
+            // tier 0 (elementos sin asignar)
+            const defaultTier = [];
+            document.querySelectorAll("#elementsContainer .badge").forEach(el => {
+                const elementText = el.getAttribute("data-element");
+                if (elementText && !defaultTier.includes(elementText.trim())) {
+                    defaultTier.push(elementText.trim());
+                }
+            });
+            orderState.push(defaultTier);
+            
+            // tiers reales
+            document.querySelectorAll('[id^="elementContainerTier"]').forEach(container => {
+                const tierElements = [];
+                container.querySelectorAll(".badge").forEach(el => {
+                    const elementText = el.getAttribute("data-element");
+                    if (elementText && !tierElements.includes(elementText.trim())) {
+                        tierElements.push(elementText.trim());
+                    }
+                });
+                orderState.push(tierElements);
+            });
+
+            actualizarEstadoBotonPublicar(orderState);
+
+            // enviar solo si hay cambios
+            htmx.ajax('POST', '/createOrder/updateOrderState', {
+                target: '#pageContent',
+                swap: 'innerHTML',
+                values: { orderStateJson: JSON.stringify(orderState) },
+                onError: (err) => {
+                    console.error("Error actualizando estado:", err);
+                    alert("Error al guardar cambios. Intente de nuevo.");
+                }
+            });
+        }
+
+        function actualizarEstadoBotonPublicar(orderState) {
+            const publishButton = document.getElementById("publishButton");
+            if (!publishButton) return;
+            const hasElementsInTiers = orderState.slice(1).some(tier => tier.length > 0);
+            publishButton.disabled = !hasElementsInTiers;
+        }
+
+    </script> 
+</div>

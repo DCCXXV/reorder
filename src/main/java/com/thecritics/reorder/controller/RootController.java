@@ -304,4 +304,12 @@ public class RootController {
     return "orderDetail"; 
 }
 
+@GetMapping("/reorder/{id}")
+    public String reorder(@PathVariable Integer id, Model model) {
+        List<List<String>> orderState = orderService.getOrderById(id).getContent();
+        model.addAttribute("publishEnabled", false);
+        model.addAttribute("orderState", orderState);
+        return "reorder"; 
+}
+
 }

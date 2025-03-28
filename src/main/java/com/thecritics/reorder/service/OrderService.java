@@ -177,4 +177,13 @@ public class OrderService {
     public Order getOrderById(Integer id){
        return orderRepository.findById(id);
     }
+
+    public List<List<String>> getOrderContent (HttpSession session){
+        Order oder = (Order) session.getAttribute("order");
+        if (oder == null) {
+            System.out.println("oder es null, se crea uno nuevo");
+        }
+        List<List<String>> orderContent = oder.getContent();
+        return orderContent;
+    }
 }

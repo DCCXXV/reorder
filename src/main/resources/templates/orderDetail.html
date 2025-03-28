@@ -8,7 +8,7 @@
         <div class="flex p-1 items-center">
             <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
             <button class="btn btn-secondary btn-sm ml-auto"
-                hx-get="/reorder"
+                th:attr="hx-get=@{/reorder/{id}(id=${order.id})}"
                 hx-target="#pageContent"
                 hx-swap="innerHTML">Reorder</button>
         </div>    <!--

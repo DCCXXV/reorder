@@ -22,8 +22,7 @@
                 tabindex="0"
                 th:attr="hx-get=@{/order/{id}(id=${order.id})}"
                 hx-target="#pageContent"
-                hx-swap="innerHTML"
-                th:attrappend="hx-push-url=@{/order/{id}(id=${order.id})}">
+                hx-swap="innerHTML">
                 <div class="flex justify-between">
                     <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
                     <div class="text-lg" th:text="'@' + ${order.author}"></div>

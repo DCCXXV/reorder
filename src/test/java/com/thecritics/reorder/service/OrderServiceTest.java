@@ -16,6 +16,7 @@ import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +27,7 @@ class OrderServiceTest {
 
     @Mock
     private HttpSession session;
-    
+
     @Mock
     private OrderRepository orderRepository;
 
@@ -55,10 +56,10 @@ class OrderServiceTest {
     void addElement_ShouldNotAddEmptyElementText() {
         // 1. Arrange; creamos las variables
         List<List<String>> initialOrderState = new ArrayList<>();
-        initialOrderState.add(new ArrayList<>()); //Tier 0
-        initialOrderState.add(new ArrayList<>()); //Tier 1
+        initialOrderState.add(new ArrayList<>()); // Tier 0
+        initialOrderState.add(new ArrayList<>()); // Tier 1
 
-        String elementText = "";   //vacio
+        String elementText = ""; // vacio
 
         // 2. Act; ejecutamos lo que vamos a testear
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
@@ -72,11 +73,11 @@ class OrderServiceTest {
     void deleteElement_ShouldDeleteElementFromTheUnassignedTier() {
         // 1. Arrange; Creamos las variables
         List<List<String>> initialOrderState = new ArrayList<>();
-        initialOrderState.add(new ArrayList<>());//Añadimos la Unassigned Tier
-        initialOrderState.add(new ArrayList<>());//Añadimos la Tier 1
+        initialOrderState.add(new ArrayList<>());// Añadimos la Unassigned Tier
+        initialOrderState.add(new ArrayList<>());// Añadimos la Tier 1
 
-        String elementText = "Elemento a eliminar"; //Creamos un elemento
-        initialOrderState.getFirst().add(elementText); //Añadimos un elemento a esa Tier
+        String elementText = "Elemento a eliminar"; // Creamos un elemento
+        initialOrderState.getFirst().add(elementText); // Añadimos un elemento a esa Tier
 
         // 2. Act; Ejecutamos lo que vamos a Testear
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
@@ -89,7 +90,7 @@ class OrderServiceTest {
 
     @Test
     void deleteElement_ShouldDeleteElementFromTheAssignedTier() {
-        //Inicializamos las variables
+        // Inicializamos las variables
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>());
         initialOrderState.add(new ArrayList<>());
@@ -98,16 +99,16 @@ class OrderServiceTest {
         initialOrderState.get(1).add(elementText);
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
 
-        //Ejecutamos lo que vamos a Testear
+        // Ejecutamos lo que vamos a Testear
         List<List<String>> result = orderService.deleteElement(elementText, session);
 
-        //Comprobamos los resultados
+        // Comprobamos los resultados
         assertThat(result.getFirst().size()).isEqualTo(0);
         assertThat(result.get(1).size()).isEqualTo(0);
     }
 
     @Test
-    void deleteElement_ShouldDeleteElementsWithSpecialCharacters(){
+    void deleteElement_ShouldDeleteElementsWithSpecialCharacters() {
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>()); // Tier 0
         initialOrderState.add(new ArrayList<>()); // Tier 1
@@ -133,16 +134,16 @@ class OrderServiceTest {
     }
 
     @Test
-    void deleteTier_ShouldNotDeleteFirtTwoTiers(){
+    void deleteTier_ShouldNotDeleteFirtTwoTiers() {
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>()); // Tier 0
         initialOrderState.add(new ArrayList<>()); // Tier 1
 
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
 
-        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+        List<List<String>> result = orderService.deleteLastTier(session); // Eliminamos la última Tier
 
-       assertThat(result).hasSize(2);
+        assertThat(result).hasSize(2);
     }
 
     @Test
@@ -154,16 +155,16 @@ class OrderServiceTest {
         int numberOfTiers = initialOrderState.size();
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
 
-        List<List<String>> result = orderService.deleteLastTier(session); //Eliminamos la última Tier
+        List<List<String>> result = orderService.deleteLastTier(session); // Eliminamos la última Tier
 
-        assertThat(result).hasSize(numberOfTiers-1);
+        assertThat(result).hasSize(numberOfTiers - 1);
     }
 
     @Test
-    void deleteLastTier_ShouldDeleteLastTierAndAllElementsInTier(){
+    void deleteLastTier_ShouldDeleteLastTierAndAllElementsInTier() {
         // configurar estado inicial
         List<List<String>> initialOrderState = new ArrayList<>();
-        initialOrderState.add(new ArrayList<>()); // Tier 0  (unassigned)
+        initialOrderState.add(new ArrayList<>()); // Tier 0 (unassigned)
         initialOrderState.add(new ArrayList<>()); // Tier 1
         initialOrderState.add(new ArrayList<>()); // Tier 2
 
@@ -191,7 +192,7 @@ class OrderServiceTest {
         List<List<String>> result = orderService.getOrderState(session);
 
         // Assert
-        for (int i = 0; i < initialOrderState.size(); i++){
+        for (int i = 0; i < initialOrderState.size(); i++) {
             assertThat(result.get(i)).isEqualTo(initialOrderState.get(i));
         }
     }
@@ -200,18 +201,18 @@ class OrderServiceTest {
     void updateOrderState_ShouldUpdateSessionAttributeAndReturnUpdatedState() {
         // Arrange
         List<List<String>> initialOrderState = new ArrayList<>();
-        initialOrderState.add(Arrays.asList("Manzana", "Pera"));        // Tier 0
-        initialOrderState.add(Arrays.asList("Naranja"));                // Tier 1
-        
+        initialOrderState.add(Arrays.asList("Manzana", "Pera")); // Tier 0
+        initialOrderState.add(Arrays.asList("Naranja")); // Tier 1
+
         List<List<String>> newOrderState = new ArrayList<>();
-        newOrderState.add(Arrays.asList("Naranja", "Pera", "Sandía"));  // nuevo Tier 0
-        newOrderState.add(Arrays.asList("Manzana", "Limón"));           // nuevo Tier 1
-        newOrderState.add(Arrays.asList());                             // nuevo Tier 2
-        
-        // Act    
+        newOrderState.add(Arrays.asList("Naranja", "Pera", "Sandía")); // nuevo Tier 0
+        newOrderState.add(Arrays.asList("Manzana", "Limón")); // nuevo Tier 1
+        newOrderState.add(Arrays.asList()); // nuevo Tier 2
+
+        // Act
         // Actualizamos el Order del estado inicial al nuevo
         List<List<String>> result = orderService.updateOrderState(newOrderState, session);
-        
+
         // Assert
         verify(session).setAttribute("orderState", newOrderState);
         assertThat(result).isSameAs(newOrderState);
@@ -224,10 +225,10 @@ class OrderServiceTest {
     void saveOrder_ShouldSetAuthorToAnonymous_WhenAuthorIsEmpty() {
         // Arrange
         String title = "Top frutas";
-        String author = "";     
+        String author = "";
         List<List<String>> content = new ArrayList<>();
-        content.add(Arrays.asList("Plátano", "Manzana")); 
-        content.add(Arrays.asList("Naranja", "Pera")); 
+        content.add(Arrays.asList("Plátano", "Manzana"));
+        content.add(Arrays.asList("Naranja", "Pera"));
 
         Order expectedOrder = new Order();
 

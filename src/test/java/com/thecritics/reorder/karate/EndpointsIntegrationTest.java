@@ -5,16 +5,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EndpointsIntegrationTest {
-    
+
     @Karate.Test
     public Karate testCreateOrder() {
         return Karate.run("classpath:features/createOrderIntegrationTest.feature")
-                    .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
 
     @Karate.Test
     public Karate testPublishOrder() {
         return Karate.run("classpath:features/publishOrderIntegrationTest.feature")
-                    .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
+    }
+
+    @Karate.Test
+    public Karate testDetailsOrder() {
+        return Karate.run("classpath:features/detailsOrderIntegrationTest.feature")
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
 }

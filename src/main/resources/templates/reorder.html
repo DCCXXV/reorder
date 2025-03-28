@@ -6,7 +6,7 @@
             <div class="my-4">
                 <div class="flex items-center text-center w-full">
                     <div class="mb-6 w-full">
-                        <form id="orderForm" class="w-full" hx-preserve action="/createOrder/PublishOrder" method="post">
+                        <form id="orderForm" class="w-full" hx-preserve action="/reorder/PublishOrder" method="post">
                             <div class="flex flex-col md:flex-row text-start w-full gap-4">
                                 <div class="flex flex-col md:flex-row gap-4 flex-grow">
                                     <div class="flex flex-col w-full md:w-1/2">
@@ -45,7 +45,7 @@
                                     <i
                                         th:if="${tierIter.index == #lists.size(orderState)-1 && tierIter.index > 1 && tier.size == 0}"
                                         class="fa-solid fa-trash mt-2 sm:mt-2 fa-xs tdel text-neutral-500"
-                                        hx-post="/createOrder/deleteLastTier"
+                                        hx-post="/reorder/deleteLastTier"
                                         hx-target="#pageContent"
                                         hx-swap="innerHTML"
                                         hx-trigger="click">
@@ -62,7 +62,7 @@
                                     th:each="e : ${tier}" 
                                     class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-grab"
                                     th:data-element="${e}">
-                                    <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                                    <form hx-post="/reorder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                                         <input type="hidden" name="elementTextBadge" th:value="${e}" />
                                         <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
                                     </form>                            
@@ -76,7 +76,7 @@
                 <div class="tooltip tooltip-right tooltip-neutral w-12 sm:w-16 font-bold" data-tip="Añade un nuevo Tier">
                     <div 
                         class="rounded-lg flex bg-neutral items-center justify-center w-12 sm:w-16 h-20 sm:h-24" 
-                        hx-post="/createOrder/addTier"
+                        hx-post="/reorder/addTier"
                         hx-target="#pageContent"
                         hx-swap="innerHTML"
                         id="addCategory">
@@ -99,14 +99,14 @@
                                 </form>
                             </div>
                             <button   
-                                hx-post="/createOrder/keepElementsAndDeleteLastTier"
+                                hx-post="/reorder/keepElementsAndDeleteLastTier"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
                                 class="btn btn-success w-full sm:w-auto">
                                 Conservar elementos
                             </button> 
                             <button
-                                hx-post="/createOrder/deleteLastTier"
+                                hx-post="/reorder/deleteLastTier"
                                 hx-target="#pageContent"
                                 hx-swap="innerHTML"
                                 class="btn btn-error w-full sm:w-auto">
@@ -124,7 +124,7 @@
     <div class="bg-base-100" id="elementsBottom">
         <div class="my-4 sm:my-4 flex w-full">
             <form
-                hx-post="/createOrder/addElement"
+                hx-post="/reorder/addElement"
                 hx-trigger="submit"
                 hx-target="#pageContent"
                 hx-swap="innerHTML"
@@ -148,7 +148,7 @@
                 th:each="e : ${orderState[0]}" 
                 class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary cursor-grab"
                 th:data-element="${e}">
-                <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
+                <form hx-post="/reorder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                     <input type="hidden" name="elementTextBadge" th:value="${e}" />
                     <button type="submit" class="fa-solid fa-xmark element-cancel"></button>
                 </form>
@@ -206,15 +206,15 @@
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
             if (event.detail.target.id === 'pageContent') {
-                const isDeleteElementRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteElement');
-                const isDeleteTierRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteLastTier');
-                const isDeleteTierKeepingElementsRequest = event.detail.pathInfo.requestPath.includes('/createOrder/keepElementsAndDeleteLastTier');
+                const isDeleteElementRequest = event.detail.pathInfo.requestPath.includes('/reorder/deleteElement');
+                const isDeleteTierRequest = event.detail.pathInfo.requestPath.includes('/reorder/deleteLastTier');
+                const isDeleteTierKeepingElementsRequest = event.detail.pathInfo.requestPath.includes('/reorder/keepElementsAndDeleteLastTier');
 
                 if (isDeleteElementRequest || isDeleteTierRequest || isDeleteTierKeepingElementsRequest) {
                     actualizarOrderState();
                 }
                 
-                const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');
+                const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/reorder/addTier');
                 
                 if (isAddTierRequest) {
                     const addCategory = document.getElementById('addCategory');
@@ -256,7 +256,7 @@
             actualizarEstadoBotonPublicar(orderState);
 
             // enviar solo si hay cambios
-            htmx.ajax('POST', '/createOrder/updateOrderState', {
+            htmx.ajax('POST', '/reorder/updateOrderState', {
                 target: '#pageContent',
                 swap: 'innerHTML',
                 values: { orderStateJson: JSON.stringify(orderState) },

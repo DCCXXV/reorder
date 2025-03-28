@@ -10,7 +10,9 @@
             <button class="btn btn-secondary btn-sm ml-auto"
                 th:attr="hx-get=@{/reorder/{id}(id=${order.id})}"
                 hx-target="#pageContent"
-                hx-swap="innerHTML">Reorder</button>
+                hx-swap="innerHTML"
+                th:attrappend="hx-push-url=@{/reorder/{id}(id=${order.id})}">
+                >Reorder</button>
         </div>    <!--
     </div>
     -->

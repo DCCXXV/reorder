@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -386,22 +387,65 @@ public class RootController {
      * @return El nombre de la vista "index".
      */
     @PostMapping("/reorder/PublishOrder")
-    public String reorderPublishOrder(@RequestParam String rtitle, @RequestParam String rauthor, @RequestParam Integer originalOrderId, HttpSession session, Model model) {
-        if (rtitle == null || rtitle.isEmpty()) {
-            return "error";
-        }
-        Order originalOrder = orderService.getOrderById(originalOrderId);
-        List<List<String>> reOrderState = orderService.getReOrderState(session);
+    public String reorderPublishOrder( 
+        @RequestParam String rtitle,
+        @RequestParam(required = false) String rauthor,
+        @RequestParam Integer originalOrderId,
+        HttpSession session,
+        Model model) {
 
-        if (originalOrder.getContent() == reOrderState) {
+        Order originalOrder = orderService.getOrderById(originalOrderId);
+        @SuppressWarnings("unchecked")
+        List<List<String>> currentReorderState = (List<List<String>>) session.getAttribute("reOrderState");
+
+        if (originalOrder == null || currentReorderState == null) {
+            log.error("Error crítico: Faltan datos originales o de sesión para ID {}", originalOrderId);
+            model.addAttribute("globalError", "Error inesperado al procesar. Intenta de nuevo.");
             return "redirect:/error";
         }
+        if (rtitle == null || rtitle.trim().isEmpty()) {
+             log.warn("Publicación cancelada: Título vacío para original ID {}", originalOrderId);
+             model.addAttribute("reorderError", "El título no puede estar vacío.");
+             model.addAttribute("originalOrder", originalOrder);
+             model.addAttribute("reOrderState", currentReorderState);
+             String searchQuery = (String) session.getAttribute("searchQuery");
+             if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
+             return "reorder";
+        }
+
+        if (originalOrder.getContent().equals(currentReorderState)) {
+            log.warn("Publicación cancelada: No hay cambios en el contenido para original ID {}", originalOrderId);
+
+            model.addAttribute("errorMessage", "No has realizado cambios en el contenido.");
+
+            model.addAttribute("originalOrder", originalOrder);
+            model.addAttribute("reOrderState", currentReorderState);
+            String searchQuery = (String) session.getAttribute("searchQuery");
+            if (searchQuery != null) {
+                model.addAttribute("searchQuery", searchQuery);
+            }
+
+            return "reorder";
+        }
         
-        orderService.saveReOrder(rtitle, rauthor, reOrderState, originalOrder);
-        reOrderState = clearOrder(reOrderState);
+        log.info("Contenido diferente, guardando reorder para original ID {}", originalOrderId);
+        try {
+            String finalAuthor = (rauthor == null || rauthor.trim().isEmpty()) ? "Anónimo" : rauthor.trim();
+            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
 
-        model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+            session.removeAttribute("reOrderState");
+            session.removeAttribute("reorderOriginalId");
 
-        return "redirect:/";
+            return "redirect:/order/" + savedReorder.getId();
+
+        } catch (Exception e) {
+            log.error("Error al guardar el reorder para original ID {}", originalOrderId, e);
+            model.addAttribute("reorderError", "Error inesperado al guardar.");
+            model.addAttribute("originalOrder", originalOrder);
+            model.addAttribute("reOrderState", currentReorderState);
+            String searchQuery = (String) session.getAttribute("searchQuery");
+            if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
+            return "reorder";
+        }
     }
 }

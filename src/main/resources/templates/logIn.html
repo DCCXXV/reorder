@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org" data-theme="night" lang="es">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="description" content="¡Inicia sesión en ReOrder!">
+        
+        <link rel="stylesheet" th:href="@{/css/custom.css}" href="css/custom.css" type="text/css" />
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.0/themes.css" rel="stylesheet" type="text/css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+<body>
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="flex flex-col bg-base-200 shadow-md rounded-lg w-full max-w-md p-6 sm:p-8">
+            <span class="text-3xl title-logo flex items-center justify-center mb-4">Re<span class="text-secondary">O</span>rder</span>
+            <span class="text-4xl title-logo pb-2 flex items-center justify-center mb-4">Iniciar sesión</span>
+            <form method="post" th:action="@{/uploadLogin}" id="loginForm">
+                <div class="flex flex-col w-full mb-5 items-center">
+                    <label class="input validator w-full">
+                        <input type="text" placeholder="Correo o usuario" required class="w-full" name="identifier"/>
+                    </label>
+                </div>
+                <div class="flex flex-col w-full mb-4 items-center">
+                    <label class="input validator w-full">
+                        <input type="password" required placeholder="Contraseña" minlength="8" class="w-full" name="password"/>
+                    </label>
+                </div>
+                <div class="flex flex-col w-full items-center mt-6">
+                    <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2" type="submit">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

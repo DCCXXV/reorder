@@ -11,6 +11,11 @@ import java.util.List;
 
 @Repository
 public interface OrdererRepository extends JpaRepository<Orderer, Long>{
+    
+    @Query("SELECT o FROM Orderer o WHERE LOWER(o.email) = LOWER(:email)")
+    Orderer existsByEmail(@Param ("email") String email);
 
+    @Query("SELECT o FROM Orderer o WHERE LOWER(o.username) = LOWER(:username)")
+    Orderer existsByUsername(@Param ("username") String username);
 
 }

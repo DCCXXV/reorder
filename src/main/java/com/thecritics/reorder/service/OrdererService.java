@@ -26,6 +26,15 @@ public class OrdererService {
     @Autowired
     private OrdererRepository ordererRepository;
 
+
+    public Orderer existsByEmail(String email) {
+        return ordererRepository.existsByEmail(email);
+    }
+
+    public Orderer existsByUsername(String username) {
+        return ordererRepository.existsByUsername(username);
+    }
+
    
 
     /**

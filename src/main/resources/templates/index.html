@@ -36,12 +36,9 @@
                         </div>
                         <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow">
                             <li class="gap-2">
-                                <a class = "py-3 text-lg"
-                                tabindex="0"
-                                   hx-get="/register"
-                                   hx-target="#pageContent"
-                                   hx-swap="innerHTML"
-                                   hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                                <a 
+                                class="py-3 text-lg"
+                                href = "/register"
                                    >Registrar</a>              
                                 <a class="py-3 text-lg"
                                    tabindex="0"
@@ -89,7 +86,7 @@
                 <div class="navbar-end hidden lg:flex">
                     <ul>
                         <li 
-                            class="btn btn-outline btn-secondary"
+                            class="btn btn-outline btn-secondary mr-4"
                             tabindex="0"
                             hx-get="/createOrder"
                             hx-target="#pageContent"
@@ -97,9 +94,7 @@
                             hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
                             <a>Crear Order</a>
                         </li>
-                        <li class="btn btn-outline btn-secondary ml-4">
-                        <a href = "/register">Registrar</a>
-                        </li>
+                        <a href = "/register" class = "btn btn-outline btn-secondary">Registrar</a>
                     </ul>
                 </div>
             </div>

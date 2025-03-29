@@ -47,4 +47,12 @@ public class OrdererService {
         return savedOrderer;
     }
 
+    public Orderer findByUsername(String username) {
+        return ordererRepository.findByUsername(username);
+    }
+    
+    public Orderer findByEmail(String email) {
+        return ordererRepository.findByEmail(email);
+    }
+
 }

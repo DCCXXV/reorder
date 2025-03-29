@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
 import com.thecritics.reorder.service.OrdererService;
 
@@ -401,15 +403,34 @@ public class RootController {
         return "redirect:/";
     }
 
-    @GetMapping("/checklogin")
-    public String loginUser(@RequestParam String username, @RequestParam String password, Model model) {
-        if (username == null || username.isEmpty()){
-            return "error";
-        }
+    @PostMapping("/uploadLogin")
+    public String loginUser(@RequestParam String identifier, @RequestParam String password, Model model,HttpSession session) {
+        if (identifier == null || identifier.isEmpty()){
+            model.addAttribute("errorMessage", "introduzca su usuario o email");
+            return "logIn";        }
         if (password == null || password.isEmpty()){
-            return "error";
-        }
+            model.addAttribute("errorMessage", "introduzca su contraseña");
+            return "logIn";        }
 
-        return "redirect:/"; 
+        boolean isEmail = identifier.contains("@");
+        Orderer orderer = null;
+        if(isEmail) {
+            orderer = ordererService.findByEmail(identifier);
+        } else {
+            orderer = ordererService.findByUsername(identifier);
+        }
+        
+        if(orderer == null) {
+            model.addAttribute("errorMessage", "¡El usuario no existe!");
+            return "logIn";
+        } else if (!orderer.getPassword().equals(password)) {
+            model.addAttribute("errorMessage", "¡Contraseña incorrecta!");
+            return "logIn";
+        } else {
+            session.setAttribute("u", orderer.getUsername());
+            session.setAttribute("ws", orderer.getId());
+            return "redirect:/";
+        }
+        
     }
 }

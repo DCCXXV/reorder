@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface OrdererRepository extends JpaRepository<Orderer, Long>{
-
-
+    Orderer findByUsername(String username);
+    Orderer findByEmail(String email);
 }

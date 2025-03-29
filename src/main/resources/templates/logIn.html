@@ -23,7 +23,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-
+        <!--
         <script>
             function toggleLoginType() {
                 var emailInput = document.getElementById("emailInput");
@@ -58,6 +58,7 @@
                 }
             }
         </script>
+        -->
     </head>
 <body>
     <div class="flex items-center justify-center min-h-screen px-4">
@@ -73,9 +74,10 @@
                               <circle cx="12" cy="7" r="4"></circle>
                             </g>
                           </svg>
-                        <input type="text" placeholder="Usuario" required class="w-full" name="identifier"/>
+                        <input type="text" placeholder="Usuario"  class="w-full" name="identifier"/>
                     </label>
                 </div>
+                <!--
                 <div class="flex flex-col w-full mb-5 items-center hidden" id="emailInput">
                     <label class="input validator w-full">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -84,9 +86,10 @@
                               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
                             </g>
                           </svg>
-                        <input type="text" placeholder="Correo Electrónico" required class="w-full" name="identifier"/>
+                        <input type="text" placeholder="Correo Electrónico"  class="w-full" name="identifier"/>
                     </label>
                 </div>
+                -->
                 <div class="flex flex-col w-full mb-4 items-center" id ="passwordInput">
                     <label class="input validator w-full">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -102,9 +105,12 @@
                     <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2" type="submit">Iniciar sesión</button>
                 </div>
             </form>
+            <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error rounded-lg" th:text="${errorMessage}"></div>
+
             <div class="mt-4 text-start " >
                 <p>¿No tienes cuenta? <a href="/register" class="text-secondary font-bold">Regístrate aquí</a></p>
             </div>
+            <!--
             <button class="btn btn-md md:btn-lg btn-secondary w-full" onclick="toggleLoginType()" id="emailButton">
                 <svg aria-label="Email icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="black"><rect width="20" height="16" x="2" y="4" rx="2"></rect>
@@ -120,7 +126,8 @@
                     </g>
                   </svg>
                 Iniciar Sesión con nombre de Usuario
-            </div>
+            </button>
+            -->
         </div>
     </div>
 </body>

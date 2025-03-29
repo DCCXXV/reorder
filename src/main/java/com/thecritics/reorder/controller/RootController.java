@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecritics.reorder.service.OrderService;
+import com.thecritics.reorder.service.OrdererService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -34,6 +35,8 @@ public class RootController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrdererService ordererService;
 
     private final int MAX_CHARACTERS = 30;
     private final int MAX_ELEMENTS = 500;
@@ -369,6 +372,26 @@ public class RootController {
         reOrderState = clearOrder(reOrderState);
 
         model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+
+        return "redirect:/";
+    }
+
+
+    @PostMapping("/uploadRegister")
+    public String uploadRegister(@RequestParam String username, @RequestParam String email, @RequestParam String password, Model model){
+        if (username == null || username.isEmpty()){
+            return "error";
+        }
+
+        if (email == null || email.isEmpty()){
+            return "error";
+        }
+
+        if (password == null || password.isEmpty()){
+            return "error";
+        }
+
+        ordererService.saveOrderer(email, username, password);
 
         return "redirect:/";
     }

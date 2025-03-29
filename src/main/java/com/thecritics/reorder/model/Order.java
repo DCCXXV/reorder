@@ -1,16 +1,23 @@
 package com.thecritics.reorder.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +45,17 @@ public class Order implements Transferable<Order.Transfer>{
     
     private String title;
     private String author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reordered_order_id")
+    private Order reorderedOrder;
+
+    @OneToMany(mappedBy = "reorderedOrder", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Order> reorders;
+
+    public boolean isReorder() {
+        return this.reorderedOrder != null;
+    }
 
     @Getter
     @AllArgsConstructor

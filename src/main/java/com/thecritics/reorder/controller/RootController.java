@@ -295,31 +295,57 @@ public class RootController {
     }
     
     @GetMapping("/order/{id}")
-    public String getOrderDetail(@PathVariable Integer id, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model) {
+    public String getOrderDetail(@PathVariable Integer id, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model, HttpSession session) {
         model.addAttribute("order", orderService.getOrderById(id));
         if (fromQuery != null && !fromQuery.isEmpty()) {
             model.addAttribute("searchQuery", fromQuery);
+            session.setAttribute("searchQuery", fromQuery);
         }
         return "order";
     }
 
     @GetMapping("/reorder")
-        public String reorder(@RequestParam Integer idInput, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model , HttpSession session) {
-        Order originalOrder = orderService.getOrderById(idInput);
-        List<List<String>> reOrderState = originalOrder.getContent();
+    public String showReorderPage(@RequestParam("idInput") Integer originalOrderId,
+                                  @RequestParam(name = "fromQuery", required = false) String fromQueryParam,
+                                  Model model, HttpSession session) {
 
-        session.setAttribute("reOrderState",  reOrderState);
-        model.addAttribute("reOrderState", reOrderState);
+        log.info("Accediendo a /reorder para Order ID: {}, fromQueryParam: {}", originalOrderId, fromQueryParam);
 
-        model.addAttribute("originalOrder", originalOrder);
-        if (fromQuery != null && !fromQuery.isEmpty()) {
-            model.addAttribute("searchQuery", fromQuery);
+        Order originalOrder = orderService.getOrderById(originalOrderId);
+        if (originalOrder == null) {
+            log.error("No se encontró la Order original con ID: {}", originalOrderId);
+            model.addAttribute("errorMessage", "La orden original no fue encontrada.");
+            return "redirect:/error";
         }
 
-        model.addAttribute("publishEnabled", false);
+        List<List<String>> initialReorderState = originalOrder.getContent();
 
+        session.setAttribute("reorderOriginalId", originalOrderId);
+        session.setAttribute("reOrderState", initialReorderState);
+
+        String searchQuery = null;
+        if (fromQueryParam != null && !fromQueryParam.isEmpty()) {
+            searchQuery = fromQueryParam;
+            session.setAttribute("searchQuery", searchQuery); // Guardar/Actualizar en sesión
+            log.debug("Recibido y guardado searchQuery desde parámetro: {}", searchQuery);
+        } else {
+            searchQuery = (String) session.getAttribute("searchQuery");
+            log.debug("Recuperado searchQuery desde sesión: {}", searchQuery);
+        }
+
+        model.addAttribute("originalOrder", originalOrder);
+        model.addAttribute("reOrderState", initialReorderState);
+
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            model.addAttribute("searchQuery", searchQuery);
+            log.debug("Añadiendo searchQuery al modelo: {}", searchQuery);
+        } else {
+            log.debug("No se añadió searchQuery al modelo (era nulo o vacío).");
+        }
+        log.info("Retornando vista 'reorder' para Order ID: {}", originalOrderId);
         return "reorder";
     }
+
 
     /**
      * Endpoint para actualizar el estado de orden (drag & drop).
@@ -340,7 +366,6 @@ public class RootController {
                 return "error";
             }
 
-            //model.addAttribute("publishEnabled", elementsFound);
             model.addAttribute("reOrderState", newOrderState);
             orderService.updateReOrderState(newOrderState, session);
 
@@ -361,14 +386,18 @@ public class RootController {
      * @return El nombre de la vista "index".
      */
     @PostMapping("/reorder/PublishOrder")
-    public String reorderPublishOrder(@RequestParam String rtitle, @RequestParam String rauthor, HttpSession session, Model model) {
+    public String reorderPublishOrder(@RequestParam String rtitle, @RequestParam String rauthor, @RequestParam Integer originalOrderId, HttpSession session, Model model) {
         if (rtitle == null || rtitle.isEmpty()) {
             return "error";
         }
-
+        Order originalOrder = orderService.getOrderById(originalOrderId);
         List<List<String>> reOrderState = orderService.getReOrderState(session);
+
+        if (originalOrder.getContent() == reOrderState) {
+            return "redirect:/error";
+        }
         
-        orderService.saveOrder(rtitle, rauthor, reOrderState);
+        orderService.saveReOrder(rtitle, rauthor, reOrderState, originalOrder);
         reOrderState = clearOrder(reOrderState);
 
         model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");

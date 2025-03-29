@@ -1,5 +1,5 @@
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
-    <!--
+    <title hidden th:text="'Haciendo ReOrder de ' + ${originalOrder.title} + ' | ReOrder'"></title>
     <div class="mt-10">
         <button class="btn rounded-pill bg-base-200 p-4"
                 th:attr="hx-get=@{/order/{id}(id=${originalOrder.id}, fromQuery=${searchQuery})}"
@@ -8,23 +8,14 @@
             <i class="fa-solid fa-chevron-left me-2"></i>
             Volver al Order Original
         </button>
-    </div>-->
-    <label class="input input-xl input-ghost bg-base-200 flex md:hidden w-full mb-4 rounded-xl mt-0">
-        <form 
-                hx-post="/search"
-                hx-trigger="submit"
-                hx-target="#pageContent"
-                hx-swap="innerHTML"
-                id="searchByTitle"
-            >
-            <i class="fa-solid fa-magnifying-glass me-3"></i>
-            <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="query" th:value="${query != null ? query : ''}"/>
-        </form>
-    </label>
+    </div>
     <form id="reOrderForm" class="w-full" hx-preserve action="/reorder/PublishOrder" method="post">
-        <div class="flex">
+        <input type="hidden" name="originalOrderId" th:value="${originalOrder.id}">
+        
+        <div class="ms-1">
             <input type="text"
                    name="rtitle"
+                   th:value="${originalOrder.title}"
                    placeholder="Título del ReOrder"
                    required
                    class="mt-4 text-4xl font-bold text-secondary bg-transparent border-none focus:outline-none w-full p-0"
@@ -36,7 +27,7 @@
             <input type="text"
                    name="rauthor"
                    placeholder="@Anónimo"
-                   class="mt-1 mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
+                   class="mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
                    style="filter: brightness(80%);" 
                    aria-label="Autor del Order"> 
     
@@ -63,7 +54,7 @@
             <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r" th:id="'elementContainerTier' + ${tierIter.index}">
                 <span 
                     th:each="e : ${tier}" 
-                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-default"
+                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-pointer"
                     th:data-element="${e}">                          
                     <span th:text="${e}">elemento</span>
                 </span>

@@ -246,12 +246,17 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public List<List<String>> getOrderContent (HttpSession session){
-        Order order = (Order) session.getAttribute("order");
-        if (order == null) {
-            System.out.println("order es null, se crea uno nuevo");
-        }
-        List<List<String>> orderContent = order.getContent();
-        return orderContent;
+    public Order saveReOrder(String title, String author, List<List<String>> content, Order orderOriginal) {
+        Order order = new Order();
+        order.setContent(content);
+        order.setTitle(title);
+        order.setAuthor((author == "") ? "Anónimo" : author);
+
+        order.setReorderedOrder(orderOriginal);
+
+        Order savedReOrder = orderRepository.save(order);
+        orderOriginal.getReorders().add(savedReOrder);
+
+        return savedReOrder;
     }
 }

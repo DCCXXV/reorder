@@ -1,8 +1,9 @@
 Feature: Publicar Order
 
 Background:
-  * url 'http://localhost:8080'
-
+  * def port = karate.properties['karate.server.port']
+  * url 'http://localhost:' + port
+  
 Scenario: Publicar Order
   # El Orderer le da a publicar Order sin poner un título
   Given path '/createOrder/PublishOrder'

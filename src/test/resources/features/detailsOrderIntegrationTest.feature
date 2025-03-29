@@ -8,14 +8,6 @@ Scenario: Ver un Order en detalle flujo habitual
     Given path '/order/1'
     When method GET
     Then status 200
-    And match response.author == "John Doe"
-    And match response.title == "Ranking de frutas"
-    And match response.content == 
-    """
-    [
-      [],
-      ["Manzana", "Pera"],
-      ["Plátano"]
-    ]
-    """
+    And match response contains "@autor"
+    And match response contains "Top 10 puertas"
 

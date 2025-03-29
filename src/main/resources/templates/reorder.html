@@ -106,15 +106,16 @@
             });
 
             actualizarEstadoBotonPublicar(reOrderState);
-
-            // enviar solo si hay cambios
+            console.log('Estado a enviar (JS):', reOrderState);
+            const jsonPayload = JSON.stringify(reOrderState);
+            console.log('Estado a enviar (JSON):', jsonPayload);
             htmx.ajax('POST', '/reorder/updateOrderState', {
                 target: '#pageContent',
                 swap: 'innerHTML',
-                values: { reOrderStateJson: JSON.stringify(reOrderState) },
-                onError: (err) => {
-                    console.error("Error actualizando estado:", err);
-                    alert("Error al guardar cambios. Intente de nuevo.");
+                values: { reOrderStateJson: jsonPayload },
+                onError: (evt) => {
+                    console.error("Error en htmx.ajax:", evt);
+                    alert("Error al guardar cambios. Intente de nuevo. Revise la consola para detalles.");
                 }
             });
         }

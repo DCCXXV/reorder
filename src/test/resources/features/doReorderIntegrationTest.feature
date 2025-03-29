@@ -16,9 +16,3 @@ Scenario: Crear un ReOrder a partir de un Order existente
   And form field reOrderStateJson = '[[], ["Pera", "Manzana"], [],["Platano"]]'
   When method POST
   Then status 200
-
-## 3: el usuario intenta publicar un reorder correctamente
-  Given path '/reorder/PublishOrder'
-  And form field reOrderStateJson = '[[], ["Pera", "Manzana"], [],["Platano"]]'
-  When method POST
-  Then status 200

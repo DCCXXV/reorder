@@ -395,4 +395,21 @@ public class RootController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/login")
+    public String login(Model model){
+        return "logIn";
+    }
+
+    @GetMapping("/checklogin")
+    public String loginUser(@RequestParam String username, @RequestParam String password, Model model) {
+        if (username == null || username.isEmpty()){
+            return "error";
+        }
+        if (password == null || password.isEmpty()){
+            return "error";
+        }
+
+        return "redirect:/"; 
+    }
 }

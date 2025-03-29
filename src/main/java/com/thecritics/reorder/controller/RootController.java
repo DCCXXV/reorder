@@ -307,6 +307,11 @@ public class RootController {
     public String registerUser() {
         return "register"; 
     }
+    
+    @GetMapping("/logIn")
+    public String login(Model model){
+        return "logIn";
+    }
 
 
     @GetMapping("/reorder")
@@ -394,11 +399,6 @@ public class RootController {
         ordererService.saveOrderer(email, username, password);
 
         return "redirect:/";
-    }
-
-    @GetMapping("/login")
-    public String login(Model model){
-        return "logIn";
     }
 
     @GetMapping("/checklogin")

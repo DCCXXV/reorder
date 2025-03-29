@@ -234,7 +234,6 @@ public class RootController {
                 return "error";
             }
 
-            //model.addAttribute("publishEnabled", elementsFound);
             model.addAttribute("orderState", newOrderState);
             orderService.updateOrderState(newOrderState, session);
 
@@ -315,7 +314,7 @@ public class RootController {
         Order originalOrder = orderService.getOrderById(originalOrderId);
         if (originalOrder == null) {
             log.error("No se encontró la Order original con ID: {}", originalOrderId);
-            model.addAttribute("errorMessage", "La orden original no fue encontrada.");
+            model.addAttribute("errorMessage", "El Order no fue encontrado.");
             return "redirect:/error";
         }
 
@@ -347,7 +346,6 @@ public class RootController {
         return "reorder";
     }
 
-
     /**
      * Endpoint para actualizar el estado de orden (drag & drop).
      * Se espera recibir un JSON que representa la nueva lista de tiers.
@@ -358,22 +356,56 @@ public class RootController {
      */
     @PostMapping("/reorder/updateOrderState")
     public String reorderUpdateOrderState(@RequestParam String reOrderStateJson, HttpSession session, Model model) {
-        try {
-            log.debug("Recibido reOrderStateJson: {}", reOrderStateJson);
-            List<List<String>> newOrderState = objectMapper.readValue(reOrderStateJson, new TypeReference<List<List<String>>>() {});
-            log.debug("Enviado newOrderState: {}", newOrderState);
+        Integer originalOrderId = (Integer) session.getAttribute("reorderOriginalId");
+        String searchQuery = (String) session.getAttribute("searchQuery");
 
-            if (newOrderState.isEmpty()) {
-                return "error";
+        if (originalOrderId == null) {
+             log.error("Error crítico en POST /reorder/updateOrderState: Falta 'reorderOriginalId' en la sesión (ID: {}).", session.getId());
+             model.addAttribute("globalError", "Error de sesión inesperado. Intente de nuevo.");
+             return "error";
+        }
+
+        Order originalOrder = null;
+
+        try {
+            originalOrder = orderService.getOrderById(originalOrderId);
+            if (originalOrder == null) {
+                 log.error("Error crítico en POST /reorder/updateOrderState: No se encontró Order con ID {} (obtenido de sesión).", originalOrderId);
+                 model.addAttribute("globalError", "No se pudo encontrar la orden original asociada a esta sesión.");
+                 return "error";
             }
 
-            model.addAttribute("reOrderState", newOrderState);
+            log.debug("Recibido reOrderStateJson: {}", reOrderStateJson);
+            List<List<String>> newOrderState = objectMapper.readValue(reOrderStateJson, new TypeReference<List<List<String>>>() {});
+            log.debug("Enviado newOrderState: {}", newOrderState); 
+
+            if (newOrderState.isEmpty()) {
+                 log.warn("newOrderState está vacío después de deserializar en POST /reorder/updateOrderState.");
+                 model.addAttribute("originalOrder", originalOrder);
+                 model.addAttribute("reOrderState", newOrderState);
+                 if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
+                 model.addAttribute("errorMessage", "El estado recibido no puede estar vacío.");
+                 return "error";
+            }
+
             orderService.updateReOrderState(newOrderState, session);
+
+            model.addAttribute("originalOrder", originalOrder);
+            model.addAttribute("reOrderState", newOrderState);
+            if (searchQuery != null) {
+                model.addAttribute("searchQuery", searchQuery);
+            }
 
             return "reorder";
 
         } catch (Exception e) {
-            log.error("Error actualizando estado", e);
+            log.error("Error actualizando estado en POST /reorder/updateOrderState", e);
+            if (originalOrder != null) {
+                 model.addAttribute("originalOrder", originalOrder);
+            }
+
+            if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
+            model.addAttribute("globalError", "Ocurrió un error inesperado al guardar los cambios."); 
             return "error";
         }
     }

@@ -46,6 +46,8 @@
                                    hx-target="#pageContent"
                                    hx-swap="innerHTML"
                                    hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                                   th:if="${session.orderer != null}"
+
                                    >
                                     Crear Order</a>
                                 <a class="py-3 text-lg" href="/">Buscar Orders</a>
@@ -91,13 +93,16 @@
                             hx-get="/createOrder"
                             hx-target="#pageContent"
                             hx-swap="innerHTML"
-                            hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
+                            hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                            th:if="${session.orderer != null}"
+                            >
                             <a>Crear Order</a>
                         </li>
-                        <li class="btn btn-outline btn-secondary ml-4">
+                        <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}"
+                        >
                             <a href = "/register">Registrar</a>
                         </li>
-                        <li class="btn btn-outline btn-secondary ml-4">
+                        <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}">
                             <a href="/logIn">Iniciar Sesión</a>
                         </li>
                     </ul>

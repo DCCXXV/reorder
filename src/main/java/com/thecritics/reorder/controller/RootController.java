@@ -419,7 +419,7 @@ public class RootController {
         } else {
             orderer = ordererService.findByUsername(identifier);
         }
-        
+        //una vez que tenemos login exito se dirige a la pagina de inicio
         if(orderer == null) {
             model.addAttribute("errorMessage", "¡El usuario no existe!");
             return "logIn";
@@ -429,6 +429,7 @@ public class RootController {
         } else {
             session.setAttribute("u", orderer.getUsername());
             session.setAttribute("ws", orderer.getId());
+            session.setAttribute("orderer", orderer);
             return "redirect:/";
         }
         

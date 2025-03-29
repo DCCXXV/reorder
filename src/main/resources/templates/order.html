@@ -5,7 +5,8 @@
         <form
             hx-get="/reorder"
             hx-target="#pageContent"
-            hx-swap="innerHTML">
+            hx-swap="innerHTML"
+            th:if="${session.orderer != null}">
             <input name="idInput" th:value="${order.id}" hidden>
             <button 
                 class="btn btn-secondary btn-md mb-6"

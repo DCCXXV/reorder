@@ -45,7 +45,7 @@ public class Order implements Transferable<Order.Transfer>{
     private String title;
     private String author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reordered_order_id")
     private Order reorderedOrder;
 

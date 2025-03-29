@@ -374,7 +374,6 @@ class OrderServiceTest {
     }
 
     //HACER REORDER
-
     @Test
     void saveReOrder_WhenValidData_ShouldSaveAndReturnNewOrder() {   
         // Arrange
@@ -464,5 +463,63 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.saveReOrder(newTitle, newAuthor, newContent, null))
             .isInstanceOf(NullPointerException.class);
     }
+
+    @Test
+    void getReOrderState_ShouldInitializeStateIfNull() {
+        // Arrange
+        List<List<String>> expectedReOrderState = new ArrayList<>();
+        expectedReOrderState.add(new ArrayList<>()); // tier 0
+        expectedReOrderState.add(new ArrayList<>()); // tier 1
+
+        // Act; cuando el atributo "reOrderState" es null en la sesión, se inicializa el estado
+        when(session.getAttribute("reOrderState")).thenReturn(null);
+        List<List<String>> result = orderService.getReOrderState(session);
+
+        // Assert
+        assertThat(result).isEqualTo(expectedReOrderState);
+    }
+
+    @Test
+    void getReOrderState_ShouldReturnExistingStateIfNotNull() {
+        // Arrange
+        List<List<String>> existingReOrderState = new ArrayList<>();
+        existingReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        existingReOrderState.add(Arrays.asList("Naranja")); 
+
+        // Act
+        when(session.getAttribute("reOrderState")).thenReturn(existingReOrderState);
+        List<List<String>> result = orderService.getReOrderState(session);
+
+        // 3.
+        assertThat(result).isEqualTo(existingReOrderState);
+    }
+
+    @Test
+    void updateReOrderState_ShouldUpdateStateInSession() {
+        // Arrange
+        List<List<String>> newReOrderState = new ArrayList<>();
+        newReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        newReOrderState.add(Arrays.asList("Naranja")); 
+        // Act;
+        List<List<String>> result = orderService.updateReOrderState(newReOrderState, session);
+
+        // Assert
+        assertThat(result).isEqualTo(newReOrderState);
+    }
+
+    @Test
+    void updateReOrderState_ShouldSetAttributeInSession() {
+       
+        // Arrange
+        List<List<String>> newReOrderState = new ArrayList<>();
+        newReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        newReOrderState.add(Arrays.asList("Naranja")); 
+        // Act
+        orderService.updateReOrderState(newReOrderState, session);
+
+        //Assert
+        verify(session).setAttribute("reOrderState", newReOrderState);
+    }
+
 
 }

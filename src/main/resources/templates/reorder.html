@@ -12,7 +12,8 @@
         <div class="flex justify-between p-1 items-center">
             <input type="text"
                    name="rauthor"
-                   placeholder="Anónimo"
+                   th:value="${u}" 
+                   readonly                   
                    class="mt-1 mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
                    style="filter: brightness(80%);" 
                    aria-label="Autor del Order"> 

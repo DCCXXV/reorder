@@ -20,7 +20,6 @@
 .badge {
     transition: all 0.05s ease-in-out;
     vertical-align: middle;
-    cursor: grab;
 }
 
 .selected-badge {
@@ -66,17 +65,17 @@
 }
 
 .categoryLabel:hover {
-    transform: scale(1.03);
+    filter: brightness(90%);
 }
 
 .tdel {
     cursor: pointer;
-    transition: all 0.05s ease;
+    transition: all 0.08s ease-in-out;
     transform: scale(1.5);
 }
 
 .tdel:hover {
-    filter: brightness(80%);
+    color: #FB7085 !important;
 }
 
 .handle {
@@ -99,6 +98,23 @@
     background-color: #171F38 !important;
 }
 
+.searchAutocompleteItem {
+    padding: 12px;
+    margin-top: 8px !important;
+    border: 2px solid #0C1425 !important;
+
+}
+
+.searchAutocompleteItem:hover {
+    border-radius: 7px !important;
+    background-color: #171F38 !important;
+}
+
+.searchItem:hover {
+    border-radius: 7px !important;
+    background-color: rgb(39, 47, 71) !important;
+}
+
 .errorMessage {
     background-color: #171F38 !important;
 }
@@ -107,15 +123,21 @@ html, body {
     margin: 0;
     height: 100%;
 }
-  
+
 .content {
     display: grid;
     grid-template-rows: 1fr auto;
-    min-height: 87vh; 
+    min-height: 93vh; 
+}
+
+.infoOrder{
+    border-radius: 7px;
+    background-color: #171F38;
+    padding: 17px;
 }
 
 /*
-#elementsBottom {
+.stickyElementBox {
     position: sticky;
     bottom: 0;
     z-index: 10;

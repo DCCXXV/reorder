@@ -1,24 +1,39 @@
 <div class="px-2 sm:px-8 content">
     <div>
         <!-- para comprobar si la vista es correcta-->
-        <title hidden>Crear Order</title>
+        <title hidden>Crear Order | ReOrder</title>
         <section>
-            <div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="mb-6 flex flex-col w-full">
-                        <form id="orderForm" class="w-full md:w-auto md:max-w-3xl" hx-preserve>
-                            <div class="flex flex-col sm:flex-row gap-4 text-start">
-                                <div class="flex flex-col w-full sm:w-1/2">
-                                    <label for="titleInput" class="mb-1 ms-2 text-sm font-medium">Título<em class="text-error">*</em></label>
-                                    <input id="titleInput" type="text" placeholder="Título del Order" required class="input input-md sm:input-lg focus:outline-none border-neutral w-full">
+            <div class="my-4">
+                <div class="flex items-center text-center w-full">
+                    <div class="mb-6 w-full">
+                        <form id="orderForm" class="w-full" hx-preserve hx-post="/createOrder/PublishOrder" hx-trigger="submit" hx-target="#pageContent">
+                            <div class="flex flex-col md:flex-row text-start w-full gap-4">
+                                <div class="flex flex-col md:flex-row gap-4 flex-grow">
+                                    <div class="flex flex-col w-full md:w-1/2">
+                                        <label for="titleInput" class="mb-1 ms-2 text-sm">Título<em class="text-error">*</em></label>
+                                        <input name="title" id="titleInput" type="text" placeholder="Título del Order" required class="input input-md sm:input-lg focus:outline-none border-neutral w-full">
+                                    </div>
+                                    <div class="flex flex-col w-full md:w-1/2">
+                                        <label for="authorInput" class="mb-1 ms-2 text-sm">Autor</label>
+                                        <input name="author" id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
+                                    </div>
                                 </div>
-                                
-                                <div class="flex flex-col w-full sm:w-1/2">
-                                    <label for="authorInput" class="mb-1 ms-2 text-sm font-medium">Autor</label>
-                                    <input id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
+                                <div class="mt-4 md:mt-0 md:self-end">
+                                    <button id="publishButton"  
+                                        th:with="hasElements=${orderState != null && orderState.size() > 1 &&
+                                        (!orderState.get(1).isEmpty() || (orderState.size() > 2 && !orderState.get(2).isEmpty()))}"
+                                        class="btn btn-secondary w-full p-6"
+                                        th:disabled="${!hasElements}">
+                                        Publicar
+                                    </button>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div class="toast" th:if="${errorToast != null}">
+                        <div class="alert alert-success">
+                            <span th:text="${errorToast}">New message arrived.</span>
+                        </div>
                     </div>
                 </div>
                 <div class="list-group mb-4" id="tiersContainer" th:fragment="tiersContainer">
@@ -45,7 +60,7 @@
                             <div class="flex-1 p-2 flex flex-wrap gap-2 bg-base-200 rounded-r elemContTier" th:id="'elementContainerTier' + ${tierIter.index}">
                                 <span 
                                     th:each="e : ${tier}" 
-                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl"
+                                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl cursor-grab"
                                     th:data-element="${e}">
                                     <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                                         <input type="hidden" name="elementTextBadge" th:value="${e}" />
@@ -128,10 +143,10 @@
                 </div>
             </form>
         </div>
-        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-2 sm:p-4">
+        <div id="elementsContainer" th:fragment="elementsContainer" class="flex flex-wrap gap-2 bg-base-200 border-2 border-neutral w-full min-h-36 rounded-lg p-2 sm:p-4 mb-8">
             <span 
                 th:each="e : ${orderState[0]}" 
-                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary"
+                class="badge p-3 sm:p-4 text-base sm:text-xl badge-soft badge-secondary cursor-grab"
                 th:data-element="${e}">
                 <form hx-post="/createOrder/deleteElement" hx-target="#pageContent" hx-swap="innerHTML">
                     <input type="hidden" name="elementTextBadge" th:value="${e}" />
@@ -190,8 +205,15 @@
         });
 
         document.body.addEventListener('htmx:afterSwap', function(event) {
-            // scroll automático al ultimo tier cuando se sale de la parte visible
             if (event.detail.target.id === 'pageContent') {
+                const isDeleteElementRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteElement');
+                const isDeleteTierRequest = event.detail.pathInfo.requestPath.includes('/createOrder/deleteLastTier');
+                const isDeleteTierKeepingElementsRequest = event.detail.pathInfo.requestPath.includes('/createOrder/keepElementsAndDeleteLastTier');
+
+                if (isDeleteElementRequest || isDeleteTierRequest || isDeleteTierKeepingElementsRequest) {
+                    actualizarOrderState();
+                }
+                
                 const isAddTierRequest = event.detail.pathInfo.requestPath.endsWith('/createOrder/addTier');
                 
                 if (isAddTierRequest) {
@@ -230,7 +252,9 @@
                 });
                 orderState.push(tierElements);
             });
-            
+
+            actualizarEstadoBotonPublicar(orderState);
+
             // enviar solo si hay cambios
             htmx.ajax('POST', '/createOrder/updateOrderState', {
                 target: '#pageContent',
@@ -242,5 +266,13 @@
                 }
             });
         }
+
+        function actualizarEstadoBotonPublicar(orderState) {
+            const publishButton = document.getElementById("publishButton");
+            if (!publishButton) return;
+            const hasElementsInTiers = orderState.slice(1).some(tier => tier.length > 0);
+            publishButton.disabled = !hasElementsInTiers;
+        }
+
     </script> 
 </div>

@@ -1,10 +1,11 @@
 Feature: Creación de Order
 
 Background:
-  * url 'http://localhost:8080'
-
+  * def port = karate.properties['karate.server.port']
+  * url 'http://localhost:' + port
+  
 Scenario: Crear Order flujo habitual
-  # 1: El Orderer entra en la aplicación
+  # 1: El Orderer entra en la vista de crear Order
   Given path '/createOrder'
   When method GET
   Then status 200

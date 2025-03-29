@@ -315,7 +315,7 @@ public class RootController {
         Order originalOrder = orderService.getOrderById(originalOrderId);
         if (originalOrder == null) {
             log.error("No se encontró la Order original con ID: {}", originalOrderId);
-            model.addAttribute("errorMessage", "La orden original no fue encontrada.");
+            model.addAttribute("errorMessage", "El Order no fue encontrado.");
             return "redirect:/error";
         }
 

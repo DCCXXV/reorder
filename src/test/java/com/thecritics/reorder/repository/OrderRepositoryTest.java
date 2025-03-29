@@ -141,4 +141,102 @@ public class OrderRepositoryTest {
         assertThat(orders.get(0).getTitle()).isEqualTo("Ranking de verduras");
         assertThat(orders.get(1).getTitle()).isEqualTo("Ranking de frutas");
     }
+
+    @Test
+    void testSaveAndRetrieveReOrder() {
+        // ------------ ORDER ORIGINAL -------------------------
+
+        Order originalOrder = new Order();
+        originalOrder.setAuthor("Manuel");
+        originalOrder.setTitle("Order de Orders");
+
+        List<List<String>> ocontent = new ArrayList<>();
+        ocontent.add(new ArrayList<>());
+        ocontent.add(new ArrayList<>());
+        ocontent.add(new ArrayList<>());
+
+        ocontent.get(1).add("Top 10 puertas");
+        ocontent.get(2).add("Top 10 frutas");
+        ocontent.get(3).add("Ranking de verduras");
+
+        originalOrder.setContent(ocontent);
+
+        Order savedOrder = orderRepository.save(originalOrder);
+        Order retrievedOrder = orderRepository.findById(savedOrder.getId()).orElse(null);
+
+        // ------------ REORDER -------------------------------
+
+        Order inputReOrder = new Order();
+
+        inputReOrder.setReorderedOrder(retrievedOrder);
+        inputReOrder.setAuthor("Chang");
+        inputReOrder.setTitle("Order de Orders");
+
+        List<List<String>> rcontent = new ArrayList<>();
+        rcontent.add(new ArrayList<>());
+        rcontent.add(new ArrayList<>());
+        rcontent.add(new ArrayList<>());
+
+        rcontent.get(1).add("Top 10 fuertas");
+        rcontent.get(1).add("Top 10 puertas");
+        rcontent.get(2).add("Ranking de verduras");
+
+        inputReOrder.setContent(rcontent);
+
+        Order savedReOrder = orderRepository.save(inputReOrder);
+        Order retrievedReOrder = orderRepository.findById(savedReOrder.getId()).orElse(null);
+
+        assertThat(retrievedReOrder).isNotNull();
+        assertThat(retrievedReOrder.getReorderedOrder()).isEqualTo(retrievedOrder);
+        assertThat(retrievedReOrder.getAuthor()).isEqualTo(retrievedOrder.getAuthor());
+        assertThat(retrievedReOrder.getTitle()).isEqualTo(retrievedOrder.getTitle());
+        assertThat(retrievedReOrder.getContent()).isEqualTo(retrievedOrder.getContent());
+    }
+
+    @Test
+    void testCantSaveAndRetrieveReOrderWhenContentIsEqual() {
+        // ------------ ORDER ORIGINAL -------------------------
+
+        Order originalOrder = new Order();
+        originalOrder.setAuthor("Manuel");
+        originalOrder.setTitle("Order de Orders");
+
+        List<List<String>> ocontent = new ArrayList<>();
+        ocontent.add(new ArrayList<>());
+        ocontent.add(new ArrayList<>());
+        ocontent.add(new ArrayList<>());
+
+        ocontent.get(1).add("Top 10 puertas");
+        ocontent.get(2).add("Top 10 frutas");
+        ocontent.get(3).add("Ranking de verduras");
+
+        originalOrder.setContent(ocontent);
+
+        Order savedOrder = orderRepository.save(originalOrder);
+        Order retrievedOrder = orderRepository.findById(savedOrder.getId()).orElse(null);
+        
+        // ------------ REORDER -------------------------------
+
+        Order inputReOrder = new Order();
+
+        inputReOrder.setReorderedOrder(retrievedOrder);
+        inputReOrder.setAuthor("Chang");
+        inputReOrder.setTitle("Order de Orders");
+
+        List<List<String>> rcontent = new ArrayList<>();
+        rcontent.add(new ArrayList<>());
+        rcontent.add(new ArrayList<>());
+        rcontent.add(new ArrayList<>());
+
+        rcontent.get(1).add("Top 10 puertas");
+        rcontent.get(2).add("Top 10 frutas");
+        rcontent.get(3).add("Ranking de verduras");
+
+        inputReOrder.setContent(rcontent);
+
+        Order savedReOrder = orderRepository.save(inputReOrder);
+        Order retrievedReOrder = orderRepository.findById(savedReOrder.getId()).orElse(null);
+
+        assertThat(retrievedReOrder).isNull();
+    }
 }

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "`order`")
+@Table(name = "`orders`")
 @NoArgsConstructor
 public class Order implements Transferable<Order.Transfer>{
 

@@ -5,15 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.TestcontainersConfiguration;
 import com.thecritics.reorder.model.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 
 @DataJpaTest
 @Import(TestcontainersConfiguration.class)
+@ContextConfiguration(classes = ReorderApplication.class)
 public class OrderRepositoryTest {
 
     @Autowired

@@ -1,11 +1,7 @@
 package com.thecritics.reorder.controller;
 
-import static org.mockito.ArgumentMatchers.floatThat;
-import static org.mockito.ArgumentMatchers.isNull;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -54,7 +49,7 @@ public class RootController {
      */
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
-        for (String name : new String[] {"u", "url", "ws"}) {
+        for (String name : new String[] { "u", "url", "ws" }) {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
@@ -90,7 +85,8 @@ public class RootController {
      *
      * @param elementTextInput El texto del elemento a añadir.
      * @param session          La sesión HTTP actual.
-     * @param model            El objeto Modelo utilizado para pasar datos a la vista.
+     * @param model            El objeto Modelo utilizado para pasar datos a la
+     *                         vista.
      * @return El nombre de la vista "createOrder".
      */
     @PostMapping("/createOrder/addElement")
@@ -128,7 +124,7 @@ public class RootController {
                 }
             }
         }
-        
+
         model.addAttribute("orderState", orderState);
         return "createOrder";
     }
@@ -138,8 +134,10 @@ public class RootController {
      *
      * @param elementTextBadge El texto del elemento a eliminar.
      * @param session          La sesión HTTP actual.
-     * @param model            El objeto Modelo utilizado para pasar datos a la vista.
-     * @return El nombre del fragmento de la vista "createOrder :: #elementsContainer".
+     * @param model            El objeto Modelo utilizado para pasar datos a la
+     *                         vista.
+     * @return El nombre del fragmento de la vista "createOrder ::
+     *         #elementsContainer".
      */
     @PostMapping("/createOrder/deleteElement")
     public String deleteElement(@RequestParam String elementTextBadge, HttpSession session, Model model) {
@@ -157,8 +155,8 @@ public class RootController {
     /**
      * Maneja las solicitudes POST para añadir un nuevo tier al Order.
      *
-     * @param model   El objeto Modelo utilizado para pasar datos a la vista.
-     * @param session La sesión HTTP actual.
+     * @param model    El objeto Modelo utilizado para pasar datos a la vista.
+     * @param session  La sesión HTTP actual.
      * @param response La respuesta a la petición http.
      * @returnEl nombre de la vista "createOrder".
      */
@@ -173,12 +171,13 @@ public class RootController {
             model.addAttribute("orderState", orderState);
             response.setHeader("HX-Trigger", "tierAdded");
         }
-        
+
         return "createOrder";
     }
 
     /**
-     * Maneja las solicitudes POST para eliminar el último tier del estado del Order.
+     * Maneja las solicitudes POST para eliminar el último tier del estado del
+     * Order.
      *
      * @param session La sesión HTTP actual.
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
@@ -192,7 +191,8 @@ public class RootController {
     }
 
     /**
-     * Maneja las solicitudes POST para eliminar el último tier del estado del Order.
+     * Maneja las solicitudes POST para eliminar el último tier del estado del
+     * Order.
      *
      * @param session La sesión HTTP actual.
      * @param model   El objeto Modelo utilizado para pasar datos a la vista.
@@ -203,13 +203,13 @@ public class RootController {
         List<List<String>> orderState = orderService.getOrderState(session);
         Integer elementCount = (Integer) session.getAttribute("elementCount");
 
-        if (elementCount != null){
-            int n  = orderState.size();
+        if (elementCount != null) {
+            int n = orderState.size();
             List<String> elements = orderState.get(n - 1);
             elementCount -= elements.size();
             session.setAttribute("elementCount", elementCount);
-        }   
-        
+        }
+
         orderState = orderService.deleteLastTier(session);
         model.addAttribute("orderState", orderState);
         return "createOrder";
@@ -227,7 +227,9 @@ public class RootController {
     public String updateOrderState(@RequestParam String orderStateJson, HttpSession session, Model model) {
         try {
             log.debug("Recibido orderStateJson: {}", orderStateJson);
-            List<List<String>> newOrderState = objectMapper.readValue(orderStateJson, new TypeReference<List<List<String>>>() {});
+            List<List<String>> newOrderState = objectMapper.readValue(orderStateJson,
+                    new TypeReference<List<List<String>>>() {
+                    });
             log.debug("Enviado newOrderState: {}", newOrderState);
 
             if (newOrderState.isEmpty()) {
@@ -250,27 +252,30 @@ public class RootController {
      *
      * @param title   El título del Order.
      * @param author  El autor del Order.
-     * @param session La sesión HTTP actual, utilizada para obtener el estado del Order.
+     * @param session La sesión HTTP actual, utilizada para obtener el estado del
+     *                Order.
      * @return El nombre de la vista "index".
      */
     @PostMapping("/createOrder/PublishOrder")
-    public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session, Model model) {
+    public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session,
+            Model model) {
         if (title == null || title.isEmpty()) {
             return "error";
         }
 
         List<List<String>> orderState = orderService.getOrderState(session);
 
-        orderService.saveOrder(title, author, orderState);
+        Order savedOrder = orderService.saveOrder(title, author, orderState);
         orderState = clearOrder(orderState);
 
         model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
 
-        return "redirect:/";
+        return "redirect:/order/" + savedOrder.getId();
     }
 
     /**
-     * Limpia el estado del Order, removiendo todos los elementos y restableciendo los tiers iniciales.
+     * Limpia el estado del Order, removiendo todos los elementos y restableciendo
+     * los tiers iniciales.
      *
      * @param orderState El estado del Order a limpiar.
      * @return El estado del Order limpio, con dos tiers vacíos.
@@ -290,12 +295,13 @@ public class RootController {
     }
 
     @GetMapping("/search")
-    public String searchRefresh( Model model) {
+    public String searchRefresh(Model model) {
         return "redirect:/";
     }
-    
+
     @GetMapping("/order/{id}")
-    public String getOrderDetail(@PathVariable Integer id, @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model, HttpSession session) {
+    public String getOrderDetail(@PathVariable Integer id,
+            @RequestParam(name = "fromQuery", required = false) String fromQuery, Model model, HttpSession session) {
         model.addAttribute("order", orderService.getOrderById(id));
         if (fromQuery != null && !fromQuery.isEmpty()) {
             model.addAttribute("searchQuery", fromQuery);
@@ -306,8 +312,8 @@ public class RootController {
 
     @GetMapping("/reorder")
     public String showReorderPage(@RequestParam("idInput") Integer originalOrderId,
-                                  @RequestParam(name = "fromQuery", required = false) String fromQueryParam,
-                                  Model model, HttpSession session) {
+            @RequestParam(name = "fromQuery", required = false) String fromQueryParam,
+            Model model, HttpSession session) {
 
         log.info("Accediendo a /reorder para Order ID: {}, fromQueryParam: {}", originalOrderId, fromQueryParam);
 
@@ -360,9 +366,11 @@ public class RootController {
         String searchQuery = (String) session.getAttribute("searchQuery");
 
         if (originalOrderId == null) {
-             log.error("Error crítico en POST /reorder/updateOrderState: Falta 'reorderOriginalId' en la sesión (ID: {}).", session.getId());
-             model.addAttribute("globalError", "Error de sesión inesperado. Intente de nuevo.");
-             return "error";
+            log.error(
+                    "Error crítico en POST /reorder/updateOrderState: Falta 'reorderOriginalId' en la sesión (ID: {}).",
+                    session.getId());
+            model.addAttribute("globalError", "Error de sesión inesperado. Intente de nuevo.");
+            return "error";
         }
 
         Order originalOrder = null;
@@ -370,22 +378,27 @@ public class RootController {
         try {
             originalOrder = orderService.getOrderById(originalOrderId);
             if (originalOrder == null) {
-                 log.error("Error crítico en POST /reorder/updateOrderState: No se encontró Order con ID {} (obtenido de sesión).", originalOrderId);
-                 model.addAttribute("globalError", "No se pudo encontrar la orden original asociada a esta sesión.");
-                 return "error";
+                log.error(
+                        "Error crítico en POST /reorder/updateOrderState: No se encontró Order con ID {} (obtenido de sesión).",
+                        originalOrderId);
+                model.addAttribute("globalError", "No se pudo encontrar la orden original asociada a esta sesión.");
+                return "error";
             }
 
             log.debug("Recibido reOrderStateJson: {}", reOrderStateJson);
-            List<List<String>> newOrderState = objectMapper.readValue(reOrderStateJson, new TypeReference<List<List<String>>>() {});
-            log.debug("Enviado newOrderState: {}", newOrderState); 
+            List<List<String>> newOrderState = objectMapper.readValue(reOrderStateJson,
+                    new TypeReference<List<List<String>>>() {
+                    });
+            log.debug("Enviado newOrderState: {}", newOrderState);
 
             if (newOrderState.isEmpty()) {
-                 log.warn("newOrderState está vacío después de deserializar en POST /reorder/updateOrderState.");
-                 model.addAttribute("originalOrder", originalOrder);
-                 model.addAttribute("reOrderState", newOrderState);
-                 if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
-                 model.addAttribute("errorMessage", "El estado recibido no puede estar vacío.");
-                 return "error";
+                log.warn("newOrderState está vacío después de deserializar en POST /reorder/updateOrderState.");
+                model.addAttribute("originalOrder", originalOrder);
+                model.addAttribute("reOrderState", newOrderState);
+                if (searchQuery != null)
+                    model.addAttribute("searchQuery", searchQuery);
+                model.addAttribute("errorMessage", "El estado recibido no puede estar vacío.");
+                return "error";
             }
 
             orderService.updateReOrderState(newOrderState, session);
@@ -401,11 +414,12 @@ public class RootController {
         } catch (Exception e) {
             log.error("Error actualizando estado en POST /reorder/updateOrderState", e);
             if (originalOrder != null) {
-                 model.addAttribute("originalOrder", originalOrder);
+                model.addAttribute("originalOrder", originalOrder);
             }
 
-            if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
-            model.addAttribute("globalError", "Ocurrió un error inesperado al guardar los cambios."); 
+            if (searchQuery != null)
+                model.addAttribute("searchQuery", searchQuery);
+            model.addAttribute("globalError", "Ocurrió un error inesperado al guardar los cambios.");
             return "error";
         }
     }
@@ -415,16 +429,17 @@ public class RootController {
      *
      * @param title   El título del Order.
      * @param author  El autor del Order.
-     * @param session La sesión HTTP actual, utilizada para obtener el estado del Order.
+     * @param session La sesión HTTP actual, utilizada para obtener el estado del
+     *                Order.
      * @return El nombre de la vista "index".
      */
     @PostMapping("/reorder/PublishOrder")
-    public String reorderPublishOrder( 
-        @RequestParam String rtitle,
-        @RequestParam(required = false) String rauthor,
-        @RequestParam Integer originalOrderId,
-        HttpSession session,
-        Model model) {
+    public String reorderPublishOrder(
+            @RequestParam String rtitle,
+            @RequestParam(required = false) String rauthor,
+            @RequestParam Integer originalOrderId,
+            HttpSession session,
+            Model model) {
 
         Order originalOrder = orderService.getOrderById(originalOrderId);
         @SuppressWarnings("unchecked")
@@ -436,13 +451,14 @@ public class RootController {
             return "redirect:/error";
         }
         if (rtitle == null || rtitle.trim().isEmpty()) {
-             log.warn("Publicación cancelada: Título vacío para original ID {}", originalOrderId);
-             model.addAttribute("reorderError", "El título no puede estar vacío.");
-             model.addAttribute("originalOrder", originalOrder);
-             model.addAttribute("reOrderState", currentReorderState);
-             String searchQuery = (String) session.getAttribute("searchQuery");
-             if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
-             return "reorder";
+            log.warn("Publicación cancelada: Título vacío para original ID {}", originalOrderId);
+            model.addAttribute("reorderError", "El título no puede estar vacío.");
+            model.addAttribute("originalOrder", originalOrder);
+            model.addAttribute("reOrderState", currentReorderState);
+            String searchQuery = (String) session.getAttribute("searchQuery");
+            if (searchQuery != null)
+                model.addAttribute("searchQuery", searchQuery);
+            return "reorder";
         }
 
         if (originalOrder.getContent().equals(currentReorderState)) {
@@ -459,11 +475,12 @@ public class RootController {
 
             return "reorder";
         }
-        
+
         log.info("Contenido diferente, guardando reorder para original ID {}", originalOrderId);
         try {
             String finalAuthor = (rauthor == null || rauthor.trim().isEmpty()) ? "Anónimo" : rauthor.trim();
-            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
+            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState,
+                    originalOrder);
 
             session.removeAttribute("reOrderState");
             session.removeAttribute("reorderOriginalId");
@@ -476,7 +493,8 @@ public class RootController {
             model.addAttribute("originalOrder", originalOrder);
             model.addAttribute("reOrderState", currentReorderState);
             String searchQuery = (String) session.getAttribute("searchQuery");
-            if (searchQuery != null) model.addAttribute("searchQuery", searchQuery);
+            if (searchQuery != null)
+                model.addAttribute("searchQuery", searchQuery);
             return "reorder";
         }
     }

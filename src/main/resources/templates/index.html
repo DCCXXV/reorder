@@ -38,6 +38,13 @@
                             <li class="gap-2">
                                 <a class = "py-3 text-lg"
                                 tabindex="0"
+                                   hx-get="/logIn"
+                                   hx-target="#pageContent"
+                                   hx-swap="innerHTML"
+                                   hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                                   >Iniciar Sesión</a>      
+                                <a class = "py-3 text-lg"
+                                tabindex="0"
                                    hx-get="/register"
                                    hx-target="#pageContent"
                                    hx-swap="innerHTML"
@@ -101,7 +108,7 @@
                             <a href = "register">Registrar</a>
                         </li>
                         <li class="btn btn-outline btn-secondary ml-4">
-                            <a href="logIn.html">Iniciar Sesión</a>
+                            <a href="logIn">Iniciar Sesión</a>
                         </li>
                     </ul>
                 </div>

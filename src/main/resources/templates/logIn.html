@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html class="h-100" xmlns:th="http://www.thymeleaf.org" data-theme="night" lang="es">
+    <script>
+        // PostHog para web analytics, ignorar
+        !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+        posthog.init('phc_2U5iex2pVjkIZU1vkt7G44nB5NSfQwTwlCA4DK8CkxB', {
+            api_host: 'https://us.i.posthog.com',
+            person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+        });
+    </script>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="description" content="¡Inicia sesión en ReOrder!">
@@ -11,6 +19,45 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+        <script>
+            function toggleLoginType() {
+                var emailInput = document.getElementById("emailInput");
+                var userInput = document.getElementById("userInput");
+                var emailButton = document.getElementById("emailButton");
+                var userButton = document.getElementById("userButton");
+                
+                if (emailInput.classList.contains("hidden")) {
+                    emailInput.classList.remove("hidden");
+                    userInput.classList.add("hidden");
+                    emailButton.classList.add("hidden");
+                    userButton.classList.remove("hidden");
+                } else {
+                    emailInput.classList.add("hidden");
+                    userInput.classList.remove("hidden");
+                    emailButton.classList.remove("hidden");
+                    userButton.classList.add("hidden");
+                }
+            }
+        </script>
+
+        <script>
+            function validateForm() {
+                var userInput = document.getElementById("emailInput");
+                var emailInput = document.getElementById("userInput");
+                var passwordInput = document.getElementById("passwordInput");
+                if (passwordInput && (userInput || emailInput)) {
+                    return true;
+                }
+                else {
+                return false;
+                }
+            }
+        </script>
     </head>
 <body>
     <div class="flex items-center justify-center min-h-screen px-4">
@@ -18,13 +65,36 @@
             <span class="text-3xl title-logo flex items-center justify-center mb-4">Re<span class="text-secondary">O</span>rder</span>
             <span class="text-4xl title-logo pb-2 flex items-center justify-center mb-4">Iniciar sesión</span>
             <form method="post" th:action="@{/uploadLogin}" id="loginForm">
-                <div class="flex flex-col w-full mb-5 items-center">
+                <div class="flex flex-col w-full mb-5 items-center" id="userInput">
                     <label class="input validator w-full">
-                        <input type="text" placeholder="Correo o usuario" required class="w-full" name="identifier"/>
+                          <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+                              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </g>
+                          </svg>
+                        <input type="text" placeholder="Usuario" required class="w-full" name="identifier"/>
                     </label>
                 </div>
-                <div class="flex flex-col w-full mb-4 items-center">
+                <div class="flex flex-col w-full mb-5 items-center hidden" id="emailInput">
                     <label class="input validator w-full">
+                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+                              <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                            </g>
+                          </svg>
+                        <input type="text" placeholder="Correo Electrónico" required class="w-full" name="identifier"/>
+                    </label>
+                </div>
+                <div class="flex flex-col w-full mb-4 items-center" id ="passwordInput">
+                    <label class="input validator w-full">
+                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+                              <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+                              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                            </g>
+                        </svg>
                         <input type="password" required placeholder="Contraseña" minlength="8" class="w-full" name="password"/>
                     </label>
                 </div>
@@ -32,6 +102,25 @@
                     <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2" type="submit">Iniciar sesión</button>
                 </div>
             </form>
+            <div class="mt-4 text-start " >
+                <p>¿No tienes cuenta? <a href="/register" class="text-secondary font-bold">Regístrate aquí</a></p>
+            </div>
+            <button class="btn btn-md md:btn-lg btn-secondary w-full" onclick="toggleLoginType()" id="emailButton">
+                <svg aria-label="Email icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="black"><rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </g></svg>
+                Iniciar Sesión con correo
+            </button>
+            <button class="btn btn-md md:btn-lg btn-secondary w-full hidden" onclick="toggleLoginType()" id="userButton">
+                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="black">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </g>
+                  </svg>
+                Iniciar Sesión con nombre de Usuario
+            </div>
         </div>
     </div>
 </body>

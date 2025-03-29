@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -39,6 +40,7 @@ public class Order implements Transferable<Order.Transfer>{
     @Convert(converter = ListOfListsConverter.class)
     @Lob
     @Column(columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.EAGER)
     private List<List<String>> content;
     
     private String title;

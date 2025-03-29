@@ -38,7 +38,6 @@ public class Order implements Transferable<Order.Transfer>{
     private java.sql.Timestamp createdAt;
     
     @Convert(converter = ListOfListsConverter.class)
-    @Lob
     @Column(columnDefinition = "TEXT")
     @Basic(fetch = FetchType.EAGER)
     private List<List<String>> content;

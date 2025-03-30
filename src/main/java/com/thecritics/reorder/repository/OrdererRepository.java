@@ -18,4 +18,5 @@ public interface OrdererRepository extends JpaRepository<Orderer, Long>{
     @Query("SELECT o FROM Orderer o WHERE LOWER(o.username) = LOWER(:username)")
     Orderer existsByUsername(@Param ("username") String username);
 
+    Orderer findById(int id);
 }

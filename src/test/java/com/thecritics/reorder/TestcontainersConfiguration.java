@@ -7,7 +7,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-@ActiveProfiles("test")
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {
     // contenedor estático compartido para todas las pruebas

@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
-@ActiveProfiles("test")
 @DataJpaTest
 @Import(TestcontainersConfiguration.class)
 @ContextConfiguration(classes = ReorderApplication.class)

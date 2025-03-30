@@ -23,4 +23,10 @@ public class EndpointsIntegrationTest {
         return Karate.run("classpath:features/searchOrderIntegrationTest.feature")
                 .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
+
+    @Karate.Test
+    public Karate testRegisterUser() {
+        return Karate.run("classpath:features/registerUserIntegrationTest.feature")
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
+    }
 }

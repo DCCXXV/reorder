@@ -60,7 +60,7 @@
                 <div class="text-secondary text-xl font-bold" th:text="${order.reorderedOrder.title ?: 'Sin Título'}"></div>
                 <div class="text-lg" th:text="'@' + ${order.reorderedOrder.author ?: 'Anónimo'}"></div>
             </div>
-            <div class="mt-4 flex" th:if="${order.reorderedOrder.content != null && order.reorderedOrder.content.size() > 1}">
+            <div class="mt-4 flex overflow-hidden" th:if="${order.reorderedOrder.content != null && order.reorderedOrder.content.size() > 1}">
                 <span
                     th:each="e, iterStat : ${order.reorderedOrder.content[1]}"
                     th:if="${iterStat.index < 3}"

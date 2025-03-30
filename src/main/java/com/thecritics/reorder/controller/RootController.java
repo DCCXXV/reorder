@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -256,21 +260,46 @@ public class RootController {
      *                Order.
      * @return El nombre de la vista "index".
      */
-    @PostMapping("/createOrder/PublishOrder")
-    public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session,
-            Model model) {
-        if (title == null || title.isEmpty()) {
-            return "error";
+@PostMapping("/createOrder/PublishOrder")
+    public ResponseEntity<?> PublishOrder(
+        @RequestParam String title,
+        @RequestParam(required = false) String author,
+        HttpSession session,
+        RedirectAttributes redirectAttributes) {
+
+        if (title == null || title.trim().isEmpty()) {
+            return new ResponseEntity<>("El título no puede estar vacío.", HttpStatus.BAD_REQUEST);
         }
 
+        String finalAuthor = (author == null || author.trim().isEmpty()) ? "Anónimo" : author.trim();
         List<List<String>> orderState = orderService.getOrderState(session);
 
-        Order savedOrder = orderService.saveOrder(title, author, orderState);
-        orderState = clearOrder(orderState);
+        boolean hasElementsInTiers = orderState != null && orderState.size() > 1 &&
+            orderState.stream()
+                      .skip(1)
+                      .anyMatch(tier -> tier != null && !tier.isEmpty());
 
-        model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+        if (!hasElementsInTiers) {
+            return new ResponseEntity<>("Debe haber al menos un elemento en un Tier para publicar.", HttpStatus.BAD_REQUEST);
+        }
 
-        return "redirect:/order/" + savedOrder.getId();
+        try {
+            Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
+
+            redirectAttributes.addFlashAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+
+            String redirectUrl = "/order/" + savedOrder.getId();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", redirectUrl);
+            headers.add("HX-Redirect", redirectUrl);
+
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+
+        } catch (Exception e) {
+            log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), finalAuthor, e);
+            return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -458,6 +487,7 @@ public class RootController {
             String searchQuery = (String) session.getAttribute("searchQuery");
             if (searchQuery != null)
                 model.addAttribute("searchQuery", searchQuery);
+            
             return "reorder";
         }
 

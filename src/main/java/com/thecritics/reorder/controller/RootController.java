@@ -386,17 +386,21 @@ public class RootController {
 
     @PostMapping("/uploadRegister")
     public String uploadRegister(@RequestParam String username, @RequestParam String email, @RequestParam String password, Model model){
-        if (username == null || username.isEmpty()){
-            return "error";
+        if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            model.addAttribute("errorMessage", "Todos los campos son obligatorios");
+            return "register"; 
         }
 
-        if (email == null || email.isEmpty()){
-            return "error";
+        if (ordererService.existsByEmail(email) != null) {
+            model.addAttribute("errorMessage", "El correo ya está registrado. Intente con otro.");
+            return "register"; 
         }
 
-        if (password == null || password.isEmpty()){
-            return "error";
+        if (ordererService.existsByUsername(username) != null) {
+            model.addAttribute("errorMessage", "El nombre de usuario ya está registrado. Intente con otro.");
+            return "register"; 
         }
+    
 
         ordererService.saveOrderer(email, username, password);
 

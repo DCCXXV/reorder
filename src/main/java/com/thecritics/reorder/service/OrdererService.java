@@ -3,14 +3,18 @@ package com.thecritics.reorder.service;
 import com.thecritics.reorder.controller.RootController;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
+import com.thecritics.reorder.SecurityConfig;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,6 +30,15 @@ public class OrdererService {
     @Autowired
     private OrdererRepository ordererRepository;
 
+    public Orderer existsByEmail(String email) {
+        return ordererRepository.existsByEmail(email);
+    }
+
+    public Orderer existsByUsername(String username) {
+        return ordererRepository.existsByUsername(username);
+    }
+
+    
    
 
     /**
@@ -40,7 +53,7 @@ public class OrdererService {
         Orderer orderer = new Orderer();
         orderer.setEmail(email);
         orderer.setUsername(username);
-        orderer.setPassword(password);
+        orderer.setPassword(getPasswordEncoder().encode(password));
 
         Orderer savedOrderer = ordererRepository.save(orderer);
 
@@ -53,6 +66,12 @@ public class OrdererService {
     
     public Orderer findByEmail(String email) {
         return ordererRepository.findByEmail(email);
+    }
+
+    @Bean
+	public PasswordEncoder getPasswordEncoder() {
+		// by default in Spring Security 5, a wrapped new BCryptPasswordEncoder();
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder(); 
     }
 
 }

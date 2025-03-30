@@ -56,8 +56,8 @@
           </svg>
           <input type="text" required placeholder="Username" pattern="[A-Za-z][A-Za-z0-9\-]*" minlength="3" maxlength="30" title="Only letters, numbers or dash" class="w-full" name = "username"/>
         </label>
-        <p class="validator-hint text-sm text-center mt-1">
-          Must be 3 to 30 characters<br/>containing only letters, numbers or dash
+        <p class="validator-hint text-sm text-center mt-1 mb-2">
+          Debe tener de 3 a 30 caracteres<br/> conteniendo solo letras, números o guiones
         </p>
       </div>
       <div class="flex flex-col w-full mb-4 items-center">
@@ -70,14 +70,15 @@
           </svg>
           <input type="password" required placeholder="Password" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must be more than 8 characters, including number, lowercase letter, uppercase letter" class="w-full" name = "password"/>
         </label>
-        <p class="validator-hint text-sm text-center mt-1 hidden">
-          Must be more than 8 characters, including:<br/>At least one number<br/>At least one lowercase letter<br/>At least one uppercase letter
+        <p class="validator-hint text-sm text-center mt-1 hidden mb-2">
+          Debe tener más de 8 caracteres, incluidos:<br/> Al menos un número<br/>Al menos una letra minúscula<br/>Al menos una letra mayúscula
         </p>
       </div>
       <div class="flex flex-col w-full items-center mt-6">
         
 
-        <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2" type = "submit">Registrar</button> 
+        <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2 mb-4" type = "submit">Registrar</button> 
+        <div id="messageContainer1" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error rounded-lg bg-base-200" th:text="${errorMessage}"></div>
       </form>
       </div>
     </div>

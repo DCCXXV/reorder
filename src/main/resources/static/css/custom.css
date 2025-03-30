@@ -6,10 +6,32 @@
     font-weight: 400;
 }
 
+html[data-theme="night"] {
+    /* rose pine
+    --color-neutral: #393552;
+    --color-secondary: #9ccfd8;
+    --color-secondary-muted: #56949f;
+
+    --color-error: #eb6f92;
+    --color-error-muted: #341920;
+    --color-base-100: #191724;
+    --color-base-200: #1f1d2e;
+    --color-base-300: #26233a;
+    --color-base-content: #e0def4;
+    */
+
+    /* mejoras sobre tema actual
+    --color-neutral: #393552;
+    --color-base-100: #18162c;
+    --color-base-200: #24223a;
+    --color-base-300: #2b2b39;
+    */
+
+    --color-secondary-muted-2: #171F38;
+}
+
 .title-logo {
-    font-family: "Playfair Display", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 500;
     font-style: normal;
 }
 
@@ -20,12 +42,13 @@
 .badge {
     transition: all 0.05s ease-in-out;
     vertical-align: middle;
+    text-wrap-mode: nowrap;
 }
 
 .selected-badge {
-    background-color: #171F38 !important;
-    color: #818CF8 !important;
-    border-color: #818CF8 !important;
+    background-color: var(--color-base-300);
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
     cursor: grabbing;
 }
 
@@ -49,9 +72,9 @@
 }
 
 .badge:has(.element-cancel:hover) {
-    background-color: #201F31 !important;
-    color: #FB7085 !important;
-    border-color: #FB7085 !important;
+    background-color: var(--color-error-muted);
+    color: var(--color-error);
+    border-color: var(--color-error);
     
     transform: scale(1.03);
     transition: transform 0.3s ease;
@@ -60,8 +83,10 @@
 
 .categoryLabel {
     transition: all 0.05s ease-in-out;
-    background-color: #171F38 !important;
-    border: 2px solid #171F38 !important;
+    background-color: var(--color-secondary-muted-2);
+    border-style: solid;
+    border-color: var(--color-secondary-muted-2);
+    border-width: 4px 0 4px 4px;
 }
 
 .categoryLabel:hover {
@@ -75,7 +100,7 @@
 }
 
 .tdel:hover {
-    color: #FB7085 !important;
+    color: var(--color-error);
 }
 
 .handle {
@@ -94,25 +119,24 @@
 
 #addCategory:hover {
     transform: scale(1.04);
-    border: 2px solid #818CF8 !important;
-    background-color: #171F38 !important;
+    border: 2px solid var(--color-secondary);
+    background-color: var(--color-secondary-muted-2);
 }
 
 .searchAutocompleteItem {
     padding: 12px;
     margin-top: 8px !important;
-    border: 2px solid #0C1425 !important;
-
 }
 
 .searchAutocompleteItem:hover {
     border-radius: 7px !important;
-    background-color: #171F38 !important;
+    background-color: var(--color-base-100);
+    cursor: pointer;
 }
 
 .searchItem:hover {
     border-radius: 7px !important;
-    background-color: rgb(39, 47, 71) !important;
+    filter: brightness(90%);
 }
 
 .errorMessage {

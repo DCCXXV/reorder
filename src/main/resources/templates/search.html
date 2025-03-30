@@ -27,7 +27,7 @@
                     <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
                     <div class="text-lg" th:text="'@' + ${order.author}"></div>
                 </div>
-                <div class="mt-4 flex">
+                <div class="mt-4 flex overflow-hidden">
                     <span
                         th:each="e, iterStat : ${order.content[1]}"
                         th:if="${iterStat.index < 3}"

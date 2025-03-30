@@ -6,6 +6,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -257,20 +262,56 @@ public class RootController {
      * @return El nombre de la vista "index".
      */
     @PostMapping("/createOrder/PublishOrder")
-    public String PublishOrder(@RequestParam String title, @RequestParam String author, HttpSession session,
-            Model model) {
-        if (title == null || title.isEmpty()) {
-            return "error";
+    public ResponseEntity<?> PublishOrder(
+        @RequestParam String title,
+        @RequestParam(required = false) String author,
+        HttpSession session,
+        RedirectAttributes redirectAttributes) {
+
+        if (title == null || title.trim().isEmpty()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            headers.add("HX-Retarget", "#publish-error-message");
+            headers.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("El título no puede estar vacío.", headers, HttpStatus.BAD_REQUEST);
         }
 
+        String finalAuthor = (author == null || author.trim().isEmpty()) ? "Anónimo" : author.trim();
         List<List<String>> orderState = orderService.getOrderState(session);
 
-        Order savedOrder = orderService.saveOrder(title, author, orderState);
-        orderState = clearOrder(orderState);
+        boolean hasElementsInTiers = orderState != null && orderState.size() > 1 &&
+            orderState.stream()
+                      .skip(1)
+                      .anyMatch(tier -> tier != null && !tier.isEmpty());
 
-        model.addAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+        if (!hasElementsInTiers) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            headers.add("HX-Retarget", "#publish-error-message");
+            headers.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("Debe haber al menos un elemento en un Tier para publicar.", headers, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
 
-        return "redirect:/order/" + savedOrder.getId();
+            redirectAttributes.addFlashAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
+
+            String redirectUrl = "/order/" + savedOrder.getId();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", redirectUrl);
+            headers.add("HX-Redirect", redirectUrl);
+
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+
+        } catch (Exception e) {
+            log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), finalAuthor, e);
+            HttpHeaders errorHeaders = new HttpHeaders();
+            errorHeaders.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            errorHeaders.add("HX-Retarget", "#publish-error-message");
+            errorHeaders.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", errorHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -458,6 +499,7 @@ public class RootController {
             String searchQuery = (String) session.getAttribute("searchQuery");
             if (searchQuery != null)
                 model.addAttribute("searchQuery", searchQuery);
+            
             return "reorder";
         }
 

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -260,7 +261,7 @@ public class RootController {
      *                Order.
      * @return El nombre de la vista "index".
      */
-@PostMapping("/createOrder/PublishOrder")
+    @PostMapping("/createOrder/PublishOrder")
     public ResponseEntity<?> PublishOrder(
         @RequestParam String title,
         @RequestParam(required = false) String author,
@@ -268,7 +269,11 @@ public class RootController {
         RedirectAttributes redirectAttributes) {
 
         if (title == null || title.trim().isEmpty()) {
-            return new ResponseEntity<>("El título no puede estar vacío.", HttpStatus.BAD_REQUEST);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            headers.add("HX-Retarget", "#publish-error-message");
+            headers.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("El título no puede estar vacío.", headers, HttpStatus.BAD_REQUEST);
         }
 
         String finalAuthor = (author == null || author.trim().isEmpty()) ? "Anónimo" : author.trim();
@@ -280,9 +285,12 @@ public class RootController {
                       .anyMatch(tier -> tier != null && !tier.isEmpty());
 
         if (!hasElementsInTiers) {
-            return new ResponseEntity<>("Debe haber al menos un elemento en un Tier para publicar.", HttpStatus.BAD_REQUEST);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            headers.add("HX-Retarget", "#publish-error-message");
+            headers.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("Debe haber al menos un elemento en un Tier para publicar.", headers, HttpStatus.BAD_REQUEST);
         }
-
         try {
             Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
 
@@ -298,7 +306,11 @@ public class RootController {
 
         } catch (Exception e) {
             log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), finalAuthor, e);
-            return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", HttpStatus.INTERNAL_SERVER_ERROR);
+            HttpHeaders errorHeaders = new HttpHeaders();
+            errorHeaders.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+            errorHeaders.add("HX-Retarget", "#publish-error-message");
+            errorHeaders.add("HX-Reswap", "innerHTML");
+            return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", errorHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

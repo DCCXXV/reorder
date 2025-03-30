@@ -5,4 +5,4 @@ Background:
   * url 'http://localhost:' + port
   
 Scenario: Ver un Order en detalle flujo habitual
-    # 1: El Orderer entra en la vista de ver Order y la vista se ve correctamente
+  # 1: El Orderer entra en la vista de ver Order y la vista se ve correctamente

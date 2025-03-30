@@ -254,12 +254,13 @@ public class RootController {
 
     /**
      * Endpoint para publicar un Order, guardándola en la base de datos.
+     * Devuelve ResponseEntity para manejar redirecciones y errores con HTMX.
      *
-     * @param title   El título del Order.
-     * @param author  El autor del Order.
-     * @param session La sesión HTTP actual, utilizada para obtener el estado del
-     *                Order.
-     * @return El nombre de la vista "index".
+     * @param title            El título del Order.
+     * @param author           El autor del Order (opcional).
+     * @param session          La sesión HTTP actual.
+     * @param redirectAttributes Para pasar mensajes flash en la redirección.
+     * @return ResponseEntity con redirección (302) o error (400/500).
      */
     @PostMapping("/createOrder/PublishOrder")
     public ResponseEntity<?> PublishOrder(
@@ -269,10 +270,7 @@ public class RootController {
         RedirectAttributes redirectAttributes) {
 
         if (title == null || title.trim().isEmpty()) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
-            headers.add("HX-Retarget", "#publish-error-message");
-            headers.add("HX-Reswap", "innerHTML");
+            HttpHeaders headers = createErrorHeaders("#publish-error-message");
             return new ResponseEntity<>("El título no puede estar vacío.", headers, HttpStatus.BAD_REQUEST);
         }
 
@@ -285,14 +283,14 @@ public class RootController {
                       .anyMatch(tier -> tier != null && !tier.isEmpty());
 
         if (!hasElementsInTiers) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
-            headers.add("HX-Retarget", "#publish-error-message");
-            headers.add("HX-Reswap", "innerHTML");
+            HttpHeaders headers = createErrorHeaders("#publish-error-message");
             return new ResponseEntity<>("Debe haber al menos un elemento en un Tier para publicar.", headers, HttpStatus.BAD_REQUEST);
         }
+
         try {
             Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
+
+            orderState = clearOrder(orderState);
 
             redirectAttributes.addFlashAttribute("toastMessage", "¡Tu Order ha sido publicado correctamente!");
 
@@ -306,10 +304,7 @@ public class RootController {
 
         } catch (Exception e) {
             log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), finalAuthor, e);
-            HttpHeaders errorHeaders = new HttpHeaders();
-            errorHeaders.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
-            errorHeaders.add("HX-Retarget", "#publish-error-message");
-            errorHeaders.add("HX-Reswap", "innerHTML");
+            HttpHeaders errorHeaders = createErrorHeaders("#publish-error-message");
             return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", errorHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -465,22 +460,24 @@ public class RootController {
         }
     }
 
-    /**
-     * Endpoint para publicar un Order, guardándola en la base de datos.
+/**
+     * Endpoint para publicar un ReOrder, guardándolo en la base de datos.
+     * Devuelve ResponseEntity para manejar redirecciones y errores con HTMX.
      *
-     * @param title   El título del Order.
-     * @param author  El autor del Order.
-     * @param session La sesión HTTP actual, utilizada para obtener el estado del
-     *                Order.
-     * @return El nombre de la vista "index".
+     * @param rtitle            El título del ReOrder.
+     * @param rauthor           El autor del ReOrder (opcional).
+     * @param originalOrderId   ID del Order original que se está reordenando.
+     * @param session           La sesión HTTP actual.
+     * @param redirectAttributes Para pasar mensajes flash en la redirección.
+     * @return ResponseEntity con redirección (302) o error (400/500).
      */
     @PostMapping("/reorder/PublishOrder")
-    public String reorderPublishOrder(
+    public ResponseEntity<?> reorderPublishOrder(
             @RequestParam String rtitle,
             @RequestParam(required = false) String rauthor,
             @RequestParam Integer originalOrderId,
             HttpSession session,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
 
         Order originalOrder = orderService.getOrderById(originalOrderId);
         @SuppressWarnings("unchecked")
@@ -488,56 +485,55 @@ public class RootController {
 
         if (originalOrder == null || currentReorderState == null) {
             log.error("Error crítico: Faltan datos originales o de sesión para ID {}", originalOrderId);
-            model.addAttribute("globalError", "Error inesperado al procesar. Intenta de nuevo.");
-            return "redirect:/error";
+            HttpHeaders headers = createErrorHeaders("#reorder-error-message"); // Usa el helper
+            return new ResponseEntity<>("Error inesperado al procesar. Intenta de nuevo.", headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
         if (rtitle == null || rtitle.trim().isEmpty()) {
             log.warn("Publicación cancelada: Título vacío para original ID {}", originalOrderId);
-            model.addAttribute("reorderError", "El título no puede estar vacío.");
-            model.addAttribute("originalOrder", originalOrder);
-            model.addAttribute("reOrderState", currentReorderState);
-            String searchQuery = (String) session.getAttribute("searchQuery");
-            if (searchQuery != null)
-                model.addAttribute("searchQuery", searchQuery);
-            
-            return "reorder";
+            HttpHeaders headers = createErrorHeaders("#reorder-error-message");
+            return new ResponseEntity<>("El título no puede estar vacío.", headers, HttpStatus.BAD_REQUEST);
         }
 
         if (originalOrder.getContent().equals(currentReorderState)) {
             log.warn("Publicación cancelada: No hay cambios en el contenido para original ID {}", originalOrderId);
-
-            model.addAttribute("errorMessage", "No has realizado cambios en el contenido.");
-
-            model.addAttribute("originalOrder", originalOrder);
-            model.addAttribute("reOrderState", currentReorderState);
-            String searchQuery = (String) session.getAttribute("searchQuery");
-            if (searchQuery != null) {
-                model.addAttribute("searchQuery", searchQuery);
-            }
-
-            return "reorder";
+            HttpHeaders headers = createErrorHeaders("#reorder-error-message");
+            return new ResponseEntity<>("No has realizado cambios en el contenido.", headers, HttpStatus.BAD_REQUEST);
         }
 
         log.info("Contenido diferente, guardando reorder para original ID {}", originalOrderId);
         try {
             String finalAuthor = (rauthor == null || rauthor.trim().isEmpty()) ? "Anónimo" : rauthor.trim();
-            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState,
-                    originalOrder);
+            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
 
             session.removeAttribute("reOrderState");
             session.removeAttribute("reorderOriginalId");
 
-            return "redirect:/order/" + savedReorder.getId();
+            redirectAttributes.addFlashAttribute("toastMessage", "¡Tu ReOrder ha sido publicado correctamente!");
+            String redirectUrl = "/order/" + savedReorder.getId();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Location", redirectUrl);
+            headers.add("HX-Redirect", redirectUrl);
+
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
 
         } catch (Exception e) {
             log.error("Error al guardar el reorder para original ID {}", originalOrderId, e);
-            model.addAttribute("reorderError", "Error inesperado al guardar.");
-            model.addAttribute("originalOrder", originalOrder);
-            model.addAttribute("reOrderState", currentReorderState);
-            String searchQuery = (String) session.getAttribute("searchQuery");
-            if (searchQuery != null)
-                model.addAttribute("searchQuery", searchQuery);
-            return "reorder";
+            HttpHeaders headers = createErrorHeaders("#reorder-error-message");
+            return new ResponseEntity<>("Error inesperado al guardar.", headers, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Helper privado para crear las cabeceras estándar de error para HTMX.
+     * @param targetSelector El selector CSS (ej. "#error-div") donde HTMX debe poner el mensaje.
+     * @return HttpHeaders configuradas para errores HTMX.
+     */
+    private HttpHeaders createErrorHeaders(String targetSelector) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("text/plain;charset=UTF-8"));
+        headers.add("HX-Retarget", targetSelector);
+        headers.add("HX-Reswap", "innerHTML");
+        return headers;
     }
 }

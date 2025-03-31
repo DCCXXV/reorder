@@ -6,7 +6,7 @@
             <div class="my-4">
                 <div class="flex items-center text-center w-full">
                     <div class="mb-6 w-full">
-                        <form id="orderForm" class="w-full" hx-preserve action="/createOrder/PublishOrder" method="post">
+                        <form id="orderForm" class="w-full" hx-preserve hx-post="/createOrder/PublishOrder" hx-trigger="submit" hx-target="#pageContent">
                             <div class="flex flex-col md:flex-row text-start w-full gap-4">
                                 <div class="flex flex-col md:flex-row gap-4 flex-grow">
                                     <div class="flex flex-col w-full md:w-1/2">

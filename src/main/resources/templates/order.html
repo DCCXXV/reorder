@@ -1,5 +1,19 @@
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
-    <div class = "flex p-1"><span th:text="${order.title}" class="mt-15 text-4xl font-bold text-secondary"></span></div>
+    <title hidden th:text="${order.title} + ' | ReOrder'"></title>
+    <div th:if="${searchQuery != null}" class="mt-10">
+        <input type="hidden" id="originalQueryInput" name="query" th:value="${searchQuery}" />
+
+        <button class="btn rounded-pill bg-base-200 p-4"
+                hx-post="/search"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                hx-include="#originalQueryInput"
+                >
+            <i class="fa-solid fa-chevron-left me-2"></i>
+            Volver a Resultados
+        </button>
+    </div>
+    <div class = "flex p-1"><span th:text="${order.title}" class="mt-4 text-4xl font-bold text-secondary"></span></div>
     <div class="flex justify-between p-1 items-center">
         <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
         <form
@@ -28,6 +42,32 @@
                     th:data-element="${e}">                          
                     <span th:text="${e}">elemento</span>
                 </span>
+            </div>
+        </div>
+    </div>
+    
+    <div th:if="${order.reorderedOrder != null}"
+        class="mt-6 bg-base-200 p-4 rounded-xl border border-base-300">
+
+        <p class="text-sm mb-2" style="filter: brightness(70%);">ReOrder de:</p>
+
+        <div class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
+            tabindex="0"
+            th:attr="hx-get=@{/order/{id}(id=${order.reorderedOrder.id}, fromQuery=${searchQuery})}"
+            hx-target="#pageContent"
+            hx-swap="innerHTML">
+            <div class="flex justify-between">
+                <div class="text-secondary text-xl font-bold" th:text="${order.reorderedOrder.title ?: 'Sin Título'}"></div>
+                <div class="text-lg" th:text="'@' + ${order.reorderedOrder.author ?: 'Anónimo'}"></div>
+            </div>
+            <div class="mt-4 flex overflow-hidden" th:if="${order.reorderedOrder.content != null && order.reorderedOrder.content.size() > 1}">
+                <span
+                    th:each="e, iterStat : ${order.reorderedOrder.content[1]}"
+                    th:if="${iterStat.index < 3}"
+                    class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
+                    <span th:text="${e}">elemento</span>
+                </span>
+                <span th:if="${order.reorderedOrder.content[1].size() > 3}" class="self-center ml-1">...</span>
             </div>
         </div>
     </div>

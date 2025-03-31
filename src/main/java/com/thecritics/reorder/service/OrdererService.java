@@ -1,6 +1,5 @@
 package com.thecritics.reorder.service;
 
-import com.thecritics.reorder.controller.RootController;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.SecurityConfig;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrdererService {
 
-    private static final Logger log = LogManager.getLogger(RootController.class);
+    private static final Logger log = LogManager.getLogger(HomeController.class);
 
     @Autowired
     private OrdererRepository ordererRepository;

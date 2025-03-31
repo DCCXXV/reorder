@@ -1,11 +1,13 @@
 package com.thecritics.reorder.service;
 
-import com.thecritics.reorder.controller.RootController;
+import com.thecritics.reorder.controller.HomeController;
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService {
 
-    private static final Logger log = LogManager.getLogger(RootController.class);
+    private static final Logger log = LogManager.getLogger(HomeController.class);
 
     @Autowired
     private OrderRepository orderRepository;
@@ -258,5 +260,27 @@ public class OrderService {
         orderOriginal.getReorders().add(savedReOrder);
 
         return savedReOrder;
+    }
+    /**
+     * Crea una copia profunda (deep clone) de la estructura de contenido de un Order.
+     * Esto asegura que las modificaciones en la copia no afecten al original.
+     *
+     * @param originalContent La lista de listas de strings original (puede ser null).
+     * @return Una nueva lista de listas de strings que es una copia profunda,
+     *         o null si la entrada era null. Devuelve listas internas null si
+     *         estaban presentes en el original.
+     */
+    public List<List<String>> deepCloneOrderContent(List<List<String>> originalContent) {
+        if (originalContent == null) {
+            return null;
+        }
+        return originalContent.stream()
+                .map(originalInnerList -> {
+                    if (originalInnerList == null) {
+                        return null;
+                    }
+                    return new ArrayList<>(originalInnerList);
+                })
+                .collect(Collectors.toList());
     }
 }

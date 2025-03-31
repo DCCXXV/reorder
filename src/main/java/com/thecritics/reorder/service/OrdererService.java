@@ -3,6 +3,8 @@ package com.thecritics.reorder.service;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.SecurityConfig;
+import com.thecritics.reorder.controller.HomeController;
+
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 /**
  * Servicio que gestiona las operaciones relacionadas con las órdenes ({@link Orderer}). Esto incluye

@@ -2,7 +2,7 @@ Feature: Publicar Order
 
 Background:
   Given url 'http://localhost:8080'
-  * def validOrderStateJson = '[[], ["Matrix"], ["Inception"]]'
+  * def validOrderStateJson = '[[], ["Puerta Simple"], ["Puerta Corredera"]]'
   * def emptyTiersOrderStateJson = '[["ElementoSinTier"], [], []]'
 
 Scenario: El Orderer le da a publicar Order sin poner un título
@@ -73,4 +73,3 @@ Scenario: El Orderer le da a publicar Order sin elementos en los Tiers (Fallo Va
   When method post
   Then status 400
   And match response == "Debe haber al menos un elemento en un Tier para publicar."
-

@@ -32,7 +32,6 @@ public class ReorderController {
     private final ObjectMapper objectMapper;
     private final OrderService orderService;
 
-    @Autowired
     public ReorderController(ObjectMapper objectMapper, OrderService orderService) {
         this.objectMapper = objectMapper;
         this.orderService = orderService;
@@ -60,7 +59,7 @@ public class ReorderController {
         String searchQuery = null;
         if (fromQueryParam != null && !fromQueryParam.isEmpty()) {
             searchQuery = fromQueryParam;
-            session.setAttribute("searchQuery", searchQuery); // Guardar/Actualizar en sesión
+            session.setAttribute("searchQuery", searchQuery);
             log.debug("Recibido y guardado searchQuery desde parámetro: {}", searchQuery);
         } else {
             searchQuery = (String) session.getAttribute("searchQuery");

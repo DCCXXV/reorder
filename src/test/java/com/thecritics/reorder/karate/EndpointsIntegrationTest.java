@@ -52,8 +52,8 @@ public class EndpointsIntegrationTest {
     }
 
     @Karate.Test
-    public Karate testRegisterUser() {
-        return Karate.run("classpath:features/registerUserIntegrationTest.feature")
+    public Karate testSignup() {
+        return Karate.run("classpath:features/signupIntegrationTest.feature")
                 .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
 }

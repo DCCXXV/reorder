@@ -18,7 +18,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Servicio que gestiona las operaciones relacionadas con las órdenes ({@link Orderer}). Esto incluye
  * manipulación del estado de la orden en la sesión, guardado de órdenes, búsqueda de órdenes y
@@ -29,19 +28,37 @@ public class OrdererService {
 
     private static final Logger log = LogManager.getLogger(HomeController.class);
 
-    @Autowired
-    private OrdererRepository ordererRepository;
+    private final OrdererRepository ordererRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public Orderer existsByEmail(String email) {
-        return ordererRepository.existsByEmail(email);
+    public OrdererService(OrdererRepository ordererRepository, PasswordEncoder passwordEncoder) {
+        this.ordererRepository = ordererRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Orderer existsByUsername(String username) {
-        return ordererRepository.existsByUsername(username);
+    /**
+     * Comprueba si ya existe un Orderer con la dirección de correo electrónico especificada
+     * en el repositorio, ignorando mayúsculas y minúsculas.
+     *
+     * @param email La dirección de correo cuya existencia se desea comprobar. No debe ser nulo.
+     * @return {@code true} si existe un Orderer con el correo electrónico proporcionado (ignorando mayúsculas/minúsculas),
+     *         {@code false} en caso contrario.
+     */
+    public Boolean emailAlreadyTaken(String email) {
+        return ordererRepository.existsByEmailIgnoreCase(email);
     }
 
-    
-   
+    /**
+     * Comprueba si ya existe un Orderer con el nombre de usuario especificado
+     * en el repositorio, ignorando mayúsculas y minúsculas.
+     *
+     * @param username El nombre de usuario cuya existencia se desea comprobar. No debe ser nulo.
+     * @return {@code true} si existe un Orderer con el nombre de usuario proporcionado (ignorando mayúsculas/minúsculas),
+     *         {@code false} en caso contrario.
+     */
+    public Boolean usernameAlreadyTaken(String username) {
+        return ordererRepository.existsByUsernameIgnoreCase(username);
+    }
 
     /**
      * Guarda un Orderer con el username, email y contraseña.
@@ -55,17 +72,10 @@ public class OrdererService {
         Orderer orderer = new Orderer();
         orderer.setEmail(email);
         orderer.setUsername(username);
-        orderer.setPassword(getPasswordEncoder().encode(password));
+        orderer.setPassword(this.passwordEncoder.encode(password));
 
         Orderer savedOrderer = ordererRepository.save(orderer);
 
         return savedOrderer;
     }
-
-    @Bean
-	public PasswordEncoder getPasswordEncoder() {
-		// by default in Spring Security 5, a wrapped new BCryptPasswordEncoder();
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder(); 
-	}	
-
 }

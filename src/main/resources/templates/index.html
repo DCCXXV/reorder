@@ -11,6 +11,9 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="description" content="¡Crea tus TierLists con ReOrder!">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <meta name="_csrf_parameter_name" th:content="${_csrf.parameterName}"/>
         
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.0/themes.css" rel="stylesheet" type="text/css" />
@@ -94,7 +97,7 @@
                             hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
                             <a>Crear Order</a>
                         </li>
-                        <a href = "/register" class = "btn btn-outline btn-secondary">Registrar</a>
+                        <a href = "/signup" class = "btn btn-soft btn-secondary">Crear cuenta</a>
                     </ul>
                 </div>
             </div>
@@ -184,4 +187,21 @@
                 
         </script>  
     </body>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            const httpVerb = evt.detail.verb.toUpperCase();
+            if (httpVerb === 'POST' || httpVerb === 'PUT' || httpVerb === 'DELETE' || httpVerb === 'PATCH') {
+                const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
+                const csrfParameterNameMeta = document.querySelector('meta[name="_csrf_parameter_name"]');
+
+                if (csrfTokenMeta && csrfParameterNameMeta) {
+                    const token = csrfTokenMeta.getAttribute('content');
+                    const parameterName = csrfParameterNameMeta.getAttribute('content');
+                    evt.detail.parameters[parameterName] = token;
+                } else {
+                    console.error("CSRF meta tags not found!");
+                }
+            }
+        });
+    </script>
 </html>

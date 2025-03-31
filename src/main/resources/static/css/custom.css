@@ -7,10 +7,14 @@
 }
 
 html[data-theme="night"] {
+    --color-secondary-muted-2: #171F38;
+
     /* rose pine
     --color-neutral: #393552;
-    --color-secondary: #9ccfd8;
-    --color-secondary-muted: #56949f;
+    --color-secondary: #f6c177;
+    --color-secondary-muted: #ea9d34;
+    --color-secondary-muted-2: #393552;
+
 
     --color-error: #eb6f92;
     --color-error-muted: #341920;
@@ -20,14 +24,13 @@ html[data-theme="night"] {
     --color-base-content: #e0def4;
     */
 
-    /* mejoras sobre tema actual
+    /* fondo ligeramente morado en vez de azul
     --color-neutral: #393552;
+    --color-secondary-muted-2: #3d4168;
     --color-base-100: #18162c;
-    --color-base-200: #24223a;
-    --color-base-300: #2b2b39;
+    --color-base-200: #201e35;
+    --color-base-300: #29293a;
     */
-
-    --color-secondary-muted-2: #171F38;
 }
 
 .title-logo {

@@ -26,7 +26,6 @@ public class OrderViewController {
 
     private final OrderService orderService;
 
-    @Autowired
     public OrderViewController(OrderService orderService) {
         this.orderService = orderService;
     }

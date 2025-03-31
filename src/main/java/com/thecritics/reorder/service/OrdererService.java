@@ -1,9 +1,10 @@
 package com.thecritics.reorder.service;
 
-import com.thecritics.reorder.controller.RootController;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.SecurityConfig;
+import com.thecritics.reorder.controller.HomeController;
+
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Servicio que gestiona las operaciones relacionadas con las órdenes ({@link Orderer}). Esto incluye
  * manipulación del estado de la orden en la sesión, guardado de órdenes, búsqueda de órdenes y
@@ -25,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrdererService {
 
-    private static final Logger log = LogManager.getLogger(RootController.class);
+    private static final Logger log = LogManager.getLogger(HomeController.class);
 
     @Autowired
     private OrdererRepository ordererRepository;

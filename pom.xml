@@ -173,6 +173,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<jmxPort>9002</jmxPort>
+					<wait>1000</wait>
+					<maxAttempts>180</maxAttempts>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

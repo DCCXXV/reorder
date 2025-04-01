@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -34,6 +35,10 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -165,6 +170,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
             .perform(get("/reorder")
                 .param("idInput", String.valueOf(NON_EXISTENT_ORDER_ID))
+                .with(csrf())
                 .session(mockSession))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl(REDIRECT_ERROR_URL));
@@ -193,6 +199,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/updateOrderState")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("reOrderStateJson", changedContentJson))
             .andExpect(status().isOk())
             .andExpect(view().name(REORDER_VIEW_NAME))
@@ -226,6 +233,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/updateOrderState")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("reOrderStateJson", changedContentJson))
             .andExpect(status().isOk())
             .andExpect(view().name(REORDER_VIEW_NAME))
@@ -252,6 +260,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/updateOrderState")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("reOrderStateJson", changedContentJson))
             .andExpect(status().isOk())
             .andExpect(view().name(ERROR_VIEW_NAME))
@@ -281,6 +290,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/updateOrderState")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("reOrderStateJson", invalidJson))
             .andExpect(status().isOk())
             .andExpect(view().name(ERROR_VIEW_NAME))
@@ -310,6 +320,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/updateOrderState")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("reOrderStateJson", emptyContentJson))
             .andExpect(status().isOk())
             .andExpect(view().name(ERROR_VIEW_NAME))
@@ -335,6 +346,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", "")
                 .param("rauthor", REORDER_AUTHOR)
                 .param(
@@ -367,6 +379,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param("rauthor", REORDER_AUTHOR)
                 .param(
@@ -394,6 +407,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param("rauthor", REORDER_AUTHOR)
                 .param(
@@ -428,6 +442,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param("rauthor", REORDER_AUTHOR)
                 .param(
@@ -462,6 +477,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", " " + REORDER_TITLE + " ")
                 .param("rauthor", " " + REORDER_AUTHOR + " ")
                 .param(
@@ -514,6 +530,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param("rauthor", "")
                 .param(
@@ -563,6 +580,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param(
                     "originalOrderId",
@@ -618,6 +636,7 @@ class ReorderControllerIntegrationTest {
             .perform(post("/reorder/PublishOrder")
                 .session(mockSession)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(csrf())
                 .param("rtitle", REORDER_TITLE)
                 .param("rauthor", REORDER_AUTHOR)
                 .param(

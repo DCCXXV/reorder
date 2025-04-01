@@ -6,7 +6,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EndpointsIntegrationTest {
+public class EndpointsKarateIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -49,5 +49,11 @@ public class EndpointsIntegrationTest {
         return Karate.run("classpath:features/doReorderIntegrationTest.feature")
                 .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
                 .systemProperty("karate.server.port", String.valueOf(port));
+    }
+
+    @Karate.Test
+    public Karate testSignup() {
+        return Karate.run("classpath:features/signupIntegrationTest.feature")
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
 }

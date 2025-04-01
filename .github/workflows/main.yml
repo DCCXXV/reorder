@@ -21,22 +21,13 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # Iniciar la aplicación Spring Boot en segundo plano (necesario para Karate)
-      - name: Iniciar aplicación Spring Boot
-        run: mvn spring-boot:run &
-        # '&' al final ejecuta el proceso en segundo plano
+      # Maven se encarga de construir, iniciar app, testear (Karate), detener app
+      - name: Construir y Testear con Maven
+        run: mvn -B verify # Este comando orquesta todo (se paso la lógica al pom.xml)
 
-      # Ejecutar tests (incluyendo Karate)
-      - name: Ejecutar tests
-        run: mvn verify
-
-      # Detener la aplicación
-      - name: Detener aplicación
-        if: always()
-        run: mvn spring-boot:stop
-
-      # Subir artefactos
+      # Subir el JAR (solo si todo fue bien)
       - name: Subir JAR
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: spring-boot-app

@@ -21,24 +21,45 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.service.OrderService;
+import com.thecritics.reorder.service.OrdererService;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+
 /**
  * Controlador para todas las operaciones relacionadas con la creación de un nuevo Order.
  */
+
 @Controller
-@RequestMapping("/createOrder") // Base path para todas las rutas de este controlador
+@RequestMapping("/createOrder")
 public class OrderCreationController {
 
     private static final Logger log = LogManager.getLogger(OrderCreationController.class);
 
+    @Autowired
+    private OrderService orderService;
     private final ObjectMapper objectMapper;
-    private final OrderService orderService;
 
-    // --- Constantes específicas de la creación ---
     private final int MAX_CHARACTERS = 30;
     private final int MAX_ELEMENTS = 500;
     private final int MAX_TIERS = 50;
 
-    @Autowired
     public OrderCreationController(ObjectMapper objectMapper, OrderService orderService) {
         this.objectMapper = objectMapper;
         this.orderService = orderService;

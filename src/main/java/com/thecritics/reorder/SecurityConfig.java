@@ -65,11 +65,12 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            /*
             .requiresChannel(channel -> {
                 if (isProductionProfileActive()) {
                     channel.anyRequest().requiresSecure();
                 }
-            })
+            })*/
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()
             )

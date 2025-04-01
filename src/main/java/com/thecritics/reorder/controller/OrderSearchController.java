@@ -30,7 +30,6 @@ public class OrderSearchController {
 
     private static final int AUTOCOMPLETE_LIMIT = 5;
 
-    @Autowired
     public OrderSearchController(OrderService orderService) {
         this.orderService = orderService;
     }

@@ -11,6 +11,9 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="description" content="¡Crea tus TierLists con ReOrder!">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <meta name="_csrf_parameter_name" th:content="${_csrf.parameterName}"/>
         
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.0/themes.css" rel="stylesheet" type="text/css" />
@@ -35,7 +38,11 @@
                             </svg>
                         </div>
                         <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow">
-                            <li class="gap-2">              
+                            <li class="gap-2">
+                                <a 
+                                class="py-3 text-lg"
+                                href = "/register"
+                                   >Registrar</a>              
                                 <a class="py-3 text-lg"
                                    tabindex="0"
                                    hx-get="/createOrder"
@@ -82,7 +89,7 @@
                 <div class="navbar-end hidden lg:flex">
                     <ul>
                         <li 
-                            class="btn btn-outline btn-secondary"
+                            class="btn btn-outline btn-secondary mr-4"
                             tabindex="0"
                             hx-get="/createOrder"
                             hx-target="#pageContent"
@@ -90,6 +97,7 @@
                             hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
                             <a>Crear Order</a>
                         </li>
+                        <a href = "/signup" class = "btn btn-soft btn-secondary">Crear cuenta</a>
                     </ul>
                 </div>
             </div>
@@ -115,7 +123,7 @@
                                     hx-indicator="#search-indicator"
                                 />
                                 <button
-                                    class="btn btn-lg md:btn-xl btn-secondary w-full sm:w-auto"
+                                    class="btn btn-lg md:btn-xl btn-secondary w-full sm:w-auto "
                                     type="button"
                                     hx-post="/search"
                                     hx-target="#pageContent"
@@ -174,6 +182,26 @@
                         htmx.trigger(searchForm, 'submit');
                     }
                 }
+
+
+                
         </script>  
     </body>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            const httpVerb = evt.detail.verb.toUpperCase();
+            if (httpVerb === 'POST' || httpVerb === 'PUT' || httpVerb === 'DELETE' || httpVerb === 'PATCH') {
+                const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
+                const csrfParameterNameMeta = document.querySelector('meta[name="_csrf_parameter_name"]');
+
+                if (csrfTokenMeta && csrfParameterNameMeta) {
+                    const token = csrfTokenMeta.getAttribute('content');
+                    const parameterName = csrfParameterNameMeta.getAttribute('content');
+                    evt.detail.parameters[parameterName] = token;
+                } else {
+                    console.error("CSRF meta tags not found!");
+                }
+            }
+        });
+    </script>
 </html>

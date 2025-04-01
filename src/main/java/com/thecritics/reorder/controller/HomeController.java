@@ -20,7 +20,6 @@ public class HomeController {
      */
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
-        // Nombres de atributos de sesión que quieres pasar globalmente al modelo
         for (String name : new String[] { "u", "url", "ws" }) {
             if (session.getAttribute(name) != null) {
                 model.addAttribute(name, session.getAttribute(name));

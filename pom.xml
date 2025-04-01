@@ -31,6 +31,7 @@
 		<maven-failsafe-plugin.version>3.2.5</maven-failsafe-plugin.version>
 		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -173,9 +174,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<jmxPort>9002</jmxPort>
-					<wait>1000</wait>
-					<maxAttempts>180</maxAttempts>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -183,23 +181,8 @@
 						</exclude>
 					</excludes>
 				</configuration>
-				<executions>
-					<execution>
-						<id>pre-integration-test</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>start</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-integration-test</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
@@ -233,9 +216,53 @@
 				 <configuration>
 					 <excludes>
 						 <exclude>**/*IntegrationTest.java</exclude>
+						 <exclude>**/*KarateIntegrationTest.java</exclude>
 					 </excludes>
 				 </configuration>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pre-integration-test</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+								  <arguments>
+								    <argument>--spring.profiles.active=dev</argument>
+								  </arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>prod</id>
+		</profile>
+	</profiles>
+
 </project>

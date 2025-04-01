@@ -1,7 +1,10 @@
 package com.thecritics.reorder.service;
 
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -24,10 +27,6 @@ import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrderRepository;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 import com.thecritics.reorder.repository.OrdererRepository;
 
 

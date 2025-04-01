@@ -6,7 +6,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EndpointsIntegrationTest {
+public class EndpointsKarateIntegrationTest {
 
     @LocalServerPort
     private int port;

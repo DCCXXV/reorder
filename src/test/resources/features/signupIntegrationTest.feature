@@ -1,7 +1,8 @@
 Feature: Pruebas para el controlador de registro de Orderer
 
   Background:
-    * url 'http://localhost:8080'
+  * def port = karate.properties['karate.server.port']
+  * url 'http://localhost:' + port
 
   Scenario: Obtener la página de registro
     Given path '/signup'

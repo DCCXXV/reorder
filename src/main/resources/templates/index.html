@@ -110,11 +110,20 @@
                     <div class="p-2" href="/"><span class="text-6xl md:text-6xl lg:text-7xl title-logo">Re<span class="text-secondary">O</span>rder</span></div>
                     <div class="w-full max-w-3xl text-center px-2 sm:px-4">
                         <div class="relative p-3 md:p-4 bg-base-200 rounded-xl">
-                            <div class="flex flex-col sm:flex-row gap-4 md:gap-4">
+                            <form
+                                class="flex flex-col sm:flex-row gap-4 md:gap-4"
+                                hx-post="/search"
+                                hx-trigger="submit"
+                                hx-target="#pageContent"
+                                hx-include="#orderSearchInput"
+                                hx-swap="innerHTML"
+                                hx-push-url="/search"
+                                id="searchByTitle">
                                 <input
                                     id="orderSearchInput"
                                     type="text"
                                     class="w-full input input-lg md:input-xl border-2 border-secondary input-ghost bg-base-100 input-bordered pr-10"
+                                    required
                                     placeholder="Busca un Order..."
                                     name="query"
                                     hx-get="/api/search/autocomplete"
@@ -123,18 +132,14 @@
                                     hx-indicator="#search-indicator"
                                 />
                                 <button
+                                    id="searchButton"
                                     class="btn btn-lg md:btn-xl btn-secondary w-full sm:w-auto "
-                                    type="button"
-                                    hx-post="/search"
-                                    hx-target="#pageContent"
-                                    hx-include="#orderSearchInput"
-                                    hx-push-url="/search"
-
+                                    type="submit"
                                 >
                                     Buscar
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
-                            </div>
+                            </form>
                             <div id="search-indicator" class="absolute top-0 right-0 mt-2 mr-2 hidden">
                                 <i class="fa fa-spinner fa-spin text-secondary"></i>
                             </div>
@@ -181,10 +186,7 @@
                         if (inputInsideForm) inputInsideForm.value = query;
                         htmx.trigger(searchForm, 'submit');
                     }
-                }
-
-
-                
+                }  
         </script>  
     </body>
     <script>

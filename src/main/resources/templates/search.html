@@ -29,7 +29,7 @@
                 </div>
                 <div class="mt-4 flex overflow-hidden">
                     <span
-                        th:each="e, iterStat : ${order.content[1]}"
+                        th:each="e, iterStat : ${order.previewElements}"
                         th:if="${iterStat.index < 3}"
                         class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
                         <span th:text="${e}">elemento</span>

@@ -5,7 +5,7 @@
 		!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 		posthog.init('phc_2U5iex2pVjkIZU1vkt7G44nB5NSfQwTwlCA4DK8CkxB', {
 			api_host: 'https://us.i.posthog.com',
-			person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
+			person_profiles: 'identified_only',
 		});
 	</script>
 	<head>
@@ -52,13 +52,30 @@
 									<circle cx="12" cy="7" r="4"></circle>
 								</g>
 							</svg>
-							<input type="text" required placeholder="Username" pattern="[A-Za-z][A-Za-z0-9\-]*" minlength="3" maxlength="30"
+							<input type="text" required placeholder="Nombre de usuario" pattern="[A-Za-z][A-Za-z0-9\-]*" minlength="3" maxlength="30"
 								title="Only letters, numbers or dash" class="w-full" name="username" />
 						</label>
 						<p class="validator-hint text-sm text-center mt-1 mb-2">
 							Debe tener de 3 a 30 caracteres<br /> conteniendo solo letras, números o guiones
 						</p>
 					</div>
+					<div class="flex flex-col w-full mb-5 items-center">
+						<label class="input validator w-full">
+							<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+								<g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+									<path
+										d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path>
+									<circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+								</g>
+							</svg>
+							<input type="password" required placeholder="Contraseña" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+								title="Tienen que ser más de 8 caracteres, incluyendo numeros, letras en minúsculas y letras en mayúsculas" class="w-full" name="password" />
+						</label>
+						<p class="validator-hint text-sm text-center mt-1 hidden mb-2">
+							Debe tener más de 8 caracteres, incluidos:<br /> Al menos un número<br />Al menos una letra minúscula<br />Al menos una letra mayúscula
+						</p>
+					</div>
+
 					<div class="flex flex-col w-full mb-4 items-center">
 						<label class="input validator w-full">
 							<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -68,8 +85,8 @@
 									<circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
 								</g>
 							</svg>
-							<input type="password" required placeholder="Password" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-								title="Must be more than 8 characters, including number, lowercase letter, uppercase letter" class="w-full" name="password" />
+							<input type="password" required placeholder="Repetir Contraseña" minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+								title="Tienen que ser más de 8 caracteres, incluyendo numeros, letras en minúsculas y letras en mayúsculas" class="w-full" name="password" />
 						</label>
 						<p class="validator-hint text-sm text-center mt-1 hidden mb-2">
 							Debe tener más de 8 caracteres, incluidos:<br /> Al menos un número<br />Al menos una letra minúscula<br />Al menos una letra mayúscula

@@ -108,10 +108,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private boolean isProductionProfileActive() {        
-        return env.acceptsProfiles(Profiles.of("prod"));
-    }
-
     /**
      * Ver más información en
      * https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#publish-authentication-manager-bean

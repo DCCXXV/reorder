@@ -41,6 +41,8 @@ public class Order implements Transferable<Order.Transfer>{
     @Column(columnDefinition = "TEXT")
     @Basic(fetch = FetchType.EAGER)
     private List<List<String>> content;
+
+    private List<String> previewElements;
     
     private String title;
     private String author;

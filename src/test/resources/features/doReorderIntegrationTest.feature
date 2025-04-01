@@ -1,9 +1,8 @@
 Feature: Publicar ReOrder
 
   Background:
-    * url 'http://localhost:8080'
-    * def knownExistingOrderId = 1
-    * def validReorderStateJson = '[[], ["Elemento Movido"], ["Elemento Original"]]'
+  * def port = karate.properties['karate.server.port']
+  * url 'http://localhost:' + port
 
 Scenario: Publicar ReOrder con error crítico (Falta estado en sesión)
   # --- NO configurar sesión ---

@@ -62,12 +62,10 @@
             </div>
             <div class="mt-4 flex overflow-hidden" th:if="${order.reorderedOrder.content != null && order.reorderedOrder.content.size() > 1}">
                 <span
-                    th:each="e, iterStat : ${order.reorderedOrder.content[1]}"
-                    th:if="${iterStat.index < 3}"
+                    th:each="e : ${order.reorderedOrder.previewElements}"
                     class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
                     <span th:text="${e}">elemento</span>
                 </span>
-                <span th:if="${order.reorderedOrder.content[1].size() > 3}" class="self-center ml-1">...</span>
             </div>
         </div>
     </div>

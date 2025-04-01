@@ -150,7 +150,7 @@ public class OrderService {
         return newOrderState;
     }
 
-    /**
+    /*
      * Guarda un Order con el título, autor y contenido especificados.
      *
      * @param title El título de Order.
@@ -163,6 +163,13 @@ public class OrderService {
         order.setContent(content);
         order.setTitle(title);
         order.setAuthor((author == "") ? "Anónimo" : author);
+        
+        List<String> previewElements = content.stream()
+            .flatMap(List::stream)
+            .limit(3)
+            .collect(Collectors.toList());
+
+        order.setPreviewElements(previewElements);
 
         Order savedOrder = orderRepository.save(order);
 
@@ -253,6 +260,13 @@ public class OrderService {
         order.setContent(content);
         order.setTitle(title);
         order.setAuthor((author == "") ? "Anónimo" : author);
+
+        List<String> previewElements = content.stream()
+            .flatMap(List::stream)
+            .limit(3)
+            .collect(Collectors.toList());
+
+        order.setPreviewElements(previewElements);
 
         order.setReorderedOrder(orderOriginal);
 

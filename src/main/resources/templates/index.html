@@ -153,6 +153,75 @@
     
         </footer>
         <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const pageContent = document.getElementById('pageContent');
+                const toastShownFlag = 'reorderToastShown';
+    
+                if (pageContent) {
+                    pageContent.addEventListener('htmx:afterSwap', function(event) {
+                        const isReorderPage = pageContent.querySelector('#reOrderForm') !== null;
+                        const toastElement = pageContent.querySelector('#reorderPageToast');
+    
+                        if (isReorderPage) {
+                            console.log('HTMX Swap: Contenido de ReOrder cargado.');
+                            if (!sessionStorage.getItem(toastShownFlag)) {
+                                console.log('Mostrando toast (bandera no encontrada).');
+                                if (toastElement) {
+                                    toastElement.style.display = '';
+                                    toastElement.style.opacity = '1';
+    
+                                    setTimeout(() => {
+                                        const currentToast = document.getElementById('reorderPageToast');
+                                        if (currentToast) {
+                                            currentToast.style.transition = 'opacity 0.5s ease-out';
+                                            currentToast.style.opacity = '0';
+                                            setTimeout(() => currentToast.remove(), 500);
+                                        }
+                                    }, 5000);
+                                    sessionStorage.setItem(toastShownFlag, 'true');
+                                } else {
+                                    console.warn('Se esperaba el toast #reorderPageToast pero no se encontró.');
+                                }
+                            } else {
+                                console.log('Ocultando toast inmediatamente (bandera encontrada).');
+                                if (toastElement) {
+                                    toastElement.remove();
+                                }
+                            }
+                        } else {
+                            console.log('HTMX Swap: Contenido NO es ReOrder. Limpiando bandera.');
+                            sessionStorage.removeItem(toastShownFlag);
+                        }
+                    });
+                } else {
+                    console.error('Elemento #pageContent no encontrado para añadir listener HTMX.');
+                }
+    
+                if (!document.getElementById('reOrderForm')) {
+                     sessionStorage.removeItem(toastShownFlag);
+                } else {
+                     if (!sessionStorage.getItem(toastShownFlag)) {
+                         const initialToast = document.getElementById('reorderPageToast');
+                         if(initialToast) {
+                             console.log('Mostrando toast en carga inicial directa.');
+                             setTimeout(() => {
+                                const currentToast = document.getElementById('reorderPageToast');
+                                if (currentToast) {
+                                    currentToast.style.transition = 'opacity 0.5s ease-out';
+                                    currentToast.style.opacity = '0';
+                                    setTimeout(() => currentToast.remove(), 500);
+                                }
+                            }, 5000);
+                            sessionStorage.setItem(toastShownFlag, 'true');
+                         }
+                     } else {
+                        const initialToast = document.getElementById('reorderPageToast');
+                        if(initialToast) initialToast.remove();
+                    }
+                }
+            });
+        </script>
+        <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     const resultsContainer = document.getElementById("order-search-results1");
                     if (!resultsContainer) return;

@@ -8,6 +8,7 @@
 
 html[data-theme="night"] {
     --color-secondary-muted-2: #171F38;
+    --color-info: #818CF8;
 
     /* rose pine
     --color-neutral: #393552;
@@ -161,6 +162,15 @@ html, body {
     border-radius: 7px;
     background-color: #171F38;
     padding: 17px;
+}
+
+.fade-out {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+  }
+
+.fade-out.hidden {
+    opacity: 0;
 }
 
 /*

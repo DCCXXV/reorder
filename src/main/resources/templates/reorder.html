@@ -1,3 +1,28 @@
+<div class="toast toast-top toast-end mt-24">
+    <div class="alert bg-secondary text-base-100">
+        <div>
+            <p class="font-bold">¡Haciendo ReOrder!</p>
+            <p>Arrastra los elementos.</p>
+        </div>
+    </div>
+  </div>
+  
+<script>
+    function removeToast(element) {
+        element.classList.add('hidden');
+        setTimeout(() => {
+            element.closest('.toast').remove();
+        }, 500);
+    }
+  
+    setTimeout(function() {
+        const toast = document.querySelector('.toast .alert');
+        if (toast) {
+            removeToast(toast);
+        }
+    }, 5000);
+</script>
+
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
     <title hidden th:text="'Haciendo ReOrder de ' + ${originalOrder.title} + ' | ReOrder'"></title>
     <div class="mt-10">

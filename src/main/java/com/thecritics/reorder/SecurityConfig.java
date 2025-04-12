@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,14 +50,18 @@ public class SecurityConfig {
     @Profile("dev")
     @Order(1)
     public SecurityFilterChain devFilterChain(HttpSecurity http) throws Exception {
+        AntPathRequestMatcher h2PathMatcher = AntPathRequestMatcher.antMatcher("/h2/**");
+
         http
-            .securityMatcher("/h2/**")
+            .securityMatcher(h2PathMatcher)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/h2/**").permitAll()
+                .requestMatchers(h2PathMatcher).permitAll()
             )
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/h2/**"))
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(h2PathMatcher)
+            )
             .headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             );
         return http.build();
     }

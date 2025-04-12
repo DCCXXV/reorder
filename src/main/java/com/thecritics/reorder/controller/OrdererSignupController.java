@@ -24,9 +24,14 @@ public class OrdererSignupController {
     }
 
     @PostMapping("/upload")
-    public String uploadOrderer(@RequestParam String username, @RequestParam String email, @RequestParam String password, Model model){
-        if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
+    public String uploadOrderer(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String password1, Model model){
+        if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password1 == null || password.isEmpty()) {
             model.addAttribute("errorMessage", "Todos los campos son obligatorios");
+            return "signup";
+        }
+
+        if (!password.equals(password1)){
+            model.addAttribute("errorMessage", "Las contraseñas no coinciden");
             return "signup";
         }
 

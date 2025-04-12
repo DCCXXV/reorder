@@ -14,6 +14,7 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = 'AlbaGaliano'
     And form field email = 'albagaliano@gmail.com'
     And form field password = 'Alb4aGaliano'
+    And form field password1 = 'Alb4aGaliano'
     When method post
     Then status 200
 
@@ -22,6 +23,7 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = ''
     And form field email = 'albagaliano@gmail.com'
     And form field password = 'Alb4aGaliano'
+     And form field password1 = 'Alb4aGaliano'
     When method post
     Then status 200
 
@@ -30,6 +32,7 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = 'AlbaGaliano'
     And form field email = ''
     And form field password = 'Alb4aGaliano'
+    And form field password1 = 'Alb4aGaliano'
     When method post
     Then status 200
 
@@ -38,6 +41,7 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = 'AlbaGaliano'
     And form field email = 'albagaliano@gmail.com'
     And form field password = ''
+    And form field password1 = ''
     When method post
     Then status 200
 
@@ -46,6 +50,7 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = 'OtroUsuario'
     And form field email = 'albagaliano@gmail.com'
     And form field password = 'OtraClave123'
+    And form field password1 = 'OtraClave123'
     When method post
     Then status 200
 
@@ -54,5 +59,19 @@ Feature: Pruebas para el controlador de registro de Orderer
     And form field username = 'AlbaGaliano'
     And form field email = 'otroemail@ejemplo.com'
     And form field password = 'OtraClave123'
+    And form field password1 = 'OtraClave123'
     When method post
     Then status 200
+
+
+
+
+    Scenario: Intento de registro con diferentes contraseñas
+    Given path '/signup/upload'
+    And form field username = 'AlbaGaliano'
+    And form field email = 'otroemail@ejemplo.com'
+    And form field password = 'OtraClave123'
+    And form field password1 = 'OtraClave1234'
+    When method post
+    Then status 200
+

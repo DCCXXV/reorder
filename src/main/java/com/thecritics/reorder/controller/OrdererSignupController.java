@@ -25,7 +25,7 @@ public class OrdererSignupController {
 
     @PostMapping("/upload")
     public String uploadOrderer(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String password1, Model model){
-        if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password1 == null || password.isEmpty()) {
+        if (username == null || username.isEmpty() || email == null || email.isEmpty() || password == null || password1 == null || password.isEmpty() || password1.isEmpty()) {
             model.addAttribute("errorMessage", "Todos los campos son obligatorios");
             return "signup";
         }

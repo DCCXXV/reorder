@@ -1,6 +1,7 @@
 package com.thecritics.reorder;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.test.context.ActiveProfiles;
 
 public class TestReorderApplication {
 

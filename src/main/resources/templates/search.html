@@ -20,16 +20,16 @@
             <div th:if="${orderList != null}" th:each="order : ${orderList}" 
                 class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
                 tabindex="0"
-                th:attr="hx-get=@{/order/{id}(id=${order.id})}"
+                th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
                 hx-target="#pageContent"
                 hx-swap="innerHTML">
                 <div class="flex justify-between">
                     <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
                     <div class="text-lg" th:text="'@' + ${order.author}"></div>
                 </div>
-                <div class="mt-4 flex">
+                <div class="mt-4 flex overflow-hidden">
                     <span
-                        th:each="e, iterStat : ${order.content[1]}"
+                        th:each="e, iterStat : ${order.previewElements}"
                         th:if="${iterStat.index < 3}"
                         class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
                         <span th:text="${e}">elemento</span>

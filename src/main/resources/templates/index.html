@@ -11,15 +11,18 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="description" content="¡Crea tus TierLists con ReOrder!">
+        <meta name="_csrf" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+        <meta name="_csrf_parameter_name" th:content="${_csrf.parameterName}"/>
         
-        <link rel="stylesheet" th:href="@{/css/custom.css}" href="css/custom.css" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.0/themes.css" rel="stylesheet" type="text/css" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        
+        <link rel="stylesheet" th:href="@{/css/custom.css}" href="css/custom.css" type="text/css" />
+
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
@@ -38,8 +41,8 @@
                             <li class="gap-2">
                                 <a 
                                 class="py-3 text-lg"
-                                href = "/register"
-                                   >Registrar</a>              
+                                href = "/signup">
+                                   Crear cuenta</a>              
                                 <a class="py-3 text-lg"
                                    tabindex="0"
                                    hx-get="/createOrder"
@@ -100,7 +103,7 @@
                         </li>
                         <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}"
                         >
-                            <a href = "/register">Registrar</a>
+                            <a href = "/signup">Crear cuenta</a>
                         </li>
                         <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}">
                             <a href="/logIn">Iniciar Sesión</a>
@@ -117,11 +120,20 @@
                     <div class="p-2" href="/"><span class="text-6xl md:text-6xl lg:text-7xl title-logo">Re<span class="text-secondary">O</span>rder</span></div>
                     <div class="w-full max-w-3xl text-center px-2 sm:px-4">
                         <div class="relative p-3 md:p-4 bg-base-200 rounded-xl">
-                            <div class="flex flex-col sm:flex-row gap-4 md:gap-4">
+                            <form
+                                class="flex flex-col sm:flex-row gap-4 md:gap-4"
+                                hx-post="/search"
+                                hx-trigger="submit"
+                                hx-target="#pageContent"
+                                hx-include="#orderSearchInput"
+                                hx-swap="innerHTML"
+                                hx-push-url="/search"
+                                id="searchByTitle">
                                 <input
                                     id="orderSearchInput"
                                     type="text"
                                     class="w-full input input-lg md:input-xl border-2 border-secondary input-ghost bg-base-100 input-bordered pr-10"
+                                    required
                                     placeholder="Busca un Order..."
                                     name="query"
                                     hx-get="/api/search/autocomplete"
@@ -130,18 +142,14 @@
                                     hx-indicator="#search-indicator"
                                 />
                                 <button
+                                    id="searchButton"
                                     class="btn btn-lg md:btn-xl btn-secondary w-full sm:w-auto "
-                                    type="button"
-                                    hx-post="/search"
-                                    hx-target="#pageContent"
-                                    hx-include="#orderSearchInput"
-                                    hx-push-url="/search"
-
+                                    type="submit"
                                 >
                                     Buscar
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
-                            </div>
+                            </form>
                             <div id="search-indicator" class="absolute top-0 right-0 mt-2 mr-2 hidden">
                                 <i class="fa fa-spinner fa-spin text-secondary"></i>
                             </div>
@@ -154,6 +162,75 @@
         <footer>
     
         </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const pageContent = document.getElementById('pageContent');
+                const toastShownFlag = 'reorderToastShown';
+    
+                if (pageContent) {
+                    pageContent.addEventListener('htmx:afterSwap', function(event) {
+                        const isReorderPage = pageContent.querySelector('#reOrderForm') !== null;
+                        const toastElement = pageContent.querySelector('#reorderPageToast');
+    
+                        if (isReorderPage) {
+                            console.log('HTMX Swap: Contenido de ReOrder cargado.');
+                            if (!sessionStorage.getItem(toastShownFlag)) {
+                                console.log('Mostrando toast (bandera no encontrada).');
+                                if (toastElement) {
+                                    toastElement.style.display = '';
+                                    toastElement.style.opacity = '1';
+    
+                                    setTimeout(() => {
+                                        const currentToast = document.getElementById('reorderPageToast');
+                                        if (currentToast) {
+                                            currentToast.style.transition = 'opacity 0.5s ease-out';
+                                            currentToast.style.opacity = '0';
+                                            setTimeout(() => currentToast.remove(), 500);
+                                        }
+                                    }, 5000);
+                                    sessionStorage.setItem(toastShownFlag, 'true');
+                                } else {
+                                    console.warn('Se esperaba el toast #reorderPageToast pero no se encontró.');
+                                }
+                            } else {
+                                console.log('Ocultando toast inmediatamente (bandera encontrada).');
+                                if (toastElement) {
+                                    toastElement.remove();
+                                }
+                            }
+                        } else {
+                            console.log('HTMX Swap: Contenido NO es ReOrder. Limpiando bandera.');
+                            sessionStorage.removeItem(toastShownFlag);
+                        }
+                    });
+                } else {
+                    console.error('Elemento #pageContent no encontrado para añadir listener HTMX.');
+                }
+    
+                if (!document.getElementById('reOrderForm')) {
+                     sessionStorage.removeItem(toastShownFlag);
+                } else {
+                     if (!sessionStorage.getItem(toastShownFlag)) {
+                         const initialToast = document.getElementById('reorderPageToast');
+                         if(initialToast) {
+                             console.log('Mostrando toast en carga inicial directa.');
+                             setTimeout(() => {
+                                const currentToast = document.getElementById('reorderPageToast');
+                                if (currentToast) {
+                                    currentToast.style.transition = 'opacity 0.5s ease-out';
+                                    currentToast.style.opacity = '0';
+                                    setTimeout(() => currentToast.remove(), 500);
+                                }
+                            }, 5000);
+                            sessionStorage.setItem(toastShownFlag, 'true');
+                         }
+                     } else {
+                        const initialToast = document.getElementById('reorderPageToast');
+                        if(initialToast) initialToast.remove();
+                    }
+                }
+            });
+        </script>
         <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     const resultsContainer = document.getElementById("order-search-results1");
@@ -188,10 +265,24 @@
                         if (inputInsideForm) inputInsideForm.value = query;
                         htmx.trigger(searchForm, 'submit');
                     }
-                }
-
-
-                
+                }  
         </script>  
     </body>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            const httpVerb = evt.detail.verb.toUpperCase();
+            if (httpVerb === 'POST' || httpVerb === 'PUT' || httpVerb === 'DELETE' || httpVerb === 'PATCH') {
+                const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
+                const csrfParameterNameMeta = document.querySelector('meta[name="_csrf_parameter_name"]');
+
+                if (csrfTokenMeta && csrfParameterNameMeta) {
+                    const token = csrfTokenMeta.getAttribute('content');
+                    const parameterName = csrfParameterNameMeta.getAttribute('content');
+                    evt.detail.parameters[parameterName] = token;
+                } else {
+                    console.error("CSRF meta tags not found!");
+                }
+            }
+        });
+    </script>
 </html>

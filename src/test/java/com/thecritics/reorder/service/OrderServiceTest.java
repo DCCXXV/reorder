@@ -1,5 +1,11 @@
 package com.thecritics.reorder.service;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,16 +17,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.thecritics.reorder.controller.RootController;
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -375,6 +375,153 @@ class OrderServiceTest {
 
         verify(orderRepository, times(1)).findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(query);
     }
+
+    //HACER REORDER
+
+    @Test
+    void saveReOrder_WhenValidData_ShouldSaveAndReturnNewOrder() {   
+        // Arrange
+        List<List<String>> orderContent = new ArrayList<>();
+        orderContent.add(List.of("Elemento 1"));
+        orderContent.add(List.of("Elemento 2"));
+
+        Order order = new Order();
+        order.setId(1L);
+        order.setTitle("Top de tops");
+        order.setAuthor("sara");
+        order.setContent(orderContent);
+        order.setReorders(new ArrayList<>());
+
+        String newTitle = "Nuevo top de tops";
+        String newAuthor = "saro";
+        List<List<String>> newContent = List.of(List.of("Nuevo Item 1"), List.of("Nuevo Item 2"));
+
+        Order reOrder = new Order();
+        reOrder.setId(2L);
+        reOrder.setTitle(newTitle);
+        reOrder.setAuthor(newAuthor);
+        reOrder.setContent(newContent);
+        reOrder.setReorderedOrder(order);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(reOrder);
+
+        // Act
+        Order result = orderService.saveReOrder(newTitle, newAuthor, newContent, order);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(2L);
+        assertThat(result.getTitle()).isEqualTo(newTitle);
+        assertThat(result.getAuthor()).isEqualTo(newAuthor);
+        assertThat(result.getContent()).isEqualTo(newContent);
+        assertThat(result.getReorderedOrder()).isEqualTo(order);
+        assertThat(order.getReorders()).contains(result);
+
+        verify(orderRepository).save(any(Order.class));
+    }
+
+    @Test
+    void saveReOrder_WhenAuthorIsEmpty_ShouldSetAnonymousAsAuthor() {  
+        // Arrange
+        List<List<String>> content = new ArrayList<>();
+        content.add(List.of("Elemento 1"));
+        content.add(List.of("Elemento 2"));
+
+        Order order = new Order();
+        order.setId(1L);
+        order.setTitle("Top de tops");
+        order.setAuthor("sara");
+        order.setContent(content);
+        order.setReorders(new ArrayList<>());
+
+        String newTitle = "Nuevo top de tops";
+        String emptyAuthor = "";
+        List<List<String>> newContent = List.of(List.of("Nuevo Item 1"));
+
+        Order reOrder = new Order();
+        reOrder.setId(2L);
+        reOrder.setTitle(newTitle);
+        reOrder.setAuthor("Anónimo");
+        reOrder.setContent(newContent);
+        reOrder.setReorderedOrder(order);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(reOrder);
+
+        // Act
+        Order result = orderService.saveReOrder(newTitle, emptyAuthor, newContent, order);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getAuthor()).isEqualTo("Anónimo");
+        verify(orderRepository).save(any(Order.class));
+    }
     
-   
+    @Test
+    void saveReOrder_WhenOriginalOrderIsNull_ShouldThrowException() {
+        // Arrange
+        String newTitle = "New Order";
+        String newAuthor = "User";
+        List<List<String>> newContent = List.of(List.of("Nuevo Item 1"));
+
+        // Act & Assert
+        assertThatThrownBy(() -> orderService.saveReOrder(newTitle, newAuthor, newContent, null))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void getReOrderState_ShouldInitializeStateIfNull() {
+        // Arrange
+        List<List<String>> expectedReOrderState = new ArrayList<>();
+        expectedReOrderState.add(new ArrayList<>()); 
+        expectedReOrderState.add(new ArrayList<>()); 
+
+        // Act; cuando el atributo "reOrderState" es null en la sesión, se inicializa el estado
+        when(session.getAttribute("reOrderState")).thenReturn(null);
+        List<List<String>> result = orderService.getReOrderState(session);
+
+        // Assert
+        assertThat(result).isEqualTo(expectedReOrderState);
+    }
+
+    @Test
+    void getReOrderState_ShouldReturnExistingStateIfNotNull() {
+        // Arrange
+        List<List<String>> existingReOrderState = new ArrayList<>();
+        existingReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        existingReOrderState.add(Arrays.asList("Naranja")); 
+
+        // Act
+        when(session.getAttribute("reOrderState")).thenReturn(existingReOrderState);
+        List<List<String>> result = orderService.getReOrderState(session);
+
+        // 3.
+        assertThat(result).isEqualTo(existingReOrderState);
+    }
+
+    @Test
+    void updateReOrderState_ShouldUpdateStateInSession() {
+        // Arrange
+        List<List<String>> newReOrderState = new ArrayList<>();
+        newReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        newReOrderState.add(Arrays.asList("Naranja")); 
+        // Act;
+        List<List<String>> result = orderService.updateReOrderState(newReOrderState, session);
+
+        // Assert
+        assertThat(result).isEqualTo(newReOrderState);
+    }
+
+    @Test
+    void updateReOrderState_ShouldSetAttributeInSession() {
+       
+        // Arrange
+        List<List<String>> newReOrderState = new ArrayList<>();
+        newReOrderState.add(Arrays.asList("Manzana", "Pera")); 
+        newReOrderState.add(Arrays.asList("Naranja")); 
+        // Act
+        orderService.updateReOrderState(newReOrderState, session);
+
+        //Assert
+        verify(session).setAttribute("reOrderState", newReOrderState);
+    }
 }

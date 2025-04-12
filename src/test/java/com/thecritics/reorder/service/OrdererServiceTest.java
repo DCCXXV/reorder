@@ -2,33 +2,18 @@ package com.thecritics.reorder.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.model.Orderer;
-import com.thecritics.reorder.repository.OrderRepository;
-
 import com.thecritics.reorder.repository.OrdererRepository;
-
 
 @ExtendWith(MockitoExtension.class) 
 public class OrdererServiceTest {

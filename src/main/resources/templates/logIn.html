@@ -23,49 +23,13 @@
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-        <!--
-        <script>
-            function toggleLoginType() {
-                var emailInput = document.getElementById("emailInput");
-                var userInput = document.getElementById("userInput");
-                var emailButton = document.getElementById("emailButton");
-                var userButton = document.getElementById("userButton");
-                
-                if (emailInput.classList.contains("hidden")) {
-                    emailInput.classList.remove("hidden");
-                    userInput.classList.add("hidden");
-                    emailButton.classList.add("hidden");
-                    userButton.classList.remove("hidden");
-                } else {
-                    emailInput.classList.add("hidden");
-                    userInput.classList.remove("hidden");
-                    emailButton.classList.remove("hidden");
-                    userButton.classList.add("hidden");
-                }
-            }
-        </script>
-
-        <script>
-            function validateForm() {
-                var userInput = document.getElementById("emailInput");
-                var emailInput = document.getElementById("userInput");
-                var passwordInput = document.getElementById("passwordInput");
-                if (passwordInput && (userInput || emailInput)) {
-                    return true;
-                }
-                else {
-                return false;
-                }
-            }
-        </script>
-        -->
     </head>
 <body>
     <div class="flex items-center justify-center min-h-screen px-4">
         <div class="flex flex-col bg-base-200 shadow-md rounded-lg w-full max-w-md p-6 sm:p-8">
             <span class="text-3xl title-logo flex items-center justify-center mb-4">Re<span class="text-secondary">O</span>rder</span>
             <span class="text-4xl title-logo pb-2 flex items-center justify-center mb-4">Iniciar sesión</span>
-            <form method="post" th:action="@{/uploadLogin}" id="loginForm">
+            <form method="post" th:action="@{/login/upload}" id="loginForm">
                 <div class="flex flex-col w-full mb-5 items-center" id="userInput">
                     <label class="input validator w-full">
                           <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -77,19 +41,6 @@
                         <input type="text" placeholder="Usuario"  class="w-full" name="identifier"/>
                     </label>
                 </div>
-                <!--
-                <div class="flex flex-col w-full mb-5 items-center hidden" id="emailInput">
-                    <label class="input validator w-full">
-                        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
-                              <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                            </g>
-                          </svg>
-                        <input type="text" placeholder="Correo Electrónico"  class="w-full" name="identifier"/>
-                    </label>
-                </div>
-                -->
                 <div class="flex flex-col w-full mb-4 items-center" id ="passwordInput">
                     <label class="input validator w-full">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -105,29 +56,11 @@
                     <button class="btn btn-md md:btn-lg btn-secondary w-full sm:w-1/2" type="submit">Iniciar sesión</button>
                 </div>
             </form>
-            <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 rounded border border-error text-error rounded-lg" th:text="${errorMessage}"></div>
+            <div id="messageContainer" th:if="${errorMessage != null}" class="errorMessage flex items-center p-2 mt-6 rounded border border-error text-error rounded-lg" th:text="${errorMessage}"></div>
 
             <div class="mt-4 text-start " >
-                <p>¿No tienes cuenta? <a href="/register" class="text-secondary font-bold">Regístrate aquí</a></p>
+                <p>¿No tienes cuenta? <a href="/signup" class="text-secondary font-bold">Crea tu cuenta aquí</a></p>
             </div>
-            <!--
-            <button class="btn btn-md md:btn-lg btn-secondary w-full" onclick="toggleLoginType()" id="emailButton">
-                <svg aria-label="Email icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="black"><rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                </g></svg>
-                Iniciar Sesión con correo
-            </button>
-            <button class="btn btn-md md:btn-lg btn-secondary w-full hidden" onclick="toggleLoginType()" id="userButton">
-                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="black">
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </g>
-                  </svg>
-                Iniciar Sesión con nombre de Usuario
-            </button>
-            -->
         </div>
     </div>
 </body>

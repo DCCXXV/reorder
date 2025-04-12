@@ -99,14 +99,14 @@
                             hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
                             th:if="${session.orderer != null}"
                             >
-                            <a>Crear Order</a>
+                            <a href = "/createOrder">Crear Order</a>
                         </li>
                         <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}"
                         >
                             <a href = "/signup">Crear cuenta</a>
                         </li>
                         <li class="btn btn-outline btn-secondary ml-4" th:if="${session.orderer == null}">
-                            <a href="/logIn">Iniciar Sesión</a>
+                            <a href="/login">Iniciar Sesión</a>
                         </li>
                     </ul>
                 </div>

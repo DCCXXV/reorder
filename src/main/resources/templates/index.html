@@ -41,8 +41,14 @@
                             <li class="gap-2">
                                 <a 
                                 class="py-3 text-lg"
+                                th:if="${session.orderer == null}"
                                 href = "/signup">
-                                   Crear cuenta</a>              
+                                   Crear cuenta</a>
+                                   <a 
+                                class="py-3 text-lg"
+                                th:if="${session.orderer == null}"
+                                href = "/login">
+                                   Iniciar sesion</a>               
                                 <a class="py-3 text-lg"
                                    tabindex="0"
                                    hx-get="/createOrder"

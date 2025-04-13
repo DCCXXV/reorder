@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Autowired
 	private Environment env;
 
+    @Autowired
+	private LoginSuccessHandler loginSuccessHandler;
+
     private static class KarateTestRequestMatcher implements RequestMatcher {
         @Override
         public boolean matches(HttpServletRequest request) {
@@ -71,46 +74,29 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            /*
-            .requiresChannel(channel -> {
-                if (isProductionProfileActive()) {
-                    channel.anyRequest().requiresSecure();
-                }
-            })*/
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
+                .requestMatchers("/", "/login/**","/error", "/css/**", "/js/**", "/images/**", "/signup/**", "/search").permitAll()
+                .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf
-                // Habilita CSRF normalmente con cookies
+                // habilita CSRF normalmente con cookies
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 // PERO ignora la protección CSRF para las solicitudes que coincidan con matcher de karate
                 .ignoringRequestMatchers(new KarateTestRequestMatcher())
-            );
-
-            /*
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/error", "/css/**", "/js/**", "/images/**").permitAll()
-                // .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
             )
-            .formLogin(login -> login
-                .loginPage("/login") // endpoint a la página de login
-                .defaultSuccessUrl("/home", true) // Redirige aquí tras login exitoso
-                .permitAll() // permite acceso a la página de login
+            .formLogin(formLogin -> formLogin
+                .loginPage("/login")
+                .permitAll()
+				.successHandler(loginSuccessHandler)
             )
             .webAuthn((webAuthn) -> webAuthn
                 .rpName("Spring Security Relying Party")
                 .rpId("reorder.naivc.top")
                 .allowedOrigins("https://reorder.naivc.top")
             )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout") // Redirige aquí tras logout
-                .permitAll()
-            )
             .exceptionHandling(exceptions -> exceptions
-                 .accessDeniedPage("/error/403") // acceso denegado
+                 .accessDeniedPage("/error/403")
             );
-            */
         return http.build();
     }
 
@@ -118,39 +104,18 @@ public class SecurityConfig {
      * Ver más información en
      * https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#publish-authentication-manager-bean
      */
-	@Bean
-	public AuthenticationManager authenticationManager(
-			UserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService);
-		authenticationProvider.setPasswordEncoder(passwordEncoder);
-
-		return new ProviderManager(authenticationProvider);
-	}
-
-    /**
-     * Ver más información de
-     * https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#publish-authentication-manager-bean
-     */
     @Bean
-    @SuppressWarnings("deprecation")
-	public UserDetailsService ordererDetailsService() {
-		UserDetails userDetails = User.withDefaultPasswordEncoder()
-			.username("user")
-			.password("password")
-			.roles("USER")
-			.build();
+    public AuthenticationManager authenticationManager(
+            UserDetailsService ordererDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(ordererDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authenticationProvider);
+    }
 
-		return new InMemoryUserDetailsManager(userDetails);
-	}
-
-    /**
-     * Ver más información de
-     * https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#publish-authentication-manager-bean
-     */
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 }

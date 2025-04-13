@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/login")
 public class OrdererLoginController {
 
-    private static final Logger log = LogManager.getLogger(OrderCreationController.class);
+    private static final Logger log = LogManager.getLogger(OrdererLoginController.class);
 
     @Autowired
     private OrdererService ordererService;
@@ -28,42 +28,20 @@ public class OrdererLoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
     
+    /**
+     * Maneja las solicitudes GET para mostrar la página de inicio de sesión (login).
+     * También maneja la visualización de un mensaje de error si un intento de inicio de sesión anterior falló.
+     * Spring Security redirige a "/login?error" en caso de fallo de autenticación.
+     *
+     * @param model El modelo de UI de Spring.
+     * @param error Parámetro que indica un error de inicio de sesión (poblado automáticamente por Spring Security).
+     * @return El nombre de la plantilla de vista de inicio de sesión ("login").
+     */
     @GetMapping
-    public String login(Model model){
+    public String login(Model model, @RequestParam(value = "error", required = false) String error){
+        if (error != null) {
+            model.addAttribute("errorMessage", "Usuario o contaseña inválidos");
+        }
         return "login";
     }
- 
-    @PostMapping("/upload")
-    public String loginUser(@RequestParam String identifier, @RequestParam String password, Model model,HttpSession session) {
-        if (identifier == null || identifier.isEmpty()){
-            model.addAttribute("errorMessage", "introduzca su usuario o email");
-            return "login";        }
-        if (password == null || password.isEmpty()){
-            model.addAttribute("errorMessage", "introduzca su contraseña");
-            return "login";        }
-
-        boolean isEmail = identifier.contains("@");
-        Orderer orderer = null;
-        if(isEmail) {
-            orderer = ordererService.findByEmail(identifier);
-        } else {
-            orderer = ordererService.findByUsername(identifier);
-        }
-        //una vez que tenemos login exito se dirige a la pagina de inicio 
-        if(orderer == null) {
-            model.addAttribute("errorMessage", "¡El usuario no existe!");
-            return "login";
-        } else if (!passwordEncoder.matches(password, orderer.getPassword())) {
-    
-            model.addAttribute("errorMessage", "¡Contraseña incorrecta!");
-            return "login";
-        } else {
-            session.setAttribute("u", orderer.getUsername());
-            session.setAttribute("ws", orderer.getId());
-            session.setAttribute("orderer", orderer);
-            return "redirect:/";
-        }
-        
-    }
 }
-

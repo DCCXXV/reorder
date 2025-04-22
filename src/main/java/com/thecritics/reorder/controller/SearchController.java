@@ -22,15 +22,15 @@ import java.util.LinkedHashMap;
  * Controlador para la búsqueda de Orders y sugerencias de autocompletado.
  */
 @Controller
-public class OrderSearchController {
+public class SearchController {
 
-    private static final Logger log = LogManager.getLogger(OrderSearchController.class);
+    private static final Logger log = LogManager.getLogger(SearchController.class);
 
     private final OrderService orderService;
 
     private static final int AUTOCOMPLETE_LIMIT = 5;
 
-    public OrderSearchController(OrderService orderService) {
+    public SearchController(OrderService orderService) {
         this.orderService = orderService;
     }
 

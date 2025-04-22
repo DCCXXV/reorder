@@ -2,6 +2,8 @@ package com.thecritics.reorder.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,10 +40,17 @@ public class OrdererLoginController {
      * @return El nombre de la plantilla de vista de inicio de sesión ("login").
      */
     @GetMapping
-    public String login(Model model, @RequestParam(value = "error", required = false) String error){
+    public String login(Model model, @RequestParam(value = "error", required = false) String error,  Authentication authentication){
         if (error != null) {
             model.addAttribute("errorMessage", "Usuario o contaseña inválidos");
         }
+
+        if (authentication != null && authentication.isAuthenticated()
+        && !(authentication instanceof AnonymousAuthenticationToken)) {
+        log.debug("Usuario {} ya autenticado, redirigiendo al home", authentication.getName());
+        return "redirect:/";
+    }
+
         return "login";
     }
 }

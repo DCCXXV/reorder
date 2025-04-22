@@ -51,7 +51,7 @@
                                    hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
                                    >
                                     Crear Order</a>
-                                <a class="py-3 text-lg" href="/">Buscar Orders</a>
+                                <a class="py-3 text-lg" href="/">Buscar en ReOrder</a>
                             </li>  
                         </ul>
                     </div>
@@ -74,7 +74,7 @@
                                     class="flex-grow bg-transparent focus:outline-none"
                                     type="search"
                                     required
-                                    placeholder="Buscar Orders..."
+                                    placeholder="Buscar en ReOrder"
                                     name="query"
                                     hx-get="/api/search/autocomplete"
                                     hx-trigger="keyup changed delay:300ms"
@@ -124,7 +124,7 @@
                                     type="text"
                                     class="w-full input input-lg md:input-xl border-2 border-secondary input-ghost bg-base-100 input-bordered pr-10"
                                     required
-                                    placeholder="Busca un Order..."
+                                    placeholder="Buscar en ReOrder"
                                     name="query"
                                     hx-get="/api/search/autocomplete"
                                     hx-trigger="keyup changed delay:300ms"

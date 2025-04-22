@@ -78,6 +78,7 @@ public class OrderCreationController {
         List<List<String>> orderState = orderService.getOrderState(session);
         model.addAttribute("publishEnabled", false);
         model.addAttribute("orderState", orderState);
+        model.addAttribute("u", session.getAttribute("username"));
         return "createOrder";
     }
 

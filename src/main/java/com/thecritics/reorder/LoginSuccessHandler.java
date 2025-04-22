@@ -36,6 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         addSameSiteCookieAttribute(response);
 
         String username = authentication.getName();
+        request.getSession().setAttribute("username", username);
 
         log.info("User '{}' successfully authenticated. Session ID: {}",
             username, request.getSession().getId());

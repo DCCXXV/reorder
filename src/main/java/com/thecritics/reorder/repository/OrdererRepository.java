@@ -14,6 +14,6 @@ public interface OrdererRepository extends JpaRepository<Orderer, Long>{
     
     boolean existsByEmailIgnoreCase(String email);
     boolean existsByUsernameIgnoreCase(String username);
-
+    List <Orderer> findByUsernameContainingIgnoreCase(String username);
     Orderer findById(int id);
 }

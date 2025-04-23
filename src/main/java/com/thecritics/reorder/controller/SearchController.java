@@ -2,6 +2,8 @@ package com.thecritics.reorder.controller;
 
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.service.OrderService;
+import com.thecritics.reorder.service.OrdererService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +29,20 @@ public class SearchController {
     private static final Logger log = LogManager.getLogger(SearchController.class);
 
     private final OrderService orderService;
+    private final OrdererService ordererService;
 
     private static final int AUTOCOMPLETE_LIMIT = 5;
 
-    public SearchController(OrderService orderService) {
+    public SearchController(OrderService orderService, OrdererService ordererService) {
         this.orderService = orderService;
+        this.ordererService = ordererService;
     }
 
     @PostMapping("/search")
     public String searchByTitle(@RequestParam String query, Model model) {
         model.addAttribute("query", query);
         model.addAttribute("orderList", orderService.getOrdersByTitle(query));
+        model.addAttribute("ordererList", ordererService.getOrderersByUsername(query));
         return "search";
     }
 

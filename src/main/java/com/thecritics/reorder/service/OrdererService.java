@@ -1,5 +1,6 @@
 package com.thecritics.reorder.service;
 
+import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.SecurityConfig;
@@ -77,5 +78,9 @@ public class OrdererService {
         Orderer savedOrderer = ordererRepository.save(orderer);
 
         return savedOrderer;
+    }
+
+    public List<Orderer> getOrderersByUsername(String username) {
+        return ordererRepository.findByUsernameContainingIgnoreCase(username);
     }
 }

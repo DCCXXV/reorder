@@ -10,13 +10,14 @@
             >
             <i class="fa-solid fa-magnifying-glass me-3"></i>
             <input id="contentSearch" class="w-140" type="search" required placeholder="Buscar de nuevo" name="query" th:value="${query != null ? query : ''}"/>
+            <input type="hidden" name="type" id="searchType" value="all" />
         </form>
     </label>
-    <div  class="flex items-center mb-4 bg-base-200 rounded-xl lg:w-2/3 w-full">
+    <div class="flex items-center mb-4 bg-base-200 rounded-xl lg:w-2/3 w-full">
         <div role="tablist" class="tabs tabs-box tabs-lg p-2">
-            <a role="tab" class="tab tab-active">Todo</a>
-            <a role="tab" class="tab">Orders</a>
-            <a role="tab" class="tab">Orderers</a>
+            <a role="tab" class="tab tab-active" id="tab-all" onclick="filterResults('all')">Todo</a>
+            <a role="tab" class="tab" id="tab-orders" onclick="filterResults('orders')">Orders</a>
+            <a role="tab" class="tab" id="tab-orderers" onclick="filterResults('orderers')">Orderers</a>
         </div>
         <div class="ms-auto text-neutral me-4">
             <i class="fa-solid fa-clock"></i>
@@ -25,25 +26,61 @@
     </div>
     <div class="mb-6 p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
         <!--<p class="text-2xl">Resultados de <b><span class="text-secondary" th:text="${query}"></span></b></p>-->
-        <p style="filter: brightness(70%);"><span th:text="${orderList.size}"></span> order<span th:if="${orderList.size != 1}">s</span> encontrado<span th:if="${orderList.size != 1}">s</span></p>
-        <div class="flex flex-col mt-6 gap-4">
-            <div th:if="${orderList != null}" th:each="order : ${orderList}" 
-                class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
-                tabindex="0"
-                th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
-                hx-target="#pageContent"
-                hx-swap="innerHTML">
-                <div class="flex justify-between">
-                    <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
-                    <div class="text-lg" th:text="'@' + ${order.author}"></div>
+        
+        <!-- Sección para Orders -->
+        <div id="orders-results" class="result-section">
+            <p style="filter: brightness(70%);"><span th:text="${orderList != null ? orderList.size : 0}"></span> order<span th:if="${orderList == null || orderList.size != 1}">s</span> encontrado<span th:if="${orderList == null || orderList.size != 1}">s</span></p>
+            <div class="flex flex-col mt-6 gap-4">
+                <div th:if="${orderList != null && !orderList.isEmpty()}" th:each="order : ${orderList}" 
+                    class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
+                    tabindex="0"
+                    th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
+                    hx-target="#pageContent"
+                    hx-swap="innerHTML">
+                    <div class="flex justify-between">
+                        <div class="text-secondary text-xl font-bold" th:text="${order.title}"></div>
+                        <div class="text-lg" th:text="'@' + ${order.author}"></div>
+                    </div>
+                    <div class="mt-4 flex overflow-hidden">
+                        <span
+                            th:each="e, iterStat : ${order.previewElements}"
+                            th:if="${iterStat.index < 3}"
+                            class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
+                            <span th:text="${e}">elemento</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="mt-4 flex overflow-hidden">
-                    <span
-                        th:each="e, iterStat : ${order.previewElements}"
-                        th:if="${iterStat.index < 3}"
-                        class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
-                        <span th:text="${e}">elemento</span>
-                    </span>
+                <div th:if="${orderList == null || orderList.isEmpty()}" class="text-center p-4">
+                    No se encontraron orders
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección para Orderers -->
+        <div id="orderers-results" class="result-section">
+            <p style="filter: brightness(70%);"><span th:text="${ordererList != null ? ordererList.size : 0}"></span> orderer<span th:if="${ordererList == null || ordererList.size != 1}">s</span> encontrado<span th:if="${ordererList == null || ordererList.size != 1}">s</span></p>
+            <div class="flex flex-col mt-6 gap-4">
+                <div th:if="${ordererList != null && !ordererList.isEmpty()}" th:each="orderer : ${ordererList}" 
+                    class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
+                    tabindex="0"
+                    th:attr="hx-get=@{/orderer/{id}(id=${orderer.id}, fromQuery=${query})}"
+                    hx-target="#pageContent"
+                    hx-swap="innerHTML">
+                    <div class="flex justify-between">
+                        <div class="text-secondary text-xl font-bold" th:text="${orderer.name}"></div>
+                        <div class="text-lg" th:text="'@' + ${orderer.username}"></div>
+                    </div>
+                    <div class="mt-4">
+                        <span class="badge badge-outline p-2 text-base m-1">
+                            <i class="fa-solid fa-star me-1"></i> <span th:text="${orderer.rating != null ? orderer.rating : 'Sin calificaciones'}">rating</span>
+                        </span>
+                        <span class="badge badge-outline p-2 text-base m-1">
+                            <i class="fa-solid fa-list-check me-1"></i> <span th:text="${orderer.ordersCount != null ? orderer.ordersCount : '0'}">orders</span>
+                        </span>
+                    </div>
+                </div>
+                <div th:if="${ordererList == null || ordererList.isEmpty()}" class="text-center p-4">
+                    No se encontraron orderers
                 </div>
             </div>
         </div>
@@ -62,7 +99,55 @@
                 if (mobileSearchInput && headerSearchInput) {
                     headerSearchInput.value = mobileSearchInput.value;
                 }
+                
+                // Asegurar que se aplique el filtro correcto después de cargar resultados
+                const activeTab = document.querySelector('.tab.tab-active');
+                if (activeTab) {
+                    const tabId = activeTab.id;
+                    const filterType = tabId.replace('tab-', '');
+                    setTimeout(() => filterResults(filterType), 100);
+                }
             }
+        });
+        
+        // Función para filtrar resultados (mostrar/ocultar secciones)
+        function filterResults(type) {
+            // Actualizar el valor del tipo de búsqueda en el formulario (para futuras búsquedas)
+            const searchTypeInput = document.getElementById('searchType');
+            if (searchTypeInput) {
+                searchTypeInput.value = type;
+            }
+            
+            // Actualizar las clases activas en las pestañas
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('tab-active'));
+            
+            const activeTab = document.getElementById('tab-' + type);
+            if (activeTab) {
+                activeTab.classList.add('tab-active');
+            }
+            
+            // Mostrar/ocultar las secciones según el tipo seleccionado
+            const ordersResults = document.getElementById('orders-results');
+            const orderersResults = document.getElementById('orderers-results');
+            
+            if (ordersResults && orderersResults) {
+                if (type === 'all') {
+                    ordersResults.style.display = 'block';
+                    orderersResults.style.display = 'block';
+                } else if (type === 'orders') {
+                    ordersResults.style.display = 'block';
+                    orderersResults.style.display = 'none';
+                } else if (type === 'orderers') {
+                    ordersResults.style.display = 'none';
+                    orderersResults.style.display = 'block';
+                }
+            }
+        }
+        
+        // Aplicar el filtro inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            filterResults('all');
         });
     </script>
 </div>

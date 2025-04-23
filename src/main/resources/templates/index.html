@@ -37,22 +37,50 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
                             </svg>
                         </div>
-                        <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow">
-                            <li class="gap-2">
+                        <ul class="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-64 p-2 shadow gap-2">
+                            <li
+                                sec:authorize="isAnonymous()"
+                            >
+                                <a
+                                    class="py-3 text-lg"
+                                    th:if="${session.orderer == null}"
+                                    href = "/signup"
+                                >
+                                   Crear cuenta
+                                </a>              
+                            </li>
+                            <li
+                                sec:authorize="isAnonymous()"
+                            >
                                 <a 
-                                class="py-3 text-lg"
-                                href = "/signup">
-                                   Crear cuenta</a>              
-                                <a class="py-3 text-lg"
-                                   tabindex="0"
-                                   hx-get="/createOrder"
-                                   hx-target="#pageContent"
-                                   hx-swap="innerHTML"
-                                   hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
-                                   >
-                                    Crear Order</a>
-                                <a class="py-3 text-lg" href="/">Buscar en ReOrder</a>
-                            </li>  
+                                    class="py-3 text-lg"
+                                    th:if="${session.orderer == null}"
+                                    href = "/login"
+                                >
+                                   Iniciar sesión
+                                </a> 
+                            </li>
+                            <li
+                                sec:authorize="isAnonymous()"
+                            >
+                                <a class="py-3 text-lg" href="/">Buscar Orders</a>
+                            </li>
+                            <li
+                                sec:authorize="isAuthenticated()"
+                            >
+                                <a 
+                                    sec:authorize="isAuthenticated()"
+                                    class="py-3 text-lg"
+                                    tabindex="0"
+                                    hx-get="/createOrder"
+                                    hx-target="#pageContent"
+                                    hx-swap="innerHTML"
+                                    hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''"
+                                    th:if="${session.orderer != null}"
+                                >
+                                    Crear Order
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <a class="p-2" href="/"><span class="text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
@@ -87,17 +115,30 @@
                 </div>
 
                 <div class="navbar-end hidden lg:flex">
-                    <ul>
-                        <li 
-                            class="btn btn-outline btn-secondary mr-4"
-                            tabindex="0"
-                            hx-get="/createOrder"
-                            hx-target="#pageContent"
-                            hx-swap="innerHTML"
-                            hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
-                            <a>Crear Order</a>
+                    <ul class="flex">
+                        <li sec:authorize="isAuthenticated()">
+                            <a href="/createOrder"
+                               class="btn btn-outline btn-secondary mr-4"
+                               tabindex="0"
+                               hx-get="/createOrder"
+                               hx-target="#pageContent"
+                               hx-swap="innerHTML"
+                               hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
+                               Crear Order
+                            </a>
                         </li>
-                        <a href = "/signup" class = "btn btn-soft btn-secondary">Crear cuenta</a>
+                    
+                        <li sec:authorize="isAnonymous()">
+                            <a href="/signup" class="btn btn-outline btn-secondary ml-4">
+                                Crear cuenta
+                            </a>
+                        </li>
+                    
+                        <li sec:authorize="isAnonymous()">
+                            <a href="/login" class="btn btn-outline btn-secondary ml-4">
+                                Iniciar Sesión
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

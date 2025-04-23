@@ -5,12 +5,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Controlador para las rutas generales y la página de inicio.
  */
 @Controller
 public class HomeController {
+
+    private static final Logger log = LogManager.getLogger(HomeController.class);
 
     /**
      * Añade atributos comunes al modelo desde la sesión HTTP.

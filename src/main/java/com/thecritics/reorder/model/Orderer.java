@@ -43,12 +43,11 @@ public class Orderer implements Transferable<Orderer.Transfer>{
     public static class Transfer {
         private String username;
         private String email;
-        private String password;   
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(username, email, password);
+        return new Transfer(username, email);
     }
 
     @Override

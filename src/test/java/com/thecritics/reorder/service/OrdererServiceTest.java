@@ -1,22 +1,47 @@
 package com.thecritics.reorder.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 
-@ExtendWith(MockitoExtension.class) 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+
+
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.thecritics.reorder.model.Order;
+
+import com.thecritics.reorder.repository.OrderRepository;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.mockito.ArgumentCaptor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@ExtendWith(MockitoExtension.class)
 public class OrdererServiceTest {
+
+    @InjectMocks
+    private OrdererService ordererService;
+
+    @Mock
+    private OrdererRepository ordererRepository;
 
     @Mock 
     private PasswordEncoder passwordEncoder;
@@ -24,11 +49,68 @@ public class OrdererServiceTest {
     @Mock
     private Orderer orderer;
 
-    @Mock
-    private OrdererRepository ordererRepository;
+    @Test
+    void findByUsername_ShouldReturnOrderer_WhenUsernameExists() {
+        // Arrange
+        String username = "Julia";
+        Orderer mockOrderer = new Orderer();
+        mockOrderer.setUsername(username);
+        when(ordererRepository.findByUsername(username)).thenReturn(mockOrderer);
 
-    @InjectMocks
-    private OrdererService ordererService;
+        // Act
+        Orderer result = ordererService.findByUsername(username);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getUsername()).isEqualTo(username);
+        verify(ordererRepository, times(1)).findByUsername(username);
+    }
+
+    @Test
+    void findByUsername_ShouldReturnNull_WhenUsernameDoesNotExist() {
+        // Arrange
+        String username = "noExiste";
+        when(ordererRepository.findByUsername(username)).thenReturn(null);
+
+        // Act
+        Orderer result = ordererService.findByUsername(username);
+
+        // Assert
+        assertThat(result).isNull();
+        verify(ordererRepository, times(1)).findByUsername(username);
+    }
+
+    @Test
+    void findByEmail_ShouldReturnOrderer_WhenEmailExists() {
+        // Arrange
+        String email = "correo@example.com";
+        Orderer mockOrderer = new Orderer();
+        mockOrderer.setEmail(email);
+        when(ordererRepository.findByEmail(email)).thenReturn(mockOrderer);
+
+        // Act
+        Orderer result = ordererService.findByEmail(email);
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.getEmail()).isEqualTo(email);
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void findByEmail_ShouldReturnNull_WhenEmailDoesNotExist() {
+        // Arrange
+        String email = "inexistente@example.com";
+        when(ordererRepository.findByEmail(email)).thenReturn(null);
+
+        // Act
+        Orderer result = ordererService.findByEmail(email);
+
+        // Assert
+        assertThat(result).isNull();
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
+
 
     @Test
     void saveOrderer_ShouldSaveOrdererCorrectly() {

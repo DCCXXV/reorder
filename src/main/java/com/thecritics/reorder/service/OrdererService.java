@@ -1,6 +1,5 @@
 package com.thecritics.reorder.service;
 
-import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.controller.HomeController;

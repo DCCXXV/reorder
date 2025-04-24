@@ -10,25 +10,13 @@ import com.thecritics.reorder.repository.OrdererRepository;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
-
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.thecritics.reorder.model.Order;
-
-import com.thecritics.reorder.repository.OrderRepository;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.ArgumentCaptor;
 
@@ -43,7 +31,7 @@ public class OrdererServiceTest {
     @Mock
     private OrdererRepository ordererRepository;
 
-    @Mock 
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -110,7 +98,6 @@ public class OrdererServiceTest {
         assertThat(result).isNull();
         verify(ordererRepository, times(1)).findByEmail(email);
     }
-
 
     @Test
     void saveOrderer_ShouldSaveOrdererCorrectly() {
@@ -218,4 +205,61 @@ public class OrdererServiceTest {
         verify(ordererRepository, times(1)).existsByUsernameIgnoreCase(username);
         verifyNoMoreInteractions(ordererRepository);
     }
+
+    @Test
+    void getOrderersByUsername_ShouldReturnTrue_WhenOrderersMatchingWithAPartialInput() {
+        // Arrange
+        String partialUsername = "an";
+        String username = "Aniceto";
+        Orderer orderer1 = new Orderer();
+        orderer1.setUsername(username);
+
+        Orderer orderer2 = new Orderer();
+        orderer2.setUsername("Antonia");
+
+        List<Orderer> expectedList = List.of(orderer1, orderer2);
+        when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(expectedList);
+
+        // Act
+        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+
+        // Assert
+        assertThat(result).hasSize(2).contains(orderer1, orderer2);
+        verify(ordererRepository, times(1)).findByUsernameContainingIgnoreCase(partialUsername);
+    }
+
+    @Test
+    void getOrderersByUsername_ShouldReturnEmptyList_WhenNoMatchFound() {
+        // Arrange
+        String partialUsername = "xyz";
+        when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(List.of());
+
+        // Act
+        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+
+        // Assert
+        assertThat(result).isEmpty();
+        verify(ordererRepository, times(1)).findByUsernameContainingIgnoreCase(partialUsername);
+    }
+
+    @Test
+    void getOrderersByUsername_ShouldReturnAll_WhenEmptyStringProvided() {
+        // Arrange
+        String partialUsername = "";
+        Orderer orderer1 = new Orderer();
+        orderer1.setUsername("Carlos");
+        Orderer orderer2 = new Orderer();
+        orderer2.setUsername("Lucía");
+
+        List<Orderer> expectedList = List.of(orderer1, orderer2);
+        when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(expectedList);
+
+        // Act
+        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+
+        // Assert
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedList);
+        verify(ordererRepository, times(1)).findByUsernameContainingIgnoreCase(partialUsername);
+    }
+
 }

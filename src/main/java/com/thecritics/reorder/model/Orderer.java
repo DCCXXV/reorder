@@ -38,6 +38,9 @@ public class Orderer implements Transferable<Orderer.Transfer>{
     @Column(nullable = false, unique = false)
     private String password;
 
+    @OneToMany
+    private List<Order> orders;
+
     @Getter
     @AllArgsConstructor
     public static class Transfer {

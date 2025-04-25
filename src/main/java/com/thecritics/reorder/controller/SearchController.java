@@ -1,6 +1,7 @@
 package com.thecritics.reorder.controller;
 
 import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
 import com.thecritics.reorder.service.OrdererService;
 
@@ -31,7 +32,7 @@ public class SearchController {
     private final OrderService orderService;
     private final OrdererService ordererService;
 
-    private static final int AUTOCOMPLETE_LIMIT = 5;
+    private static final int AUTOCOMPLETE_LIMIT = 3;
 
     public SearchController(OrderService orderService, OrdererService ordererService) {
         this.orderService = orderService;
@@ -70,17 +71,28 @@ public class SearchController {
         }
 
         List<Order> potentialMatches = orderService.findTopOrdersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
+        List<Orderer> potentiaOrderersMatches = ordererService.findTopOrderersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
 
+        //Orders
         Map<String, Order> uniqueOrdersMap = new LinkedHashMap<>();
         for (Order order : potentialMatches) {
             uniqueOrdersMap.putIfAbsent(order.getTitle(), order);
         }
         List<Order> uniqueOrders = List.copyOf(uniqueOrdersMap.values());
 
+        //Orderers
+        Map<String, Orderer> uniqueOrderersMap = new LinkedHashMap<>();
+        for (Orderer orderer : potentiaOrderersMatches) {
+            uniqueOrderersMap.putIfAbsent(orderer.getUsername(), orderer);
+        }
+        List<Orderer> uniqueOrderers = List.copyOf(uniqueOrderersMap.values());
+        
         model.addAttribute("orders", uniqueOrders);
+        model.addAttribute("orderers", uniqueOrderers);
         model.addAttribute("query", trimmedQuery);
 
-        log.debug("Devolviendo {} sugerencias para autocompletado.", uniqueOrders.size());
+        log.debug("Devolviendo {} sugerencias para autocompletado de Orders y {} para Orderers.", 
+        uniqueOrders.size(), uniqueOrderers.size());
         return "fragments/search :: autocomplete";
     }
 }

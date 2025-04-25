@@ -11,6 +11,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 /**
  * Servicio que gestiona las operaciones relacionadas con las órdenes
  * ({@link Orderer}). Esto incluye
@@ -114,4 +118,10 @@ public class OrdererService {
         return ordererRepository.findByEmail(email);
     }
 
+    
+    public List<Orderer> findTopOrderersStartingWith(String query, int limit) {
+        Pageable pageRequest = PageRequest.of(0, limit);
+        return ordererRepository.findTopUsernamesStartingWith(query, pageRequest);
+    }
+    
 }

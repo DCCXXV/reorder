@@ -9,6 +9,7 @@ import java.util.List;
 import com.thecritics.reorder.ReorderApplication;
 import com.thecritics.reorder.TestcontainersConfiguration;
 import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -26,8 +27,15 @@ public class OrderRepositoryTest {
 
     @Test
     void testSaveAndRetrieveOrder() {
+
+        Orderer inputOrderer = new Orderer();
+        inputOrderer.setEmail("autor@gmail.com");
+        inputOrderer.setId(224342);
+        inputOrderer.setPassword("AAAaaa111");
+        inputOrderer.setUsername("John Doe");
+
         Order inputOrder = new Order();
-        inputOrder.setAuthor("John Doe");
+        inputOrder.setAuthor(inputOrderer);
         inputOrder.setTitle("Ranking de frutas");
 
         List<List<String>> content = new ArrayList<>();
@@ -52,8 +60,14 @@ public class OrderRepositoryTest {
 
     @Test
     void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDesc() {
+        Orderer orderer1 = new Orderer();
+        orderer1.setEmail("author@gmail.com");
+        orderer1.setId(4366);
+        orderer1.setPassword("ewiqt33AA");
+        orderer1.setUsername("John Doe");
+
         Order order1 = new Order();
-        order1.setAuthor("John Doe");
+        order1.setAuthor(orderer1);
         order1.setTitle("Ranking de frutas");
 
         List<List<String>> content1 = new ArrayList<>();
@@ -63,8 +77,14 @@ public class OrderRepositoryTest {
         content1.get(1).add("Manzana");
         order1.setContent(content1);
 
+        Orderer orderer2 = new Orderer();
+        orderer2.setEmail("sauthor@gmail.com");
+        orderer2.setId(43866);
+        orderer2.setPassword("ewiqt33AA");
+        orderer2.setUsername("Jane Doe");
+
         Order order2 = new Order();
-        order2.setAuthor("Jane Doe");
+        order2.setAuthor(orderer2);
         order2.setTitle("Ranking de verduras");
         
         List<List<String>> content2 = new ArrayList<>();
@@ -85,8 +105,16 @@ public class OrderRepositoryTest {
 
     @Test
     void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDescEmpty() {
+
+        Orderer orderer1 = new Orderer();
+        orderer1.setEmail("author@gmail.com");
+        orderer1.setId(4366);
+        orderer1.setPassword("ewiqt33AA");
+        orderer1.setUsername("John Doe");
+
+
         Order order1 = new Order();
-        order1.setAuthor("John Doe");
+        order1.setAuthor(orderer1);
         order1.setTitle("Ranking de frutas");
 
         List<List<String>> content1 = new ArrayList<>();
@@ -96,8 +124,15 @@ public class OrderRepositoryTest {
         content1.get(1).add("Manzana");
         order1.setContent(content1);
 
+        Orderer orderer2 = new Orderer();
+        orderer2.setEmail("autho2r@gmail.com");
+        orderer2.setId(45366);
+        orderer2.setPassword("ewiqt33AA");
+        orderer2.setUsername("Jane Doe");
+
+
         Order order2 = new Order();
-        order2.setAuthor("Jane Doe");
+        order2.setAuthor(orderer2);
         order2.setTitle("Ranking de verduras");
         List<List<String>> content2 = new ArrayList<>();
         content2.add(new ArrayList<>());
@@ -116,8 +151,16 @@ public class OrderRepositoryTest {
 
     @Test
     void testFindByTitleContainingIgnoreCaseOrderByCreatedAtDescMultiple() {
+
+        Orderer orderer1 = new Orderer();
+        orderer1.setEmail("author@gmail.com");
+        orderer1.setId(4366);
+        orderer1.setPassword("ewiqt33AA");
+        orderer1.setUsername("John Doe");
+
+
         Order order1 = new Order();
-        order1.setAuthor("John Doe");
+        order1.setAuthor(orderer1);
         order1.setTitle("Ranking de frutas");
 
         List<List<String>> content1 = new ArrayList<>();
@@ -127,8 +170,14 @@ public class OrderRepositoryTest {
         content1.get(1).add("Manzana");
         order1.setContent(content1);
 
+        Orderer orderer2 = new Orderer();
+        orderer2.setEmail("author2@gmail.com");
+        orderer2.setId(43566);
+        orderer2.setPassword("ewiqt33AA");
+        orderer2.setUsername("Jane Doe");
+
         Order order2 = new Order();
-        order2.setAuthor("Jane Doe");
+        order2.setAuthor(orderer2);
         order2.setTitle("Ranking de verduras");
         List<List<String>> content2 = new ArrayList<>();
         content2.add(new ArrayList<>());
@@ -150,9 +199,15 @@ public class OrderRepositoryTest {
     @Test
     void testSaveAndRetrieveReOrder() {
         // ------------ ORDER ORIGINAL -------------------------
+        Orderer originalOrderer = new Orderer();
+        originalOrderer.setEmail("author@gmail.com");
+        originalOrderer.setId(4366);
+        originalOrderer.setPassword("ewiqt33AA");
+        originalOrderer.setUsername("Manuel");
+
 
         Order originalOrder = new Order();
-        originalOrder.setAuthor("Manuel");
+        originalOrder.setAuthor(originalOrderer);
         originalOrder.setTitle("Order de Orders");
 
         List<List<String>> ocontent = new ArrayList<>();
@@ -172,10 +227,17 @@ public class OrderRepositoryTest {
 
         // ------------ REORDER -------------------------------
 
+        Orderer inputOrderer = new Orderer();
+        inputOrderer.setEmail("author1@gmail.com");
+        inputOrderer.setId(43366);
+        inputOrderer.setPassword("ewiqt33AA");
+        inputOrderer.setUsername("Chang");
+
+
         Order inputReOrder = new Order();
 
         inputReOrder.setReorderedOrder(retrievedOrder);
-        inputReOrder.setAuthor("Chang");
+        inputReOrder.setAuthor(inputOrderer);
         inputReOrder.setTitle("Order de Orders");
 
         List<List<String>> rcontent = new ArrayList<>();

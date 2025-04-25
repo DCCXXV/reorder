@@ -1,9 +1,9 @@
 package com.thecritics.reorder.controller;
 
 import com.thecritics.reorder.model.Order;
-import com.thecritics.reorder.model.Orderer; // Asumiendo que tienes un modelo Orderer
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
-import com.thecritics.reorder.service.OrdererService; // Necesitas importar OrdererService
+import com.thecritics.reorder.service.OrdererService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf; // Necesario para POST
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -43,13 +43,12 @@ class SearchControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean // Mock para OrderService
+    @MockitoBean
     private OrderService orderService;
 
-    @MockitoBean // Mock para OrdererService
+    @MockitoBean
     private OrdererService ordererService;
 
-    // Datos de prueba
     private Order mockOrder1;
     private Order mockOrder2;
     private Order mockOrderAutocomplete1;
@@ -79,14 +78,13 @@ class SearchControllerIntegrationTest {
         mockOrderAutocomplete2.setId(11);
         mockOrderAutocomplete2.setTitle("Test Autocomplete B");
 
-        // Orden con título duplicado para probar la lógica de unicidad
         mockOrderAutocompleteDuplicateTitle = new Order();
         mockOrderAutocompleteDuplicateTitle.setId(12);
-        mockOrderAutocompleteDuplicateTitle.setTitle("Test Autocomplete A"); // Mismo título que mockOrderAutocomplete1
+        mockOrderAutocompleteDuplicateTitle.setTitle("Test Autocomplete A");
 
 
-        mockOrderer1 = new Orderer(); // Asumiendo una clase Orderer simple
-        mockOrderer1.setId(101L); // Asumiendo Long ID
+        mockOrderer1 = new Orderer();
+        mockOrderer1.setId(101L);
         mockOrderer1.setUsername("Test Query User 1");
 
         mockOrderer2 = new Orderer();
@@ -174,7 +172,7 @@ class SearchControllerIntegrationTest {
                 .andExpect(model().attributeExists("orders", "query"))
                 .andExpect(model().attribute("query", AUTOCOMPLETE_QUERY))
                 .andExpect(model().attribute("orders", hasSize(2)))
-                .andExpect(model().attribute("orders", contains( // LinkedHashMap preserva orden de inserción
+                .andExpect(model().attribute("orders", contains(
                         mockOrderAutocomplete1,
                         mockOrderAutocomplete2
                 )));

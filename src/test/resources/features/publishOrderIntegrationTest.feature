@@ -1,7 +1,16 @@
 Feature: Publicar Order
 
 Background:
-  Given url 'http://localhost:8080'
+  * def port = karate.properties['karate.server.port']
+  * url 'http://localhost:' + port
+  * header X-Test-Framework = 'Karate'
+  * path '/login'
+  * form field username = 'a'
+  * form field password = 'aaaAAA123'
+  * method post
+  * status 200
+  * path ''
+
   * def validOrderStateJson = '[[], ["Puerta Simple"], ["Puerta Corredera"]]'
   * def emptyTiersOrderStateJson = '[["ElementoSinTier"], [], []]'
 

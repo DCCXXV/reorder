@@ -28,7 +28,8 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
@@ -123,7 +124,8 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(get("/reorder")
                         .param("idInput", String.valueOf(VALID_ORIGINAL_ORDER_ID))
-                        .session(mockSession))
+                        .session(mockSession)
+                        .with(user("testOrderer")))
                 .andExpect(status().isOk())
                 .andExpect(view().name(REORDER_VIEW_NAME))
                 .andExpect(model().attributeExists("originalOrder"))
@@ -151,7 +153,8 @@ class ReorderControllerIntegrationTest {
                 .perform(get("/reorder")
                         .param("idInput", String.valueOf(NON_EXISTENT_ORDER_ID))
                         .with(csrf())
-                        .session(mockSession))
+                        .session(mockSession)
+                        .with(user("testOrderer")))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl(REDIRECT_ERROR_URL));
 
@@ -176,6 +179,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/updateOrderState")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("reOrderStateJson", changedContentJson))
@@ -208,6 +212,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/updateOrderState")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("reOrderStateJson", changedContentJson))
@@ -234,6 +239,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/updateOrderState")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("reOrderStateJson", changedContentJson))
@@ -263,6 +269,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/updateOrderState")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("reOrderStateJson", invalidJson))
@@ -292,6 +299,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/updateOrderState")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("reOrderStateJson", emptyContentJson))
@@ -317,6 +325,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", "")
@@ -348,6 +357,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)
@@ -374,6 +384,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)
@@ -407,6 +418,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)
@@ -440,6 +452,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", " " + REORDER_TITLE + " ")
@@ -485,6 +498,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)
@@ -528,6 +542,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)
@@ -576,6 +591,7 @@ class ReorderControllerIntegrationTest {
         mockMvc
                 .perform(post("/reorder/PublishOrder")
                         .session(mockSession)
+                        .with(user("testOrderer"))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("rtitle", REORDER_TITLE)

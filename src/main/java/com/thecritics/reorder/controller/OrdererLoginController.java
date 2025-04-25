@@ -23,12 +23,6 @@ import jakarta.servlet.http.HttpSession;
 public class OrdererLoginController {
 
     private static final Logger log = LogManager.getLogger(OrdererLoginController.class);
-
-    @Autowired
-    private OrdererService ordererService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
     
     /**
      * Maneja las solicitudes GET para mostrar la página de inicio de sesión (login).
@@ -48,8 +42,8 @@ public class OrdererLoginController {
         if (authentication != null && authentication.isAuthenticated()
         && !(authentication instanceof AnonymousAuthenticationToken)) {
         log.debug("Usuario {} ya autenticado, redirigiendo al home", authentication.getName());
-        return "redirect:/";
-    }
+            return "redirect:/";
+        }
 
         return "login";
     }

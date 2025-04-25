@@ -1,5 +1,6 @@
 package com.thecritics.reorder.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,7 +40,7 @@ public class Orderer implements Transferable<Orderer.Transfer>{
     @Column(nullable = false, unique = false)
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "author")
     private List<Order> orders;
 
     @Getter
@@ -46,11 +48,12 @@ public class Orderer implements Transferable<Orderer.Transfer>{
     public static class Transfer {
         private String username;
         private String email;
+        private int numOrders;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(username, email);
+        return new Transfer(username, email, orders.size());
     }
 
     @Override

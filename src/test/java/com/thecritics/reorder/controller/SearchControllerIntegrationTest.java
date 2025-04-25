@@ -94,7 +94,7 @@ class SearchControllerIntegrationTest {
         when(orderService.getOrdersByTitle(eq(SEARCH_QUERY)))
                 .thenReturn(Arrays.asList(mockOrder1, mockOrder2));
         when(ordererService.getOrderersByUsername(eq(SEARCH_QUERY)))
-                .thenReturn(Arrays.asList(mockOrderer1, mockOrderer2));
+                .thenReturn(Arrays.asList(mockOrderer1.toTransfer(), mockOrderer2.toTransfer()));
         when(orderService.getOrdersByTitle(eq(EMPTY_QUERY)))
                 .thenReturn(Collections.emptyList());
         when(ordererService.getOrderersByUsername(eq(EMPTY_QUERY)))

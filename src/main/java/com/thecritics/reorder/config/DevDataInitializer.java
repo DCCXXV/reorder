@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,22 +47,24 @@ public class DevDataInitializer implements CommandLineRunner {
 
             Order originalOrder = new Order();
             originalOrder.setTitle("top frutas");
-            originalOrder.setAuthor("a");
+            originalOrder.setAuthor(devOrderer);
             List<List<String>> content1 = Arrays.asList(
                 Arrays.asList("pera", "manzana"),
                 Arrays.asList("plátano")
             );
+            originalOrder.setPreviewElements(Arrays.asList("pera", "manzana", "plátano"));
             originalOrder.setContent(content1);
             Order savedOriginalOrder = orderRepository.save(originalOrder);
 
             Order reorder = new Order();
             reorder.setTitle("top frutas (version mala)");
-            reorder.setAuthor("a");
+            reorder.setAuthor(devOrderer);
             List<List<String>> content2 = Arrays.asList(
                 Arrays.asList("plátanao"),
                 Arrays.asList("pera", "manzana")
             );
             reorder.setContent(content2);
+            reorder.setPreviewElements(Arrays.asList("plátano", "pera", "manzana"));
             reorder.setReorderedOrder(savedOriginalOrder);
             orderRepository.save(reorder);
 

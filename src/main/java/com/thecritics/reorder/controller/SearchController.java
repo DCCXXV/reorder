@@ -71,7 +71,7 @@ public class SearchController {
         }
 
         List<Order> potentialMatches = orderService.findTopOrdersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
-        List<Orderer> potentiaOrderersMatches = ordererService.findTopOrderersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
+        List<Orderer.Transfer> potentiaOrderersMatches = ordererService.findTopOrderersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
 
         //Orders
         Map<String, Order> uniqueOrdersMap = new LinkedHashMap<>();
@@ -81,11 +81,11 @@ public class SearchController {
         List<Order> uniqueOrders = List.copyOf(uniqueOrdersMap.values());
 
         //Orderers
-        Map<String, Orderer> uniqueOrderersMap = new LinkedHashMap<>();
-        for (Orderer orderer : potentiaOrderersMatches) {
+        Map<String, Orderer.Transfer> uniqueOrderersMap = new LinkedHashMap<>();
+        for (Orderer.Transfer orderer : potentiaOrderersMatches) {
             uniqueOrderersMap.putIfAbsent(orderer.getUsername(), orderer);
         }
-        List<Orderer> uniqueOrderers = List.copyOf(uniqueOrderersMap.values());
+        List<Orderer.Transfer> uniqueOrderers = List.copyOf(uniqueOrderersMap.values());
         
         model.addAttribute("orders", uniqueOrders);
         model.addAttribute("orderers", uniqueOrderers);

@@ -19,6 +19,7 @@ public interface OrdererRepository extends JpaRepository<Orderer, Long>{
     boolean existsByUsernameIgnoreCase(String username);
     List <Orderer> findByUsernameContainingIgnoreCase(String username);
     Orderer findById(int id);
-     @Query("SELECT o FROM Orderer o WHERE LOWER(o.username) LIKE LOWER(CONCAT(:query, '%')) ORDER BY o.username ASC")
+    
+    @Query("SELECT o FROM Orderer o WHERE LOWER(o.username) LIKE LOWER(CONCAT(:query, '%')) ORDER BY o.username ASC")
     List<Orderer> findTopUsernamesStartingWith(@Param("query") String query, Pageable pageable);
 }

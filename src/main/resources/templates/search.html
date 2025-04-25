@@ -63,7 +63,8 @@
                 <div th:if="${ordererList != null && !ordererList.isEmpty()}" th:each="orderer : ${ordererList}"
                     class="bg-base-100 p-4 rounded searchItem transition cursor-pointer">
                     <div class="flex justify-between">
-                        <div class="text-lg" th:text="'@' + ${orderer.username}"></div>
+                        <div class="text-lg" th:text="${'@' + orderer.username}"></div>
+                        <div class="text-lg" th:text="${orderer.numOrders + (orderer.numOrders == 1 ? ' Order' : ' Orders')}"></div>
                     </div>
                 </div>
                 <div th:if="${ordererList == null || ordererList.isEmpty()}" class="text-center p-4">

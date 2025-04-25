@@ -46,7 +46,7 @@ public class OrdererServiceTest {
         when(ordererRepository.findByUsername(username)).thenReturn(mockOrderer);
 
         // Act
-        Orderer result = ordererService.findByUsername(username);
+        Orderer.Transfer result = ordererService.findByUsername(username);
 
         // Assert
         assertThat(result).isNotNull();
@@ -61,7 +61,7 @@ public class OrdererServiceTest {
         when(ordererRepository.findByUsername(username)).thenReturn(null);
 
         // Act
-        Orderer result = ordererService.findByUsername(username);
+        Orderer.Transfer result = ordererService.findByUsername(username);
 
         // Assert
         assertThat(result).isNull();
@@ -77,7 +77,7 @@ public class OrdererServiceTest {
         when(ordererRepository.findByEmail(email)).thenReturn(mockOrderer);
 
         // Act
-        Orderer result = ordererService.findByEmail(email);
+        Orderer.Transfer result = ordererService.findByEmail(email);
 
         // Assert
         assertThat(result).isNotNull();
@@ -92,7 +92,7 @@ public class OrdererServiceTest {
         when(ordererRepository.findByEmail(email)).thenReturn(null);
 
         // Act
-        Orderer result = ordererService.findByEmail(email);
+        Orderer.Transfer result = ordererService.findByEmail(email);
 
         // Assert
         assertThat(result).isNull();
@@ -221,10 +221,10 @@ public class OrdererServiceTest {
         when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(expectedList);
 
         // Act
-        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+        List<Orderer.Transfer> result = ordererService.getOrderersByUsername(partialUsername);
 
         // Assert
-        assertThat(result).hasSize(2).contains(orderer1, orderer2);
+        assertThat(result).hasSize(2).contains(orderer1.toTransfer(), orderer2.toTransfer());
         verify(ordererRepository, times(1)).findByUsernameContainingIgnoreCase(partialUsername);
     }
 
@@ -235,7 +235,7 @@ public class OrdererServiceTest {
         when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(List.of());
 
         // Act
-        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+        List<Orderer.Transfer> result = ordererService.getOrderersByUsername(partialUsername);
 
         // Assert
         assertThat(result).isEmpty();
@@ -255,10 +255,10 @@ public class OrdererServiceTest {
         when(ordererRepository.findByUsernameContainingIgnoreCase(partialUsername)).thenReturn(expectedList);
 
         // Act
-        List<Orderer> result = ordererService.getOrderersByUsername(partialUsername);
+        List<Orderer.Transfer> result = ordererService.getOrderersByUsername(partialUsername);
 
         // Assert
-        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedList);
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedList.stream().map(Orderer::toTransfer).toList());
         verify(ordererRepository, times(1)).findByUsernameContainingIgnoreCase(partialUsername);
     }
 

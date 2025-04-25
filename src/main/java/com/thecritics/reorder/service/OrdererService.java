@@ -4,6 +4,7 @@ import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.controller.HomeController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,6 +78,7 @@ public class OrdererService {
         orderer.setEmail(email);
         orderer.setUsername(username);
         orderer.setPassword(this.passwordEncoder.encode(password));
+        orderer.setOrders(new ArrayList<>());
 
         Orderer savedOrderer = ordererRepository.save(orderer);
 
@@ -92,8 +94,11 @@ public class OrdererService {
      * @return Lista de Orderers cuyos usernames contienen la subcadena especificada
      *         (ignorando mayúsculas/minúsculas).
      */
-    public List<Orderer> getOrderersByUsername(String username) {
-        return ordererRepository.findByUsernameContainingIgnoreCase(username);
+    public List<Orderer.Transfer> getOrderersByUsername(String username) {
+        return ordererRepository.findByUsernameContainingIgnoreCase(username)
+                .stream()
+                .map(Orderer::toTransfer)
+                .toList();
     }
 
     /**
@@ -103,8 +108,8 @@ public class OrdererService {
      * @return El Orderer correspondiente al nombre de usuario proporcionado, o
      *         {@code null} si no se encuentra.
      */
-    public Orderer findByUsername(String username) {
-        return ordererRepository.findByUsername(username);
+    public Orderer.Transfer findByUsername(String username) {
+        return ordererRepository.findByUsername(username).toTransfer();
     }
 
     /**
@@ -114,14 +119,16 @@ public class OrdererService {
      * @return El Orderer correspondiente al correo electrónico proporcionado, o
      *         {@code null} si no se encuentra.
      */
-    public Orderer findByEmail(String email) {
-        return ordererRepository.findByEmail(email);
+    public Orderer.Transfer findByEmail(String email) {
+        return ordererRepository.findByEmail(email).toTransfer();
     }
 
     
-    public List<Orderer> findTopOrderersStartingWith(String query, int limit) {
+    public List<Orderer.Transfer> findTopOrderersStartingWith(String query, int limit) {
         Pageable pageRequest = PageRequest.of(0, limit);
-        return ordererRepository.findTopUsernamesStartingWith(query, pageRequest);
+        return ordererRepository.findTopUsernamesStartingWith(query, pageRequest)
+                .stream()
+                .map(Orderer::toTransfer)
+                .toList();
     }
-    
 }

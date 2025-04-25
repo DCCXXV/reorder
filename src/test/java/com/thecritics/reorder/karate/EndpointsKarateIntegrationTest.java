@@ -56,4 +56,13 @@ public class EndpointsKarateIntegrationTest {
         return Karate.run("classpath:features/signupIntegrationTest.feature")
                 .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
+
+    @Karate.Test
+    public Karate testSearchUser(){
+        System.setProperty("karate.server.port", String.valueOf(port));
+        return Karate.run("classpath:features/searchUserIntegrationTest.feature")
+        .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
+        .systemProperty("karate.server.port", String.valueOf(port));
+
+    }
 }

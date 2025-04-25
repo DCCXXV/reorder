@@ -59,16 +59,23 @@ class SearchControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // --- Setup para datos de prueba ---
+        mockOrderer1 = new Orderer();
+        mockOrderer1.setId(101);
+        mockOrderer1.setUsername("Test Query User 1");
+
+        mockOrderer2 = new Orderer();
+        mockOrderer2.setId(102);
+        mockOrderer2.setUsername("Another Test User");
+
         mockOrder1 = new Order();
         mockOrder1.setId(1);
         mockOrder1.setTitle("Test Query Order 1");
-        mockOrder1.setAuthor("Author 1");
+        mockOrder1.setAuthor(mockOrderer1);
 
         mockOrder2 = new Order();
         mockOrder2.setId(2);
         mockOrder2.setTitle("Another Test Query Order");
-        mockOrder2.setAuthor("Author 2");
+        mockOrder2.setAuthor(mockOrderer2);
 
         mockOrderAutocomplete1 = new Order();
         mockOrderAutocomplete1.setId(10);
@@ -81,16 +88,6 @@ class SearchControllerIntegrationTest {
         mockOrderAutocompleteDuplicateTitle = new Order();
         mockOrderAutocompleteDuplicateTitle.setId(12);
         mockOrderAutocompleteDuplicateTitle.setTitle("Test Autocomplete A");
-
-
-        mockOrderer1 = new Orderer();
-        mockOrderer1.setId(101L);
-        mockOrderer1.setUsername("Test Query User 1");
-
-        mockOrderer2 = new Orderer();
-        mockOrderer2.setId(102L);
-        mockOrderer2.setUsername("Another Test User");
-
         // --- Setup para Mocks de Servicios ---
 
         // Para POST /search

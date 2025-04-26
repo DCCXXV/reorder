@@ -45,8 +45,7 @@ public class Order implements Transferable<Order.Transfer>{
     private List<String> previewElements;
     
     private String title;
-    @ManyToOne
-    private Orderer author;
+    private String author;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reordered_order_id")
@@ -54,8 +53,6 @@ public class Order implements Transferable<Order.Transfer>{
 
     @OneToMany(mappedBy = "reorderedOrder", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Order> reorders;
-
-   
 
     public boolean isReorder() {
         return this.reorderedOrder != null;
@@ -67,12 +64,11 @@ public class Order implements Transferable<Order.Transfer>{
         private List<List<String>> content;
         private String title;
         private String author;   
-        private long id;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(content, title, author.getUsername(), id);
+        return new Transfer(content, title, author);
     }
 
     @Override

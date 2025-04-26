@@ -3,7 +3,6 @@ package com.thecritics.reorder.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecritics.reorder.model.Order;
-import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,8 +79,6 @@ class ReorderControllerIntegrationTest {
 
     private MockHttpSession mockSession;
     private Order mockOriginalOrder;
-    private Orderer mockOriginalOrderer;
-    private Orderer mockOriginalReOrderer;
     private List<List<String>> originalContent;
     private List<List<String>> changedContent;
     private Order mockSavedReorder;
@@ -99,28 +96,16 @@ class ReorderControllerIntegrationTest {
             Arrays.asList("Elemento C", "Elemento A")
         );
 
-        mockOriginalOrderer = new Orderer();
-        mockOriginalOrderer.setId(VALID_ORIGINAL_ORDER_ID);
-        mockOriginalOrderer.setEmail("usuario@gmail.com");
-        mockOriginalOrderer.setPassword("aaaAAA111");
-        mockOriginalOrderer.setUsername("Autor Original");
-
         mockOriginalOrder = new Order();
         mockOriginalOrder.setId(VALID_ORIGINAL_ORDER_ID);
         mockOriginalOrder.setTitle("Título Original");
-        mockOriginalOrder.setAuthor(mockOriginalOrderer);
+        mockOriginalOrder.setAuthor("Autor Original");
         mockOriginalOrder.setContent(originalContent);
 
-        mockOriginalReOrderer = new Orderer();
-        mockOriginalReOrderer.setId(VALID_ORIGINAL_ORDER_ID);
-        mockOriginalReOrderer.setEmail("usuario1@gmail.com");
-        mockOriginalReOrderer.setPassword("aaaAAA111");
-        mockOriginalReOrderer.setUsername(REORDER_AUTHOR);
-        
         mockSavedReorder = new Order();
         mockSavedReorder.setId(100);
         mockSavedReorder.setTitle(REORDER_TITLE);
-        mockSavedReorder.setAuthor(mockOriginalReOrderer);
+        mockSavedReorder.setAuthor(REORDER_AUTHOR);
         mockSavedReorder.setContent(changedContent);
         mockSavedReorder.setReorderedOrder(mockOriginalOrder);
 
@@ -133,7 +118,7 @@ class ReorderControllerIntegrationTest {
             anyList(),
             any(Order.class)
         ))
-            .thenReturn(mockSavedReorder.toTransfer());
+            .thenReturn(mockSavedReorder);
 
         when(orderService.updateReOrderState(anyList(), any(HttpSession.class)))
             .thenAnswer(invocation -> {

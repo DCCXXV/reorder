@@ -195,7 +195,7 @@ public class ReorderController {
         log.info("Contenido diferente, guardando reorder para original ID {}", originalOrderId);
         try {
             String finalAuthor = (rauthor == null || rauthor.trim().isEmpty()) ? "Anónimo" : rauthor.trim();
-            Order.Transfer savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
+            Order savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
 
             session.removeAttribute("reOrderState");
             session.removeAttribute("reorderOriginalId");

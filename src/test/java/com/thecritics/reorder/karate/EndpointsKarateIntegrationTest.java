@@ -56,4 +56,12 @@ public class EndpointsKarateIntegrationTest {
         return Karate.run("classpath:features/signupIntegrationTest.feature")
                 .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
     }
+    @Karate.Test
+    //Error: el servidor rechaza la solicitud por seguridad, error 403
+public Karate testLogin() {
+    System.setProperty("karate.server.port", String.valueOf(port));
+    return Karate.run("classpath:features/loginIntegrationTest.feature")
+            .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
+            .systemProperty("karate.server.port", String.valueOf(port));
+}
 }

@@ -285,7 +285,7 @@ public class OrderCreationController {
         }
 
         try {
-            Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
+            Order.Transfer savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
 
             orderState = clearOrder(orderState);
 

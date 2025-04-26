@@ -3,6 +3,7 @@ package com.thecritics.reorder.service;
 import com.thecritics.reorder.controller.HomeController;
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.repository.OrderRepository;
+import com.thecritics.reorder.repository.OrdererRepository;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+    private OrdererRepository ordererRepository;
 
     /**
      * Añade un elemento al primer tier (sin asignar) del estado del Order en la sesión.
@@ -158,11 +160,11 @@ public class OrderService {
      * @param content El contenido del Order, organizado en tiers y elementos.
      * @return Order guardado, incluyendo su ID asignado.
      */
-    public Order saveOrder(String title, String author, List<List<String>> content) {
+    public Order.Transfer saveOrder(String title, String author, List<List<String>> content) {
         Order order = new Order();
         order.setContent(content);
         order.setTitle(title);
-        order.setAuthor((author == "") ? "Anónimo" : author);
+        order.setAuthor(ordererRepository.findByUsername(author));
         
         List<String> previewElements = content.stream()
             .flatMap(List::stream)
@@ -173,7 +175,7 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        return savedOrder;
+        return savedOrder.toTransfer();
     }
 
     /**
@@ -255,11 +257,11 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public Order saveReOrder(String title, String author, List<List<String>> content, Order orderOriginal) {
+    public Order.Transfer saveReOrder(String title, String author, List<List<String>> content, Order orderOriginal) {
         Order order = new Order();
         order.setContent(content);
         order.setTitle(title);
-        order.setAuthor((author == "") ? "Anónimo" : author);
+        order.setAuthor(ordererRepository.findByUsername(author));
 
         List<String> previewElements = content.stream()
             .flatMap(List::stream)
@@ -273,7 +275,7 @@ public class OrderService {
         Order savedReOrder = orderRepository.save(order);
         orderOriginal.getReorders().add(savedReOrder);
 
-        return savedReOrder;
+        return savedReOrder.toTransfer();
     }
     /**
      * Crea una copia profunda (deep clone) de la estructura de contenido de un Order.

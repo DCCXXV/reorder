@@ -131,4 +131,21 @@ public class OrdererService {
                 .map(Orderer::toTransfer)
                 .toList();
     }
+
+    /**
+     * Busca una orden por su ID
+     * 
+     * @param id El ID de la orden a buscar
+     * @return La orden encontrada, o null si no existe.
+     */
+
+     public Orderer getOrdererById(Integer id){
+        return ordererRepository.findById(id);
+
+
+     }
+
+     public Orderer getOrdererByUsername(String username){
+        return ordererRepository.findByUsername(username);
+     }
 }

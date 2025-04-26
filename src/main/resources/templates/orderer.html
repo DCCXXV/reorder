@@ -1,0 +1,25 @@
+<div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
+    <title hidden th:text="${orderer} + ' | ReOrder'"></title>
+    <div th:if="${searchQuery !=null}" class="mt-10">
+        <input type="hidden" id="originalQueryInput" name="query" th:value="${searchQuery}" />
+
+        <button class="btn rounded-pill bg-base-200 p-4"
+                hx-post="/search"
+                hx-target="#pageContent"
+                hx-swap="innerHTML"
+                hx-include="#originalQueryInput"
+                >
+            <i class="fa-solid fa-chevron-left me-2"></i>
+            Volver a Resultados
+        </button>
+    </div>
+
+    <div class="flex justify-center items-center mt-10 relative">
+        <div class="absolute w-20 h-20 bg-secondary rounded-full top-0 transform -translate-y-1/2 z-10"></div>
+        <div class="w-full max-w-2xl rounded-xl border border-base-300 bg-base-200 p-6 relative">
+            <div class="mt-10">
+                <p>Contenido del rectángulo</p>
+            </div>
+        </div>
+    </div>
+</div>

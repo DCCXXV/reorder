@@ -52,7 +52,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * Adapt this if your session cookie name is different.
      * @param response The HttpServletResponse
      */
-    private void addSameSiteCookieAttribute(HttpServletResponse response) {
+    protected void addSameSiteCookieAttribute(HttpServletResponse response) {
         String header = response.getHeader("Set-Cookie");
         if (header != null && header.contains("JSESSIONID")) {
             response.setHeader("Set-Cookie", header + "; SameSite=Lax");

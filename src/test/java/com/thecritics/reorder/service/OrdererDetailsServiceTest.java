@@ -52,7 +52,7 @@ public class OrdererDetailsServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(username))
             .isInstanceOf(UsernameNotFoundException.class)
-            .hasMessageContaining("User not found with username: " + username);
+            .hasMessageContaining("User not found with username or email: " + username);
 
         verify(ordererRepository, times(1)).findByUsername(username);
     }

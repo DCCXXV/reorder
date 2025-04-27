@@ -36,7 +36,7 @@ public class OrdererLoginController {
     @GetMapping
     public String login(Model model, @RequestParam(value = "error", required = false) String error,  Authentication authentication){
         if (error != null) {
-            model.addAttribute("errorMessage", "Usuario o contaseña inválidos");
+            model.addAttribute("errorMessage", "Usuario o contraseña inválidos");
         }
 
         if (authentication != null && authentication.isAuthenticated()

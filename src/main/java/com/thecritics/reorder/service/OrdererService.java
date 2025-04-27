@@ -105,11 +105,15 @@ public class OrdererService {
      * Busca un Orderer exacto por su nombre de usuario.
      *
      * @param username El nombre de usuario del Orderer a buscar.
-     * @return El Orderer correspondiente al nombre de usuario proporcionado, o
+     * @return El Transfer del Orderer correspondiente al nombre de usuario proporcionado, o
      *         {@code null} si no se encuentra.
      */
     public Orderer.Transfer findByUsername(String username) {
-        return ordererRepository.findByUsername(username).toTransfer();
+        Orderer orderer =  ordererRepository.findByUsername(username);
+        if (orderer == null) {
+            return null;
+        }
+        return orderer.toTransfer();
     }
 
     /**
@@ -120,7 +124,11 @@ public class OrdererService {
      *         {@code null} si no se encuentra.
      */
     public Orderer.Transfer findByEmail(String email) {
-        return ordererRepository.findByEmail(email).toTransfer();
+        Orderer orderer =  ordererRepository.findByEmail(email);
+        if (orderer == null) {
+            return null;
+        }
+        return orderer.toTransfer();
     }
 
     

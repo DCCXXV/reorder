@@ -24,10 +24,13 @@ public class OrdererDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Attempting to load user by username/identifier: {}", username);
 
-        Orderer orderer = ordererRepository.findByUsername(username);
+         // Intento cargar el usuario por nombre de usuario o correo electrónico
+         Orderer orderer = loadOrdererByUsernameOrEmail(username);
+
+        // Orderer orderer = ordererRepository.findByUsername(username);
 
         if (orderer == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("User not found with username or email: " + username);
         }
 
         log.info("User found: {}", orderer.getUsername());
@@ -38,4 +41,15 @@ public class OrdererDetailsService implements UserDetailsService {
             .roles("USER")
             .build();
     }
+
+ //no se si es la mejor forma de comprobar esto la verdad
+   private Orderer loadOrdererByUsernameOrEmail(String usernameOrEmail) {
+    if (usernameOrEmail.contains("@")) {
+        // Si contiene @ es muy probablemente un correo electrónico
+        return ordererRepository.findByEmail(usernameOrEmail);
+    } else {
+        // Si no contiene @ nombre de usuario
+        return ordererRepository.findByUsername(usernameOrEmail);
+    }
+}
 }

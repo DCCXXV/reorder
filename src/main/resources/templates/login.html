@@ -38,7 +38,7 @@
                               <circle cx="12" cy="7" r="4"></circle>
                             </g>
                           </svg>
-                        <input type="text" placeholder="Usuario"  class="w-full" name="username" id="username"/>
+                        <input type="text" placeholder="Usuario o Correo electrónico"  class="w-full" name="username" id="username"/>
                     </label>
                 </div>
                 <div class="flex flex-col w-full mb-4 items-center" id ="passwordInput">
@@ -50,6 +50,9 @@
                             </g>
                         </svg>
                         <input type="password" required placeholder="Contraseña" minlength="8" class="w-full" name="password" id="password"/>
+                        <button type="button" onclick="passwordVisibility()" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500">
+                            <i class="fa fa-eye"></i>
+                        </button>
                     </label>
                 </div>
                 <div class="flex flex-col w-full items-center mt-6">
@@ -63,5 +66,15 @@
             </div>
         </div>
     </div>
+    <script>
+        function passwordVisibility() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+    </script>
 </body>
 </html>

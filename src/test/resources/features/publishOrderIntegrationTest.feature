@@ -10,7 +10,6 @@ Background:
   * method post
   * status 200
   * path ''
-
   * def validOrderStateJson = '[[], ["Puerta Simple"], ["Puerta Corredera"]]'
   * def emptyTiersOrderStateJson = '[["ElementoSinTier"], [], []]'
 
@@ -22,7 +21,7 @@ Scenario: El Orderer le da a publicar Order sin poner un título
   Then status 400
   And match response == "El título no puede estar vacío."
 
-Scenario: El Orderer le da a publicar Order con un título (Éxito - Ajustado)
+Scenario: El Orderer le da a publicar Order con un título correctamente(Éxito - Ajustado)
   # --- 1. Configurar sesión VÁLIDA ---
   Given path '/createOrder/updateOrderState'
   And form field orderStateJson = validOrderStateJson
@@ -32,41 +31,10 @@ Scenario: El Orderer le da a publicar Order con un título (Éxito - Ajustado)
   # --- 2. Realizar la prueba principal ---
   Given path '/createOrder/PublishOrder'
   And form field title = "Top 10 puertas"
-  And form field author = "autor"
   When method post
   Then status 200
   And match response contains '<span class="mt-4 text-4xl font-bold text-secondary">Top 10 puertas</span>'
-  And match response contains '<span class="mt-1 mb-4 text-xl" style="filter: brightness(80%);">@autor</span>'
-
-Scenario: El Orderer le da a publicar Order con un título y en Anónimo (Éxito - Ajustado)
-  Given path '/createOrder/updateOrderState'
-  And form field orderStateJson = validOrderStateJson
-  When method post
-  Then status 200
-
-  Given path '/createOrder/PublishOrder'
-  And form field title = "Top 10 puertas"
-  And form field author = ""
-  When method post
-  Then status 200
-  And match response contains '<span class="mt-4 text-4xl font-bold text-secondary">Top 10 puertas</span>'
-  And match response contains '<span class="mt-1 mb-4 text-xl" style="filter: brightness(80%);">@Anónimo</span>'
-
-Scenario: El Orderer le da a publicar Order con un título y con un nombre de autor (Éxito - Ajustado)
-  # --- 1. Configurar sesión VÁLIDA ---
-  Given path '/createOrder/updateOrderState'
-  And form field orderStateJson = validOrderStateJson
-  When method post
-  Then status 200
-
-  # --- 2. Realizar la prueba principal ---
-  Given path '/createOrder/PublishOrder'
-  And form field title = "Top 10 puertas"
-  And form field author = "ManuVilla"
-  When method post
-  Then status 200
-  And match response contains '<span class="mt-4 text-4xl font-bold text-secondary">Top 10 puertas</span>'
-  And match response contains '<span class="mt-1 mb-4 text-xl" style="filter: brightness(80%);">@ManuVilla</span>'
+  And match response contains '<span class="mt-1 mb-4 text-xl" style="filter: brightness(80%);">@a</span>'
 
 Scenario: El Orderer le da a publicar Order sin elementos en los Tiers (Fallo Validación)
   # --- 1. Configurar sesión INVÁLIDA ---

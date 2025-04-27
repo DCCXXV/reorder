@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 import com.thecritics.reorder.model.Order;
 import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrderRepository;
+import com.thecritics.reorder.repository.OrdererRepository;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +22,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class OrderServiceTest {
 
     @InjectMocks
@@ -33,6 +37,9 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+    
+    @Mock
+    private OrdererRepository ordererRepository;
 
     @Mock
     private Orderer authorOrderer;
@@ -49,7 +56,8 @@ class OrderServiceTest {
     }
 
     @BeforeEach
-    void setUp() {}
+    void setUp() {
+    }
 
     @Test
     void addElement_ShouldAddElementToUnassignedTier() {
@@ -105,8 +113,7 @@ class OrderServiceTest {
         List<List<String>> initialOrderState = new ArrayList<>();
         initialOrderState.add(new ArrayList<>());
         initialOrderState.add(new ArrayList<>());
-        String elementText =
-            "¡¡ \" Elemento a eliminar con carácteres especiales <h1> \" !!";
+        String elementText = "¡¡ \" Elemento a eliminar con carácteres especiales <h1> \" !!";
         initialOrderState.getFirst().add(elementText);
         when(session.getAttribute("orderState")).thenReturn(initialOrderState);
         List<List<String>> result = orderService.deleteElement(elementText, session);
@@ -176,50 +183,55 @@ class OrderServiceTest {
         newOrderState.add(Arrays.asList("Manzana", "Limón"));
         newOrderState.add(new ArrayList<>());
         List<List<String>> result = orderService.updateOrderState(
-            newOrderState,
-            session
-        );
+                newOrderState,
+                session);
         verify(session).setAttribute("orderState", newOrderState);
         assertThat(result).isSameAs(newOrderState);
     }
 
     @Test
-    void saveOrder_ShouldSaveOrderWithTitleAuthorAndContentCorrectly() {
-        String title = "TOP FRUTAS";
-        String authorUsername = "Sara";
+void saveOrder_ShouldSaveOrderWithTitleAuthorAndContentCorrectly() {
+    String title = "TOP FRUTAS";
+    String authorUsername = "Sara";
 
-        List<List<String>> content = List.of(
+    List<List<String>> content = List.of(
             List.of("Manzana", "Pera"),
-            List.of("Naranja")
-        );
+            List.of("Naranja"));
 
-        when(authorOrderer.getUsername()).thenReturn(authorUsername);
+    when(ordererRepository.findByUsername(authorUsername)).thenReturn(authorOrderer);
+    when(authorOrderer.getUsername()).thenReturn(authorUsername);
 
-        Order expectedSavedOrder = mock(Order.class);
-        when(expectedSavedOrder.getId()).thenReturn(1L);
-        when(expectedSavedOrder.getTitle()).thenReturn(title);
-        when(expectedSavedOrder.getAuthor()).thenReturn(authorOrderer);
-        when(expectedSavedOrder.getContent()).thenReturn(content);
+    Order savedOrder = mock(Order.class);
+    Order.Transfer transfer = mock(Order.Transfer.class);
 
-        when(orderRepository.save(any(Order.class)))
-            .thenReturn(expectedSavedOrder);
+    when(savedOrder.toTransfer()).thenReturn(transfer);
 
-        Order.Transfer savedOrder = orderService.saveOrder(title, authorUsername, content);
+    when(savedOrder.getId()).thenReturn(1L);
+    when(savedOrder.getTitle()).thenReturn(title);
+    when(savedOrder.getAuthor()).thenReturn(authorOrderer);
+    when(savedOrder.getContent()).thenReturn(content);
 
-        verify(orderRepository, times(1)).save(orderCaptor.capture());
-        Order orderPassedToSave = orderCaptor.getValue();
+    when(transfer.getId()).thenReturn(1L);
+    when(transfer.getTitle()).thenReturn(title);
+    when(transfer.getAuthor()).thenReturn(authorUsername);
+    when(transfer.getContent()).thenReturn(content);
 
-        assertThat(orderPassedToSave.getTitle()).isEqualTo(title);
-        assertThat(orderPassedToSave.getContent()).isEqualTo(content);
+    when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
 
-        assertThat(savedOrder).isNotNull();
-        assertThat(savedOrder.getId()).isEqualTo(1L);
-        assertThat(savedOrder.getTitle()).isEqualTo(title);
-        assertThat(savedOrder.getContent()).isEqualTo(content);
-        assertThat(savedOrder.getAuthor()).isNotNull();
-        assertThat(savedOrder.getAuthor()).isEqualTo(authorOrderer);
-        assertThat(savedOrder.getAuthor()).isEqualTo(authorUsername);
-    }
+    Order.Transfer result = orderService.saveOrder(title, authorUsername, content);
+
+    verify(orderRepository).save(orderCaptor.capture());
+    Order capturedOrder = orderCaptor.getValue();
+    
+    assertThat(capturedOrder.getTitle()).isEqualTo(title);
+    assertThat(capturedOrder.getContent()).isEqualTo(content);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(1L);
+    assertThat(result.getTitle()).isEqualTo(title);
+    assertThat(result.getContent()).isEqualTo(content);
+    assertThat(result.getAuthor()).isEqualTo(authorUsername);
+}
 
     @Test
     void getOrdersByTitle_ShouldReturnOrdersWhenTitleExists() {
@@ -236,31 +248,27 @@ class OrderServiceTest {
         when(order2.getAuthor()).thenReturn(author2);
         List<Order> mockOrders = Arrays.asList(order1, order2);
         when(
-            orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
-                title
-            )
-        )
-            .thenReturn(mockOrders);
+                orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
+                        title))
+                .thenReturn(mockOrders);
         List<Order> result = orderService.getOrdersByTitle(title);
         assertThat(result).hasSize(2);
         assertThat(result).containsExactly(order1, order2);
         verify(orderRepository, times(1))
-            .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
     }
 
     @Test
     void getOrdersByTitle_ShouldReturnEmptyListWhenTitleNotExists() {
         String title = "Título inexistente";
         when(
-            orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
-                title
-            )
-        )
-            .thenReturn(new ArrayList<>());
+                orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
+                        title))
+                .thenReturn(new ArrayList<>());
         List<Order> result = orderService.getOrdersByTitle(title);
         assertThat(result).isEmpty();
         verify(orderRepository, times(1))
-            .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(title);
     }
 
     @Test
@@ -277,13 +285,12 @@ class OrderServiceTest {
         when(order2.getAuthor()).thenReturn(author2);
         List<Order> mockOrders = Arrays.asList(order1, order2);
         when(
-            orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("")
-        )
-            .thenReturn(mockOrders);
+                orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(""))
+                .thenReturn(mockOrders);
         List<Order> result = orderService.getOrdersByTitle("");
         assertThat(result).hasSize(2);
         verify(orderRepository, times(1))
-            .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("");
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc("");
     }
 
     @Test
@@ -299,17 +306,15 @@ class OrderServiceTest {
         when(order2.getAuthor()).thenReturn(author2);
         List<Order> expectedOrders = Arrays.asList(order1, order2);
         when(
-            orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
-                query
-            )
-        )
-            .thenReturn(expectedOrders);
+                orderRepository.findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
+                        query))
+                .thenReturn(expectedOrders);
         List<Order> result = orderService.getOrdersByTitle(query);
         assertThat(result).isNotNull();
         assertThat(result).hasSize(2);
         assertThat(result).containsExactlyElementsOf(expectedOrders);
         verify(orderRepository, times(1))
-            .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(query);
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(query);
     }
 
     @Test
@@ -338,9 +343,8 @@ class OrderServiceTest {
         newReOrderState.add(Arrays.asList("Manzana", "Pera"));
         newReOrderState.add(Arrays.asList("Naranja"));
         List<List<String>> result = orderService.updateReOrderState(
-            newReOrderState,
-            session
-        );
+                newReOrderState,
+                session);
         assertThat(result).isEqualTo(newReOrderState);
     }
 

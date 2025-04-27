@@ -33,20 +33,59 @@
                 th:text="${orderer.username}">
                 NombreUsuario
             </p>
+
         </div>
         <div
             class="w-full max-w-5xl rounded-xl border border-base-300 bg-base-200 p-6 relative">
             <div class="mt-10">
                 <!-- Fila de información -->
                 <div class="flex justify-between items-center mb-10">
-                    <div class="text-left">
+                    <div class="absolute top-4 left-4">
                         <p class="text-sm text-gray-500">Orders realizados</p>
                         <p class="text-2xl font-bold">
                             <span
                                 th:text="${orderer.orders != null ? #lists.size(orderer.orders) : 0}"></span>
                         </p>
                     </div>
-                    <div class="text-right">
+                    <div class="absolute top-4 right-4" th:if="${orderer.username != #authentication.name}">
+                        <button
+                            id="followButton"
+                            class="btn btn-secondary p-4">
+                            Seguir
+                        </button>
+                    </div>
+                </div>
+
+                    <div id="confirmModal"
+                    class="fixed inset-0 hidden flex items-center justify-center bg-transparent backdrop-blur-sm z-50">
+                 <div class="bg-base-100 rounded-lg p-6 w-80 text-center shadow-xl">
+                   <h3 class="text-lg font-semibold mb-4">
+                     ¿Estás seguro de que quieres dejar de seguir a
+                     <span class="text-secondary font-bold" th:text="'@' + ${orderer.username}">@Usuario</span>?
+                   </h3>
+                   <div class="flex justify-center gap-4 mt-4">
+                     <button id="cancelBtn" class="btn">Cancelar</button>
+                     <button id="acceptBtn" class="btn btn-error">Aceptar</button>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="absolute bottom-4 left-4 flex gap-6 items-center">
+                <div class="text-center">
+                  <p class="text-sm text-gray-500">Seguidores</p>
+                  <p class="text-lg font-bold">
+                    <!--<span th:text="${orderer.followersCount != null ? orderer.followersCount : 0}"></span>-->
+                  </p>
+                </div>
+                <div class="text-center">
+                  <p class="text-sm text-gray-500">Seguidos</p>
+                  <p class="text-lg font-bold">
+                   <!-- <span th:text="${orderer.followingCount != null ? orderer.followingCount : 0}"></span>-->
+                  </p>
+                </div>
+              </div>
+
+                        <div class="absolute bottom-4 right-4">
                         <p class="text-sm text-gray-500">Se unió a ReOrder el
                             día</p>
                         <p class="text-2xl font-bold">
@@ -94,3 +133,41 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        const followButton = document.getElementById('followButton');
+        const confirmModal = document.getElementById('confirmModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const acceptBtn = document.getElementById('acceptBtn');
+      
+        function showModal() {
+          confirmModal.classList.remove('hidden');
+        }
+        function hideModal() {
+          confirmModal.classList.add('hidden');
+        }
+      
+        followButton.addEventListener('click', () => {
+          if (followButton.innerText === 'Seguir') {
+            // Pasar a estado "Dejar de seguir"
+            followButton.innerText = 'Dejar de seguir';
+            followButton.className = 'btn btn-outline btn-secondary mr-4 p-4';
+          } else {
+            // Mostrar modal de confirmación
+            showModal();
+          }
+        });
+      
+        cancelBtn.addEventListener('click', () => {
+          hideModal();
+        });
+      
+        acceptBtn.addEventListener('click', () => {
+          // Confirmado: volver a "Seguir"
+          followButton.innerText = 'Seguir';
+          followButton.className = 'btn btn-secondary p-4';
+          hideModal();
+          // Aquí podrías llamar al backend para procesar el unfollow
+        });
+      </script>

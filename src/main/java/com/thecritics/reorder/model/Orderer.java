@@ -12,6 +12,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -40,6 +43,20 @@ public class Orderer implements Transferable<Orderer.Transfer> {
     @Column(nullable = false, unique = false)
     private String password;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        joinColumns = @JoinColumn(name = "orderer_id"),
+        inverseJoinColumns = @JoinColumn(name = "follower_id")
+    )
+    private List<Orderer> followers = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        joinColumns = @JoinColumn(name = "orderer_id"),
+        inverseJoinColumns = @JoinColumn(name = "following_id")
+    )
+    private List<Orderer> following = new ArrayList<>();
+
     @OneToMany(mappedBy = "author")
     private List<Order> orders;
 
@@ -50,12 +67,14 @@ public class Orderer implements Transferable<Orderer.Transfer> {
         private String email;
         private int numOrders;
         private java.sql.Timestamp createdAt;
-        private List<Order> orders;
+        private List<Order.Transfer> orders;
+        private int followersCount;
+        private int followingCount;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(username, email, orders.size(), createdAt, orders);
+        return new Transfer(username, email, orders.size(), createdAt, orders.stream().map(Order::toTransfer).toList(), followers.size(), following.size());
     }
 
     @Override

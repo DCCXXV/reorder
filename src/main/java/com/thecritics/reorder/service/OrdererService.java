@@ -148,4 +148,59 @@ public class OrdererService {
      public Orderer getOrdererByUsername(String username){
         return ordererRepository.findByUsername(username);
      }
+
+        /**
+     * Comprueba si un usuario sigue a otro.
+     *
+     * @param followerUsername El nombre de usuario del seguidor.
+     * @param followedUsername El nombre de usuario del usuario seguido.
+     * @return {@code true} si followerUsername sigue a followedUsername, {@code false} en caso contrario.
+     */
+    public boolean isFollowing(String followerUsername, String followedUsername) {
+        Orderer follower = ordererRepository.findByUsername(followerUsername);
+        Orderer followed = ordererRepository.findByUsername(followedUsername);
+
+        if (follower == null || followed == null) {
+            return false;
+        }
+
+        return follower.getFollowing().stream()
+                .anyMatch(o -> o.getId().equals(followed.getId()));
+    }
+
+    /**
+     * Permite que un usuario siga a otro.
+     *
+     * @param followerUsername El nombre de usuario del seguidor.
+     * @param followedUsername El nombre de usuario del usuario a seguir.
+     */
+    public void follow(String followerUsername, String followedUsername) {
+        Orderer follower = ordererRepository.findByUsername(followerUsername);
+        Orderer followed = ordererRepository.findByUsername(followedUsername);
+
+        if (follower != null && followed != null && !isFollowing(followerUsername, followedUsername)) {
+            follower.getFollowing().add(followed);
+            followed.getFollowers().add(follower);
+            ordererRepository.save(follower);
+            ordererRepository.save(followed);
+        }
+    }
+
+    /**
+     * Permite que un usuario deje de seguir a otro.
+     *
+     * @param followerUsername El nombre de usuario del seguidor.
+     * @param followedUsername El nombre de usuario del usuario al que se desea dejar de seguir.
+     */
+    public void unfollow(String followerUsername, String followedUsername) {
+        Orderer follower = ordererRepository.findByUsername(followerUsername);
+        Orderer followed = ordererRepository.findByUsername(followedUsername);
+
+        if (follower != null && followed != null && isFollowing(followerUsername, followedUsername)) {
+            follower.getFollowing().removeIf(o -> o.getId().equals(followed.getId()));
+            followed.getFollowers().removeIf(o -> o.getId().equals(follower.getId()));
+            ordererRepository.save(follower);
+            ordererRepository.save(followed);
+        }
+    }
 }

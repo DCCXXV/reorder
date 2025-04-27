@@ -20,6 +20,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,6 +73,22 @@ public class OrdererViewController {
                     model.addAttribute("searchQuery", sessionQuery);
                 }
             }
+            
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String currentUser = (auth != null && auth.isAuthenticated()) ? auth.getName() : null;
+
+            
+            model.addAttribute("followers", orderer.getFollowers());
+            model.addAttribute("following", orderer.getFollowing());
+
+            
+            boolean isFollowing = false;
+            if (currentUser != null) {
+                isFollowing = ordererService.isFollowing(currentUser, username);
+            }
+            model.addAttribute("isFollowing", isFollowing);
+
+
             return "orderer";
         }
   

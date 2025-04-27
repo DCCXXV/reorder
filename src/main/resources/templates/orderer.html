@@ -50,8 +50,8 @@
                     <div class="absolute top-4 right-4" th:if="${orderer.username != #authentication.name}">
                         <button
                             id="followButton"
-                            class="btn btn-secondary p-4">
-                            Seguir
+                            class="btn btn-secondary p-4
+                            th:text="${isFollowing ? 'Dejar de seguir' : 'Seguir'}">
                         </button>
                     </div>
                 </div>
@@ -74,13 +74,13 @@
                 <div class="text-center">
                   <p class="text-sm text-gray-500">Seguidores</p>
                   <p class="text-lg font-bold">
-                    <!--<span th:text="${orderer.followersCount != null ? orderer.followersCount : 0}"></span>-->
+                    <span th:text="${orderer.followers.size() != null ? orderer.followers.size() : 0}"></span>
                   </p>
                 </div>
                 <div class="text-center">
                   <p class="text-sm text-gray-500">Seguidos</p>
                   <p class="text-lg font-bold">
-                   <!-- <span th:text="${orderer.followingCount != null ? orderer.followingCount : 0}"></span>-->
+                    <span th:text="${orderer.following.size() != null ? orderer.following.size() : 0}"></span>
                   </p>
                 </div>
               </div>

@@ -4,6 +4,7 @@
 <body>
     <div th:fragment="empty"></div>
     <div th:fragment="autocomplete">
+    <!-- Seccion de Orders-->
         <div th:if="${orders != null && !orders.isEmpty()}" class="autocomplete-container">
             <div th:each="order : ${orders}"
                  class="searchAutocompleteItem"
@@ -12,11 +13,28 @@
                 <span th:text="${order.title}"></span>
             </div>
         </div>
+
+    <!-- Seccion de Orderers-->
+        <div th:if="${orderers != null && !orderers.isEmpty()}" class="autocomplete-container">
+            <hr class="text-secondary">
+            <div th:each="orderer : ${orderers}"
+                class="searchAutocompleteItem"
+                onclick="selectSearchQuery(this.getAttribute('data-value'))"
+                th:data-value="${orderer.username}">
+                <span class="text-neutral-400" th:text="${'@' + orderer.username}"></span>
+            </div>
+        </div>
+        
         <!--
         <div th:if="${orders.isEmpty()}" class="p-2">
             No se encontraron resultados
         </div>
         -->
+
+         <!-- Mensaje cuando no hay resultados (para ambos) >
+         <div th:if="${(orders == null || orders.isEmpty()) && (orderers == null || orderers.isEmpty())}" class="p-2">
+            No se encontraron resultados
+        </div-->
     </div>
 </body>
 </html>

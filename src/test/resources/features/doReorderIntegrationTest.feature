@@ -3,6 +3,13 @@ Feature: Publicar ReOrder
   Background:
   * def port = karate.properties['karate.server.port']
   * url 'http://localhost:' + port
+  * header X-Test-Framework = 'Karate'
+  * path '/login'
+  * form field username = 'a'
+  * form field password = 'aaaAAA123'
+  * method post
+  * status 200
+  * path ''
   * def knownExistingOrderId = 1
   * def validReorderStateJson = '[[], ["Elemento Movido"], ["Elemento Original"]]'
 

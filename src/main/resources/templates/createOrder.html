@@ -15,7 +15,8 @@
                                     </div>
                                     <div class="flex flex-col w-full md:w-1/2">
                                         <label for="authorInput" class="mb-1 ms-2 text-sm">Autor</label>
-                                        <input name="author" id="authorInput" type="text" placeholder="Anónimo" class="input input-md sm:input-lg focus:outline-none border-neutral w-full"/>
+                                        <input name="author" id="authorInput" type="text" th:value="${'@' + u}" readonly class="mt-1 mb-4 text-xl text-gray-500 bg-transparent border-none focus:outline-none w-auto p-0"
+                                        />
                                     </div>
                                 </div>
                                 <div class="mt-4 md:mt-0 md:self-end">

@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
 import com.thecritics.reorder.service.OrdererService;
 
@@ -76,6 +78,7 @@ public class OrderCreationController {
         List<List<String>> orderState = orderService.getOrderState(session);
         model.addAttribute("publishEnabled", false);
         model.addAttribute("orderState", orderState);
+        model.addAttribute("u", session.getAttribute("username"));
         return "createOrder";
     }
 
@@ -259,7 +262,6 @@ public class OrderCreationController {
     @PostMapping("/PublishOrder")
     public ResponseEntity<?> PublishOrder(
         @RequestParam String title,
-        @RequestParam(required = false) String author,
         HttpSession session,
         RedirectAttributes redirectAttributes) {
 
@@ -268,7 +270,7 @@ public class OrderCreationController {
             return new ResponseEntity<>("El título no puede estar vacío.", headers, HttpStatus.BAD_REQUEST);
         }
 
-        String finalAuthor = (author == null || author.trim().isEmpty()) ? "Anónimo" : author.trim();
+        String author = (String) session.getAttribute("username");
         List<List<String>> orderState = orderService.getOrderState(session);
 
         boolean hasElementsInTiers = orderState != null && orderState.size() > 1 &&
@@ -282,7 +284,7 @@ public class OrderCreationController {
         }
 
         try {
-            Order savedOrder = orderService.saveOrder(title.trim(), finalAuthor, orderState);
+            Order.Transfer savedOrder = orderService.saveOrder(title.trim(), author, orderState);
 
             orderState = clearOrder(orderState);
 
@@ -297,7 +299,7 @@ public class OrderCreationController {
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
 
         } catch (Exception e) {
-            log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), finalAuthor, e);
+            log.error("Error al publicar el Order con título '{}' por autor '{}'", title.trim(), author, e);
             HttpHeaders errorHeaders = createErrorHeaders("#publish-error-message");
             return new ResponseEntity<>("Ocurrió un error inesperado al publicar el Order.", errorHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -333,3 +335,4 @@ public class OrderCreationController {
         return orderState;
     }
 }
+

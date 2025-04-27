@@ -1,7 +1,10 @@
 package com.thecritics.reorder.controller;
 
 import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
+import com.thecritics.reorder.service.OrdererService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +25,25 @@ import java.util.LinkedHashMap;
  * Controlador para la búsqueda de Orders y sugerencias de autocompletado.
  */
 @Controller
-public class OrderSearchController {
+public class SearchController {
 
-    private static final Logger log = LogManager.getLogger(OrderSearchController.class);
+    private static final Logger log = LogManager.getLogger(SearchController.class);
 
     private final OrderService orderService;
+    private final OrdererService ordererService;
 
-    private static final int AUTOCOMPLETE_LIMIT = 5;
+    private static final int AUTOCOMPLETE_LIMIT = 3;
 
-    public OrderSearchController(OrderService orderService) {
+    public SearchController(OrderService orderService, OrdererService ordererService) {
         this.orderService = orderService;
+        this.ordererService = ordererService;
     }
 
     @PostMapping("/search")
     public String searchByTitle(@RequestParam String query, Model model) {
         model.addAttribute("query", query);
         model.addAttribute("orderList", orderService.getOrdersByTitle(query));
+        model.addAttribute("ordererList", ordererService.getOrderersByUsername(query));
         return "search";
     }
 
@@ -65,17 +71,28 @@ public class OrderSearchController {
         }
 
         List<Order> potentialMatches = orderService.findTopOrdersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
+        List<Orderer.Transfer> potentiaOrderersMatches = ordererService.findTopOrderersStartingWith(trimmedQuery, AUTOCOMPLETE_LIMIT);
 
+        //Orders
         Map<String, Order> uniqueOrdersMap = new LinkedHashMap<>();
         for (Order order : potentialMatches) {
             uniqueOrdersMap.putIfAbsent(order.getTitle(), order);
         }
         List<Order> uniqueOrders = List.copyOf(uniqueOrdersMap.values());
 
+        //Orderers
+        Map<String, Orderer.Transfer> uniqueOrderersMap = new LinkedHashMap<>();
+        for (Orderer.Transfer orderer : potentiaOrderersMatches) {
+            uniqueOrderersMap.putIfAbsent(orderer.getUsername(), orderer);
+        }
+        List<Orderer.Transfer> uniqueOrderers = List.copyOf(uniqueOrderersMap.values());
+        
         model.addAttribute("orders", uniqueOrders);
+        model.addAttribute("orderers", uniqueOrderers);
         model.addAttribute("query", trimmedQuery);
 
-        log.debug("Devolviendo {} sugerencias para autocompletado.", uniqueOrders.size());
+        log.debug("Devolviendo {} sugerencias para autocompletado de Orders y {} para Orderers.", 
+        uniqueOrders.size(), uniqueOrderers.size());
         return "fragments/search :: autocomplete";
     }
 }

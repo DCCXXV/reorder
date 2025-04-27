@@ -6,8 +6,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -45,7 +47,8 @@ public class Order implements Transferable<Order.Transfer>{
     private List<String> previewElements;
     
     private String title;
-    private String author;
+    @ManyToOne
+    private Orderer author;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reordered_order_id")
@@ -53,6 +56,8 @@ public class Order implements Transferable<Order.Transfer>{
 
     @OneToMany(mappedBy = "reorderedOrder", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Order> reorders;
+
+   
 
     public boolean isReorder() {
         return this.reorderedOrder != null;
@@ -64,11 +69,12 @@ public class Order implements Transferable<Order.Transfer>{
         private List<List<String>> content;
         private String title;
         private String author;   
+        private long id;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(content, title, author);
+        return new Transfer(content, title, author.getUsername(), id);
     }
 
     @Override

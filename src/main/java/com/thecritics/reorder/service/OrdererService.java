@@ -173,7 +173,7 @@ public class OrdererService {
         }
 
         return follower.getFollowing().stream()
-                .anyMatch(o -> o.getId().equals(followed.getId()));
+                .anyMatch(o -> o.getId() == followed.getId());
     }
 
     /**
@@ -205,8 +205,8 @@ public class OrdererService {
         Orderer followed = ordererRepository.findByUsername(followedUsername);
 
         if (follower != null && followed != null && isFollowing(followerUsername, followedUsername)) {
-            follower.getFollowing().removeIf(o -> o.getId().equals(followed.getId()));
-            followed.getFollowers().removeIf(o -> o.getId().equals(follower.getId()));
+            follower.getFollowing().removeIf(o -> o.getId() == followed.getId());
+            followed.getFollowers().removeIf(o -> o.getId() == follower.getId());
             ordererRepository.save(follower);
             ordererRepository.save(followed);
         }

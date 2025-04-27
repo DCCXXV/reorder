@@ -1,4 +1,4 @@
-Feature: Buscar Order por titulo
+Feature: Buscar User 
 
 Background:
   * def port = karate.properties['karate.server.port']
@@ -11,11 +11,11 @@ Background:
   * status 200
   * path ''
   
-Scenario: Buscar Order por titulo
+Scenario: Buscar User
 
-  # El Orderer hace la acción de buscar un Order por un título que no existe
+  # El Orderer hace la acción de buscar un User que no existe
   Given path '/search'
-  And form field query = "Top 10 puertas"
-  When method POST
+  And form field query = "Sofia"
+  When method GET
   Then status 200
 

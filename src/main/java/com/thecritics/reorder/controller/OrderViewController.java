@@ -61,8 +61,8 @@ public class OrderViewController {
         } else {
             String sessionQuery = (String) session.getAttribute("searchQueryContext");
             if (sessionQuery != null) {
-                 log.debug("Recuperado 'searchQueryContext' de sesión: {}", sessionQuery);
-                 model.addAttribute("searchQuery", sessionQuery);
+                log.debug("Recuperado 'searchQueryContext' de sesión: {}", sessionQuery);
+                model.addAttribute("searchQuery", sessionQuery);
             }
         }
 

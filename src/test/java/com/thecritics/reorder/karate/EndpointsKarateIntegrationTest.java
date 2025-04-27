@@ -54,13 +54,25 @@ public class EndpointsKarateIntegrationTest {
     @Karate.Test
     public Karate testSignup() {
         return Karate.run("classpath:features/signupIntegrationTest.feature")
-                .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
+                .systemProperty("karate.server.port", String.valueOf(port));
     }
+
     @Karate.Test
-    //Error: el servidor rechaza la solicitud por seguridad, error 403
-public Karate testLogin() {
-    System.setProperty("karate.server.port", String.valueOf(port));
-    return Karate.run("classpath:features/loginIntegrationTest.feature")
-            .systemProperty("karate.env", System.getProperty("karate.env", "dev"));
-}
+    public Karate testSearchUser(){
+        System.setProperty("karate.server.port", String.valueOf(port));
+        return Karate.run("classpath:features/searchUserIntegrationTest.feature")
+        .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
+        .systemProperty("karate.server.port", String.valueOf(port));
+
+    }
+
+    @Karate.Test
+    public Karate testLogin() {
+        System.setProperty("karate.server.port", String.valueOf(port));
+        return Karate.run("classpath:features/loginIntegrationTest.feature")
+                .systemProperty("karate.env", System.getProperty("karate.env", "dev"))
+                .systemProperty("karate.server.port", String.valueOf(port));
+                
+    }
 }

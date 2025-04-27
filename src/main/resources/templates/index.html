@@ -41,7 +41,7 @@
                             <li
                                 sec:authorize="isAnonymous()"
                             >
-                                <a 
+                                <a
                                     class="py-3 text-lg"
                                     th:if="${session.orderer == null}"
                                     href = "/signup"
@@ -102,7 +102,7 @@
                                     class="flex-grow bg-transparent focus:outline-none"
                                     type="search"
                                     required
-                                    placeholder="Buscar Orders..."
+                                    placeholder="Buscar en ReOrder"
                                     name="query"
                                     hx-get="/api/search/autocomplete"
                                     hx-trigger="keyup changed delay:300ms"
@@ -165,7 +165,7 @@
                                     type="text"
                                     class="w-full input input-lg md:input-xl border-2 border-secondary input-ghost bg-base-100 input-bordered pr-10"
                                     required
-                                    placeholder="Busca un Order..."
+                                    placeholder="Buscar en ReOrder"
                                     name="query"
                                     hx-get="/api/search/autocomplete"
                                     hx-trigger="keyup changed delay:300ms"

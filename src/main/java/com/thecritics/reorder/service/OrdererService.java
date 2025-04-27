@@ -4,14 +4,23 @@ import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrdererRepository;
 import com.thecritics.reorder.controller.HomeController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 /**
- * Servicio que gestiona las operaciones relacionadas con las órdenes ({@link Orderer}). Esto incluye
- * manipulación del estado de la orden en la sesión, guardado de órdenes, búsqueda de órdenes y
+ * Servicio que gestiona las operaciones relacionadas con las órdenes
+ * ({@link Orderer}). Esto incluye
+ * manipulación del estado de la orden en la sesión, guardado de órdenes,
+ * búsqueda de órdenes y
  * otras operaciones relacionadas.
  */
 @Service
@@ -28,11 +37,14 @@ public class OrdererService {
     }
 
     /**
-     * Comprueba si ya existe un Orderer con la dirección de correo electrónico especificada
+     * Comprueba si ya existe un Orderer con la dirección de correo electrónico
+     * especificada
      * en el repositorio, ignorando mayúsculas y minúsculas.
      *
-     * @param email La dirección de correo cuya existencia se desea comprobar. No debe ser nulo.
-     * @return {@code true} si existe un Orderer con el correo electrónico proporcionado (ignorando mayúsculas/minúsculas),
+     * @param email La dirección de correo cuya existencia se desea comprobar. No
+     *              debe ser nulo.
+     * @return {@code true} si existe un Orderer con el correo electrónico
+     *         proporcionado (ignorando mayúsculas/minúsculas),
      *         {@code false} en caso contrario.
      */
     public Boolean emailAlreadyTaken(String email) {
@@ -43,8 +55,10 @@ public class OrdererService {
      * Comprueba si ya existe un Orderer con el nombre de usuario especificado
      * en el repositorio, ignorando mayúsculas y minúsculas.
      *
-     * @param username El nombre de usuario cuya existencia se desea comprobar. No debe ser nulo.
-     * @return {@code true} si existe un Orderer con el nombre de usuario proporcionado (ignorando mayúsculas/minúsculas),
+     * @param username El nombre de usuario cuya existencia se desea comprobar. No
+     *                 debe ser nulo.
+     * @return {@code true} si existe un Orderer con el nombre de usuario
+     *         proporcionado (ignorando mayúsculas/minúsculas),
      *         {@code false} en caso contrario.
      */
     public Boolean usernameAlreadyTaken(String username) {
@@ -54,7 +68,7 @@ public class OrdererService {
     /**
      * Guarda un Orderer con el username, email y contraseña.
      *
-     * @param email El email del Orderer.
+     * @param email    El email del Orderer.
      * @param username El username de Orderer.
      * @param password La contraseña de la cuenta del orderer
      * @return Orderer guardado, incluyendo su ID asignado.
@@ -64,18 +78,65 @@ public class OrdererService {
         orderer.setEmail(email);
         orderer.setUsername(username);
         orderer.setPassword(this.passwordEncoder.encode(password));
+        orderer.setOrders(new ArrayList<>());
 
         Orderer savedOrderer = ordererRepository.save(orderer);
 
         return savedOrderer;
     }
 
-    public Orderer findByUsername(String username) {
-        return ordererRepository.findByUsername(username);
-    }
-    
-    public Orderer findByEmail(String email) {
-        return ordererRepository.findByEmail(email);
+    /**
+     * Obtiene una lista de Orderers cuyos nombres de usuario contienen la cadena
+     * especificada,
+     * sin distinguir entre mayúsculas y minúsculas.
+     *
+     * @param username Subcadena del nombre de usuario que se desea buscar.
+     * @return Lista de Orderers cuyos usernames contienen la subcadena especificada
+     *         (ignorando mayúsculas/minúsculas).
+     */
+    public List<Orderer.Transfer> getOrderersByUsername(String username) {
+        return ordererRepository.findByUsernameContainingIgnoreCase(username)
+                .stream()
+                .map(Orderer::toTransfer)
+                .toList();
     }
 
+    /**
+     * Busca un Orderer exacto por su nombre de usuario.
+     *
+     * @param username El nombre de usuario del Orderer a buscar.
+     * @return El Transfer del Orderer correspondiente al nombre de usuario proporcionado, o
+     *         {@code null} si no se encuentra.
+     */
+    public Orderer.Transfer findByUsername(String username) {
+        Orderer orderer =  ordererRepository.findByUsername(username);
+        if (orderer == null) {
+            return null;
+        }
+        return orderer.toTransfer();
+    }
+
+    /**
+     * Busca un Orderer exacto por su dirección de correo electrónico.
+     *
+     * @param email La dirección de correo electrónico del Orderer a buscar.
+     * @return El Orderer correspondiente al correo electrónico proporcionado, o
+     *         {@code null} si no se encuentra.
+     */
+    public Orderer.Transfer findByEmail(String email) {
+        Orderer orderer =  ordererRepository.findByEmail(email);
+        if (orderer == null) {
+            return null;
+        }
+        return orderer.toTransfer();
+    }
+
+    
+    public List<Orderer.Transfer> findTopOrderersStartingWith(String query, int limit) {
+        Pageable pageRequest = PageRequest.of(0, limit);
+        return ordererRepository.findTopUsernamesStartingWith(query, pageRequest)
+                .stream()
+                .map(Orderer::toTransfer)
+                .toList();
+    }
 }

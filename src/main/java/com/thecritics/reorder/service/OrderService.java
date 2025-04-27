@@ -2,6 +2,7 @@ package com.thecritics.reorder.service;
 
 import com.thecritics.reorder.controller.HomeController;
 import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.repository.OrderRepository;
 import com.thecritics.reorder.repository.OrdererRepository;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +29,8 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
     private OrdererRepository ordererRepository;
 
     /**
@@ -162,9 +165,11 @@ public class OrderService {
      */
     public Order.Transfer saveOrder(String title, String author, List<List<String>> content) {
         Order order = new Order();
+        Orderer orderer = ordererRepository.findByUsername(author);
+
         order.setContent(content);
         order.setTitle(title);
-        order.setAuthor(ordererRepository.findByUsername(author));
+        order.setAuthor(orderer);
         
         List<String> previewElements = content.stream()
             .flatMap(List::stream)
@@ -174,6 +179,7 @@ public class OrderService {
         order.setPreviewElements(previewElements);
 
         Order savedOrder = orderRepository.save(order);
+        orderer.getOrders().add(savedOrder);
 
         return savedOrder.toTransfer();
     }

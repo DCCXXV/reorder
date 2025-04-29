@@ -3,7 +3,10 @@ package com.thecritics.reorder.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thecritics.reorder.model.Order;
+import com.thecritics.reorder.model.Orderer;
 import com.thecritics.reorder.service.OrderService;
+import com.thecritics.reorder.service.OrdererService;
+
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +38,7 @@ public class ReorderController {
     public ReorderController(ObjectMapper objectMapper, OrderService orderService) {
         this.objectMapper = objectMapper;
         this.orderService = orderService;
+
     }
 
     @GetMapping
@@ -55,6 +59,7 @@ public class ReorderController {
 
         session.setAttribute("reorderOriginalId", originalOrderId);
         session.setAttribute("reOrderState", initialReorderState);
+        model.addAttribute("u", session.getAttribute("username"));
 
         String searchQuery = null;
         if (fromQueryParam != null && !fromQueryParam.isEmpty()) {
@@ -165,7 +170,6 @@ public class ReorderController {
     @PostMapping("/PublishOrder")
     public ResponseEntity<?> reorderPublishOrder(
             @RequestParam String rtitle,
-            @RequestParam(required = false) String rauthor,
             @RequestParam Integer originalOrderId,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
@@ -194,8 +198,8 @@ public class ReorderController {
 
         log.info("Contenido diferente, guardando reorder para original ID {}", originalOrderId);
         try {
-            String finalAuthor = (rauthor == null || rauthor.trim().isEmpty()) ? "Anónimo" : rauthor.trim();
-            Order.Transfer savedReorder = orderService.saveReOrder(rtitle.trim(), finalAuthor, currentReorderState, originalOrder);
+            String author = (String) session.getAttribute("username");
+            Order.Transfer savedReorder = orderService.saveReOrder(rtitle.trim(), author, currentReorderState, originalOrder);
 
             session.removeAttribute("reOrderState");
             session.removeAttribute("reorderOriginalId");

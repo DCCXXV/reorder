@@ -28,7 +28,12 @@
         
     <div class = "flex p-1"><span th:text="${order.title}" class="mt-4 text-4xl font-bold text-secondary"></span></div>
     <div class="flex justify-between p-1 items-center">
-        <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
+        <div sec:authorize="isAnonymous()">
+            <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <span hx:get="@{/orderer/{username}(username=${#authentication.name})}" hx-target="#pageContent" hx-trigger="click" th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%); cursor: pointer;"></span>
+        </div>
         <form
             hx-get="/reorder"
             hx-target="#pageContent"

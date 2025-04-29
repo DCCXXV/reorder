@@ -156,7 +156,7 @@
                         </li>
 
                         <li sec:authorize="isAuthenticated()">
-                            <button class="btn btn-ghost btn-secondary text-lg font-semibold hover:bg-inherit hover:text-inherit" tabindex="-1">
+                            <button hx:get="@{/orderer/{username}(username=${#authentication.name})}" hx-target="#pageContent" class="btn btn-ghost btn-secondary text-lg font-semibold hover:bg-inherit hover:text-inherit" tabindex="-1">
                                 <span th:text="'@' + ${#authentication.name}">@username</span>
                             </button>
                         </li>

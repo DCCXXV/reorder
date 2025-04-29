@@ -74,6 +74,41 @@ public class OrdererViewController {
             return "orderer";
         }
   
+     /**
+ * Muestra la página de detalles de un Orderer específico por ID.
+ * @param id El ID del Orderer a mostrar.
+ * @param fromQuery Término de búsqueda original (opcional, para volver a la búsqueda).
+ * @param model El modelo para la vista.
+ * @param session La sesión HTTP.
+ * @return El nombre de la vista "orderer".
+ */
+@GetMapping("/orderer/id/{id}")
+public String getOrdererDetailById(@PathVariable Integer id,
+    @RequestParam(name = "fromQuery", required = false) String fromQuery,
+    Model model, HttpSession session){
+        log.debug("Solicitando detalles para Orderer ID: {}", id);
+        Orderer orderer = ordererService.getOrdererById(id);
+
+        if (orderer == null){
+            model.addAttribute("errorMessage", "Orderer con ID " + id + " no encontrado");
+            return "error";
+        }
+
+        model.addAttribute("orderer", orderer);
+        if (fromQuery != null && !fromQuery.trim().isEmpty()){
+            String trimmedQuery = fromQuery.trim();
+            log.debug("Recibido 'fromQuery': {}", trimmedQuery);
+            model.addAttribute("searchQuery", trimmedQuery);
+            session.setAttribute("searchQueryContext", trimmedQuery);
+        } else {
+            String sessionQuery = (String) session.getAttribute("searchQueryContext");
+            if (sessionQuery != null){
+                log.debug("Recuperado 'searchQueryContext' de sesión: {}", sessionQuery);
+                model.addAttribute("searchQuery", sessionQuery);
+            }
+        }
+        return "orderer";
+    }
     }
     
 

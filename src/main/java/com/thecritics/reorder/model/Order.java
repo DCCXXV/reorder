@@ -70,12 +70,11 @@ public class Order implements Transferable<Order.Transfer>{
         private List<List<String>> content;
         private String title;
         private String author;   
-        private Long reorderedId;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(id, content, title, author.getUsername(), reorderedOrder.getId());
+        return new Transfer(id, content, title, author.getUsername());
     }
 
     @Override

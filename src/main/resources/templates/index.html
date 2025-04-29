@@ -93,9 +93,9 @@
                       </div>
                     <div sec:authorize="isAuthenticated()">
                         <div id="loginToast" class="toast toast-top toast-end mt-24" style="display: none; opacity: 1; transition: opacity 0.5s ease;">
-                          <div class="alert bg-secondary text-base-100">
-                            <span th:text="'Has iniciado sesión como @' + ${#authentication.name}">@username</span>
-                          </div>
+                            <div class="alert bg-secondary text-base-100">
+                                <span th:text="'Has iniciado sesión como @' + ${#authentication.name}">@username</span>
+                            </div>
                         </div>
                         <script th:inline="javascript">
                             document.addEventListener('DOMContentLoaded', function() {
@@ -156,7 +156,7 @@
                         </li>
 
                         <li sec:authorize="isAuthenticated()">
-                            <button class="btn btn-ghost btn-secondary text-lg font-semibold mr-4 hover:bg-inherit hover:text-inherit" tabindex="-1">
+                            <button class="btn btn-ghost btn-secondary text-lg font-semibold hover:bg-inherit hover:text-inherit" tabindex="-1">
                                 <span th:text="'@' + ${#authentication.name}">@username</span>
                             </button>
                         </li>

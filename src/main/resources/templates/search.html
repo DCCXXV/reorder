@@ -24,13 +24,11 @@
             <i class="fa-solid fa-arrow-down"></i>
         </div>
     </div>
-    <div class="mb-6 p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
-        <!--<p class="text-2xl">Resultados de <b><span class="text-secondary" th:text="${query}"></span></b></p>-->
-
+    <div class="p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
         <!-- Sección para Orders -->
         <div id="orders-results" class="result-section">
             <p style="filter: brightness(70%);"><span th:text="${orderList != null ? #lists.size(orderList) : 0}"></span> order<span th:if="${orderList == null || #lists.size(orderList) != 1}">s</span> encontrado<span th:if="${orderList == null || #lists.size(orderList) != 1}">s</span></p>
-            <div class="flex flex-col mt-6 gap-4">
+            <div class="flex flex-col my-6 gap-4">
                 <div th:if="${orderList != null && !orderList.isEmpty()}" th:each="order : ${orderList}"
                     class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
                     tabindex="0"

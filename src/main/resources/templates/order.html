@@ -1,6 +1,6 @@
 <div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
     <title hidden th:text="${order.title} + ' | ReOrder'"></title>
-    <div th:if="${searchQuery != null}" class="mt-10">
+    <div th:if="${searchQuery != null and fromOrderer == null}" class="mt-10">
         <input type="hidden" id="originalQueryInput" name="query" th:value="${searchQuery}" />
 
         <button class="btn rounded-pill bg-base-200 p-4"
@@ -13,9 +13,27 @@
             Volver a Resultados
         </button>
     </div>
+
+    <div th:if="${fromOrderer != null}" class="mt-10">
+        <input type="hidden" id="ordererIdInput" name="ordererId" th:value="${fromOrderer}" />
+    
+        <button class="btn rounded-pill bg-base-200 p-4"
+        th:attr="hx-get=@{/orderer/id/{id}(id=${fromOrderer})}"
+        hx-target="#pageContent"
+        hx-swap="innerHTML">
+        <i class="fa-solid fa-user me-2"></i>
+        Volver al Perfil
+        </button>
+    </div>
+        
     <div class = "flex p-1"><span th:text="${order.title}" class="mt-4 text-4xl font-bold text-secondary"></span></div>
     <div class="flex justify-between p-1 items-center">
-        <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
+        <div sec:authorize="isAnonymous()">
+            <span th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%);"></span>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <span hx:get="@{/orderer/{username}(username=${#authentication.name})}" hx-target="#pageContent" hx-trigger="click" th:text="'@' + ${order.author}" class="mt-1 mb-4 text-xl" style="filter: brightness(80%); cursor: pointer;"></span>
+        </div>
         <form
             hx-get="/reorder"
             hx-target="#pageContent"

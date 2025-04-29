@@ -34,6 +34,7 @@ public class OrderViewController {
      * Muestra la página de detalles de un Order específico.
      * @param id El ID del Order a mostrar.
      * @param fromQuery Término de búsqueda original (opcional, para volver a la búsqueda).
+     * @param fromOrderer ID del orderer desde cuyo perfil se accedió (opcional).
      * @param model El modelo para la vista.
      * @param session La sesión HTTP.
      * @return El nombre de la vista "order".
@@ -41,9 +42,15 @@ public class OrderViewController {
     @GetMapping("/order/{id}")
     public String getOrderDetail(@PathVariable Integer id,
                                  @RequestParam(name = "fromQuery", required = false) String fromQuery,
+                                 @RequestParam(name = "fromOrderer", required = false) String fromOrderer,
                                  Model model, HttpSession session) {
         log.debug("Solicitando detalles para Order ID: {}", id);
         Order order = orderService.getOrderById(id);
+
+        if (fromOrderer != null && !fromOrderer.trim().isEmpty()) {
+            log.debug("Recibido 'fromOrderer': {}", fromOrderer);
+            model.addAttribute("fromOrderer", fromOrderer);
+        }
 
         if (order == null) {
             log.warn("No se encontró Order con ID: {}", id);

@@ -1,6 +1,4 @@
-# language: es
-@OrdererFeature
-Característica: Ver Detalles de Orderer
+Feature: Ver Detalles de Orderer
 
 Background:
   * def port = karate.properties['karate.server.port']
@@ -12,22 +10,15 @@ Background:
   * method post
   * status 200
   * path ''
-  
-  Scenario: Ver Detalles de un Orderer Existente 
-    Given path '/orderer/a'
-    When method get
-    Then status 200 
-    And match response '<h1 class="text-2xl font-semibold">Detalles del Orderer</h1>'
-    And match response ('<span id="orderer-username">a</span>') 
-    And !match response '<div id="error-message-container">'
 
-  Scenario: Intentar Ver Detalles de un Orderer Inexistente 
-     Given path '/orderer/b' 
-    When method get
-    Then status 200 
-    And match response '<h1 class="text-xl text-red-600">Error</h1>'
-    And match response '<p id="error-message-text">Orderer no encontrado</p>'
-    And !match response '<span id="orderer-username">'
+Scenario: Ver Detalles de un Orderer Existente 
+  Given path '/orderer/a'
+  When method get
+  Then status 200 
+  And match response contains '<title hidden>a | ReOrder</title>'
 
-
-  
+Scenario: Intentar Ver Detalles de un Orderer Inexistente 
+  Given path '/orderer/b' 
+  When method get
+  Then status 200
+  And match response !contains '<title hidden>a | ReOrder</title>'

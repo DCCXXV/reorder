@@ -108,9 +108,9 @@ class SearchControllerIntegrationTest {
         mockOrderAutocompleteDuplicateTitle.setId(12);
         mockOrderAutocompleteDuplicateTitle.setTitle("Test Autocomplete A");
 
-        mockOrdererAutocompleteTransfer1 = new Orderer.Transfer("TestAutocompleteUser1", "auto1@example.com", 0);
-        mockOrdererAutocompleteTransfer2 = new Orderer.Transfer("TestAutocompleteUser2", "auto2@example.com", 0);
-        mockOrdererAutocompleteTransferDuplicateUsername = new Orderer.Transfer("TestAutocompleteUser1", "auto3@example.com", 0); 
+        mockOrdererAutocompleteTransfer1 = new Orderer.Transfer("TestAutocompleteUser1", "auto1@example.com", 0, null, new ArrayList<>());
+        mockOrdererAutocompleteTransfer2 = new Orderer.Transfer("TestAutocompleteUser2", "auto2@example.com", 0, null, new ArrayList<>());
+        mockOrdererAutocompleteTransferDuplicateUsername = new Orderer.Transfer("TestAutocompleteUser1", "auto3@example.com", 0, null, new ArrayList<>()); 
 
         when(orderService.getOrdersByTitle(eq(SEARCH_QUERY)))
                 .thenReturn(Arrays.asList(mockOrder1, mockOrder2));

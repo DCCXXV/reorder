@@ -22,6 +22,7 @@ public class OrdererDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+      
         log.info("Attempting to load user by username/identifier: {}", username);
 
          // Intento cargar el usuario por nombre de usuario o correo electrónico

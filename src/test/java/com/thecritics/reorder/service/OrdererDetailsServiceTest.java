@@ -1,6 +1,7 @@
 package com.thecritics.reorder.service;
 
 import com.thecritics.reorder.model.Orderer;
+import com.thecritics.reorder.repository.OrderRepository;
 import com.thecritics.reorder.repository.OrdererRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @ExtendWith(MockitoExtension.class)
 public class OrdererDetailsServiceTest {
 
@@ -20,6 +24,8 @@ public class OrdererDetailsServiceTest {
 
     @Mock
     private OrdererRepository ordererRepository;
+ @Mock
+    private OrderRepository orderRepository;
 
     @Test
     void loadUserByUsername_ShouldReturnUserDetails_WhenUserExists() {
@@ -56,4 +62,41 @@ public class OrdererDetailsServiceTest {
 
         verify(ordererRepository, times(1)).findByUsername(username);
     }
+    @Test
+    void loadUserByUsername_ShouldReturnUserDetails_WhenEmailExists() {
+        // Arrange
+        String email = "sara@example.com";
+        String password = "secretismo";
+        Orderer orderer = new Orderer();
+        orderer.setUsername("sara");
+        orderer.setPassword(password);
+        orderer.setEmail(email);
+        when(ordererRepository.findByEmail(email)).thenReturn(orderer);
+
+        // Act
+        UserDetails userDetails = ordererDetailsService.loadUserByUsername(email);
+
+        // Assert
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails.getUsername()).isEqualTo(orderer.getUsername());
+        assertThat(userDetails.getPassword()).isEqualTo(password);
+        assertThat(userDetails.getAuthorities()).extracting("authority").containsExactly("ROLE_USER");
+
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void loadUserByUsername_ShouldThrowException_WhenEmailDoesNotExist() {
+        // Arrange
+        String email = "nonexistent@example.com";
+        when(ordererRepository.findByEmail(email)).thenReturn(null);
+
+        // Act & Assert
+        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(email))
+            .isInstanceOf(UsernameNotFoundException.class)
+            .hasMessageContaining("User not found with username or email: " + email);
+
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
+
 }

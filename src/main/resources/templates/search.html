@@ -13,6 +13,7 @@
         </form>
     </label>
     
+    
     <div class="mb-6 p-6 bg-base-200 rounded-xl lg:w-2/3 w-full">
         <p class="text-2xl">Resultados de <b><span class="text-secondary" th:text="${query}"></span></b></p>
         <p style="filter: brightness(70%);"><span th:text="${orderList.size}"></span> order<span th:if="${orderList.size != 1}">s</span> encontrado<span th:if="${orderList.size != 1}">s</span></p>

@@ -34,7 +34,7 @@ Scenario: El Orderer le da a publicar Order con un título correctamente(Éxito 
   When method post
   Then status 200
   And match response contains '<span class="mt-4 text-4xl font-bold text-secondary">Top 10 puertas</span>'
-  And match response contains '<span class="mt-1 mb-4 text-xl" style="filter: brightness(80%);">@a</span>'
+  And match response contains '<span hx-get="/orderer/a" hx-target="#pageContent" hx-trigger="click" class="mt-1 mb-4 text-xl" style="filter: brightness(80%); cursor: pointer;">@a</span>'
 
 Scenario: El Orderer le da a publicar Order sin elementos en los Tiers (Fallo Validación)
   # --- 1. Configurar sesión INVÁLIDA ---

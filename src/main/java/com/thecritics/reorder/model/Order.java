@@ -66,15 +66,16 @@ public class Order implements Transferable<Order.Transfer>{
     @Getter
     @AllArgsConstructor
     public static class Transfer {
+        private Long id;
         private List<List<String>> content;
         private String title;
         private String author;   
-        private long id;
+        private Long reorderedId;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(content, title, author.getUsername(), id);
+        return new Transfer(id, content, title, author.getUsername(), reorderedOrder.getId());
     }
 
     @Override

@@ -41,6 +41,8 @@ public class DevDataInitializer implements CommandLineRunner {
             Orderer devOrderer = new Orderer();
             devOrderer.setUsername("a");
             devOrderer.setEmail("a@a");
+            devOrderer.setCreatedAt(null);
+            devOrderer.setOrders(new ArrayList<>());
             devOrderer.setPassword(passwordEncoder.encode("aaaAAA123"));
             ordererRepository.save(devOrderer);
             log.info("Saved Orderer: {}", devOrderer.getUsername());

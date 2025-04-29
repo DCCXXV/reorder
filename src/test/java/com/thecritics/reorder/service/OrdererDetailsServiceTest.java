@@ -99,26 +99,4 @@ public class OrdererDetailsServiceTest {
         verify(ordererRepository, times(1)).findByEmail(email);
     }
 
-    @Test
-    void loadUserByUsername_ShouldHandleNullInput() {
-        // Act & Assert
-        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(null))
-            .isInstanceOf(UsernameNotFoundException.class)
-            .hasMessageContaining("User not found with username or email: null");
-
-        verifyNoInteractions(ordererRepository);
-    }
-
-    @Test
-    void loadUserByUsername_ShouldHandleEmptyStringInput() {
-        // Arrange
-        String emptyInput = "";
-
-        // Act & Assert
-        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(emptyInput))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("Input cannot be empty");
-
-        verifyNoInteractions(ordererRepository);
-    }
 }

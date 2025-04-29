@@ -84,6 +84,33 @@
                         </ul>
                     </div>
                     <a class="p-2" href="/"><span class="text-4xl title-logo">Re<span class="text-secondary">O</span>rder</span></a>
+                    <div sec:authorize="isAnonymous()">
+                        <script th:inline="javascript">
+                            if (sessionStorage.getItem('loginToastShown')) {
+                                sessionStorage.removeItem('loginToastShown');
+                            }
+                        </script>
+                      </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <div id="loginToast" class="toast toast-top toast-end mt-24" style="display: none; opacity: 1; transition: opacity 0.5s ease;">
+                            <div class="alert bg-secondary text-base-100">
+                                <span th:text="'Has iniciado sesión como @' + ${#authentication.name}">@username</span>
+                            </div>
+                        </div>
+                        <script th:inline="javascript">
+                            document.addEventListener('DOMContentLoaded', function() {
+                              if (!sessionStorage.getItem('loginToastShown')) {
+                                var toast = document.getElementById('loginToast');
+                                toast.style.display = '';
+                                setTimeout(function() {
+                                  toast.style.opacity = '0';
+                                  setTimeout(function() {toast.style.display = 'none';}, 500);
+                                }, 3000);
+                                sessionStorage.setItem('loginToastShown', 'true');
+                              }
+                            });
+                          </script>
+                      </div>
                 </div>
                 <div class="navbar-center hidden md:flex relative">
                     <div class="relative w-156">
@@ -114,7 +141,7 @@
                     </div>
                 </div>
 
-                <div class="navbar-end hidden lg:flex">
+                <div class="navbar-end hidden lg:flex pr-6 h-full">
                     <ul class="flex">
                         <li sec:authorize="isAuthenticated()">
                             <a href="/createOrder"
@@ -126,6 +153,12 @@
                                hx-on::after-request="document.getElementById('order-search-results1').innerHTML = ''">
                                Crear Order
                             </a>
+                        </li>
+
+                        <li sec:authorize="isAuthenticated()">
+                            <button class="btn btn-ghost btn-secondary text-lg font-semibold hover:bg-inherit hover:text-inherit" tabindex="-1">
+                                <span th:text="'@' + ${#authentication.name}">@username</span>
+                            </button>
                         </li>
                     
                         <li sec:authorize="isAnonymous()">

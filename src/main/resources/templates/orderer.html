@@ -1,0 +1,96 @@
+<div class="mx-4 sm:mx-12 md:mx-24 lg:mx-48">
+    <title hidden th:text="${orderer} + ' | ReOrder'"></title>
+
+    <div th:if="${searchQuery !=null}" class="mt-10">
+        <input
+            type="hidden"
+            id="originalQueryInput"
+            name="query"
+            th:value="${searchQuery}" />
+
+        <button
+            class="btn rounded-pill bg-base-200 p-4"
+            hx-post="/search"
+            hx-target="#pageContent"
+            hx-swap="innerHTML"
+            hx-include="#originalQueryInput">
+            <i class="fa-solid fa-chevron-left me-2"></i>
+            Volver a Resultados
+        </button>
+    </div>
+
+    <div class="flex justify-center items-center mt-10 relative">
+        <div
+            class="flex flex-col items-center absolute top-0 transform -translate-y-1/2 z-10">
+            <div class="w-32 h-32 rounded-full overflow-hidden bg-secondary">
+                <img
+                    th:src="@{/images/user.png}"
+                    alt="Avatar"
+                    class="w-full h-full object-cover" />
+            </div>
+            <p
+                class="mt-2 text-2xl font-bold text-center"
+                th:text="${orderer.username}">
+                NombreUsuario
+            </p>
+        </div>
+        <div
+            class="w-full max-w-5xl rounded-xl border border-base-300 bg-base-200 p-6 relative">
+            <div class="mt-10">
+                <!-- Fila de información -->
+                <div class="flex justify-between items-center">
+                    <div class="text-left">
+                        <p class="text-sm text-gray-500">Orders realizados</p>
+                        <p class="text-2xl font-bold">
+                            <span
+                                th:text="${orderer.orders != null ? #lists.size(orderer.orders) : 0}"></span>
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-500">Se unió a ReOrder el
+                            día</p>
+                        <p class="text-2xl font-bold">
+                            <span
+                                th:text="${#temporals.format(orderer.createdAt.toLocalDateTime(), 'dd/MM/yyyy')}">01/01/2025</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center mt-8">
+        <div
+            class="w-full max-w-5xl rounded-xl border border-base-300 bg-base-200 p-6 relative">
+            <div class="flex flex-col mt-6 gap-4">
+                <div
+                    th:if="${orderer.orders != null && !orderer.orders.isEmpty()}"
+                    th:each="order : ${orderer.orders}"
+                    class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
+                    tabindex="0"
+                    th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
+                    hx-target="#pageContent"
+                    hx-swap="innerHTML">
+                    <div class="flex justify-between">
+                        <div
+                            class="text-secondary text-xl font-bold"
+                            th:text="${order.title}"></div>
+                        <div class="text-lg"
+                            th:text="'@' + ${order.author}"></div>
+                    </div>
+                    <div class="mt-4 flex overflow-hidden">
+                        <span
+                            th:each="e, iterStat : ${order.previewElements}"
+                            th:if="${iterStat.index < 3}"
+                            class="badge badge-soft badge-secondary p-3 sm:p-4 text-base sm:text-xl m-1">
+                            <span th:text="${e}">elemento</span>
+                        </span>
+                    </div>
+                </div>
+                <div
+                    th:if="${orderer.orders == null || orderer.orders.isEmpty()}"
+                    class="text-center p-4">
+                    No se encontraron orders
+                </div>
+            </div>
+        </div>
+    </div>

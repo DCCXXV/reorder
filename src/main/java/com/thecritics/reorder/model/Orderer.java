@@ -23,16 +23,16 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "`orderer`")
 @NoArgsConstructor
-public class Orderer implements Transferable<Orderer.Transfer>{
+public class Orderer implements Transferable<Orderer.Transfer> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+    private long id;
 
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     private java.sql.Timestamp createdAt;
-    
+
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false, unique = true)
@@ -49,11 +49,13 @@ public class Orderer implements Transferable<Orderer.Transfer>{
         private String username;
         private String email;
         private int numOrders;
+        private java.sql.Timestamp createdAt;
+        private List<Order> orders;
     }
 
     @Override
     public Transfer toTransfer() {
-        return new Transfer(username, email, orders.size());
+        return new Transfer(username, email, orders.size(), createdAt, orders);
     }
 
     @Override

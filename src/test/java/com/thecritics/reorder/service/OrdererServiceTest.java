@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList; // Import ArrayList
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.mockito.ArgumentMatchers.any;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.ArgumentCaptor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -308,4 +308,98 @@ public class OrdererServiceTest {
         verify(ordererRepository, times(1))
             .findByUsernameContainingIgnoreCase(partialUsername);
     }
+    private Orderer createMockOrderer(long id, String username, String email) {
+        Orderer orderer = new Orderer();
+        orderer.setId(id);
+        orderer.setUsername(username);
+        orderer.setEmail(email);
+        orderer.setFollowers(new ArrayList<>());
+        orderer.setFollowing(new ArrayList<>());
+        return orderer;
+}
+      @Test
+void followUser_ShouldAddFollower_WhenUserExists() {
+     // Arrange
+     String followerUsername = "john";
+     String followeeUsername = "jane";
+
+     Orderer follower = createMockOrderer(1L, followerUsername, "john@example.com");
+     Orderer followee = createMockOrderer(2L, followeeUsername, "jane@example.com");
+
+     when(ordererRepository.findByUsername(followerUsername)).thenReturn(follower);
+     when(ordererRepository.findByUsername(followeeUsername)).thenReturn(followee);
+     when(ordererRepository.save(any(Orderer.class))).thenAnswer(i -> {
+         Orderer orderer = (Orderer) i.getArguments()[0];
+         if (orderer.getFollowing() == null) {
+             orderer.setFollowing(new ArrayList<>());
+         }
+         orderer.getFollowing().add(followee);
+         return orderer;
+     });
+
+     // Act
+     ordererService.followUser(followerUsername, followeeUsername);
+
+     // Assert
+     assertThat(follower.getFollowing()).contains(followee);
+     verify(ordererRepository, times(1)).save(follower);
+}
+@Test
+void followUser_ShouldThrowException_WhenFolloweeDoesNotExist() {
+    // Arrange
+    String followerUsername = "john";
+    String followeeUsername = "nonexistent";
+
+    Orderer follower = createMockOrderer(1L, followerUsername, "john@example.com");
+
+    when(ordererRepository.findByUsername(followerUsername)).thenReturn(follower);
+    when(ordererRepository.findByUsername(followeeUsername)).thenReturn(null);
+
+    // Act & Assert
+    assertThatThrownBy(() -> ordererService.followUser(followerUsername, followeeUsername))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("User to follow does not exist");
+}
+@Test
+void unfollowUser_ShouldRemoveFollower_WhenUserExists() {
+      // Arrange
+      String followerUsername = "john";
+      String followeeUsername = "jane";
+
+      Orderer follower = createMockOrderer(1L, followerUsername, "john@example.com");
+      Orderer followee = createMockOrderer(2L, followeeUsername, "jane@example.com");
+
+      follower.getFollowing().add(followee);
+
+      when(ordererRepository.findByUsername(followerUsername)).thenReturn(follower);
+      when(ordererRepository.findByUsername(followeeUsername)).thenReturn(followee);
+      when(ordererRepository.save(any(Orderer.class))).thenAnswer(i -> {
+          Orderer orderer = (Orderer) i.getArguments()[0];
+          orderer.getFollowing().remove(followee);
+          return orderer;
+      });
+
+      // Act
+      ordererService.unfollowUser(followerUsername, followeeUsername);
+
+      // Assert
+      assertThat(follower.getFollowing()).doesNotContain(followee);
+      verify(ordererRepository, times(1)).save(follower);
+ }
+@Test
+void unfollowUser_ShouldThrowException_WhenFolloweeDoesNotExist() {
+     // Arrange
+     String followerUsername = "john";
+     String followeeUsername = "nonexistent";
+
+     Orderer follower = createMockOrderer(1L, followerUsername, "john@example.com");
+
+     when(ordererRepository.findByUsername(followerUsername)).thenReturn(follower);
+     when(ordererRepository.findByUsername(followeeUsername)).thenReturn(null);
+
+     // Act & Assert
+     assertThatThrownBy(() -> ordererService.unfollowUser(followerUsername, followeeUsername))
+             .isInstanceOf(IllegalArgumentException.class)
+             .hasMessageContaining("User to unfollow does not exist");
+ }
 }

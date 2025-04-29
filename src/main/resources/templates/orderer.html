@@ -19,6 +19,24 @@
         </button>
     </div>
 
+    <div th:if="${fromOrderer != null}">
+        <input
+            type="hidden"
+            id="ordererIdInput"
+            name="ordererId"
+            th:value="${fromOrderer}" />
+
+        <button
+            class="btn rounded-pill bg-base-200 p-4"
+            th:attr="hx-get=@{/orderer/{id}(id=${fromOrderer})}"
+            hx-target="#pageContent"
+            hx-swap="innerHTML">
+            <i class="fa-solid fa-user me-2"></i>
+            Volver al Perfil
+        </button>
+    </div>
+</div>
+
     <div class="flex justify-center items-center mt-10 relative">
         <div
             class="flex flex-col items-center absolute top-0 transform -translate-y-1/2 z-10">
@@ -67,7 +85,7 @@
                     th:each="order : ${orderer.orders}"
                     class="bg-base-100 p-4 rounded searchItem transition cursor-pointer"
                     tabindex="0"
-                    th:attr="hx-get=@{/order/{id}(id=${order.id}, fromQuery=${query})}"
+                    th:attr="hx-get=@{/order/{id}(id=${order.id}, fromOrderer=${orderer.id}, fromQuery=${query})}"
                     hx-target="#pageContent"
                     hx-swap="innerHTML">
                     <div class="flex justify-between">
@@ -89,7 +107,7 @@
                 <div
                     th:if="${orderer.orders == null || orderer.orders.isEmpty()}"
                     class="text-center p-4">
-                    No se encontraron orders
+                    Este usuario no ha realizado ningún order
                 </div>
             </div>
         </div>

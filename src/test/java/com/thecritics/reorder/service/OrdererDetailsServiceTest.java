@@ -63,65 +63,62 @@ public class OrdererDetailsServiceTest {
         verify(ordererRepository, times(1)).findByUsername(username);
     }
     @Test
-    void getOrdererDetails_ShouldReturnCorrectDetails_WhenUserExists() {
-    // Arrange
-    String username = "sara";
-    Orderer orderer = new Orderer();
-    orderer.setUsername(username);
-    orderer.setJoinDate(LocalDate.of(2022, 1, 15));
+    void loadUserByUsername_ShouldReturnUserDetails_WhenEmailExists() {
+        // Arrange
+        String email = "sara@example.com";
+        String password = "secretismo";
+        Orderer orderer = new Orderer();
+        orderer.setUsername("sara");
+        orderer.setPassword(password);
+        orderer.setEmail(email);
+        when(ordererRepository.findByEmail(email)).thenReturn(orderer);
 
-    Order order1 = new Order();
-    order1.setTitle("Order 1");
-    order1.setItems(List.of("Item 1", "Item 2", "Item 3"));
-    order1.setCreatedAt(LocalDateTime.now().minusDays(1));
-    order1.setOrderer(orderer);
+        // Act
+        UserDetails userDetails = ordererDetailsService.loadUserByUsername(email);
 
-    Order order2 = new Order();
-    order2.setTitle("Order 2");
-    order2.setItems(List.of("Item A", "Item B", "Item C"));
-    order2.setCreatedAt(LocalDateTime.now().minusDays(2));
-    order2.setOrderer(orderer); 
+        // Assert
+        assertThat(userDetails).isNotNull();
+        assertThat(userDetails.getUsername()).isEqualTo(orderer.getUsername());
+        assertThat(userDetails.getPassword()).isEqualTo(password);
+        assertThat(userDetails.getAuthorities()).extracting("authority").containsExactly("ROLE_USER");
 
-    Order order3 = new Order();
-    order3.setTitle("Order 3");
-    order3.setItems(List.of("Item X", "Item Y", "Item Z"));
-    order3.setCreatedAt(LocalDateTime.now().minusDays(3));
-    order3.setOrderer(orderer);
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
 
-    List<Order> orders = List.of(order1, order2, order3);
-
-    when(ordererRepository.findByUsername(username)).thenReturn(orderer);
-    when(orderRepository.findByOrdererOrderByCreatedAtDesc(orderer)).thenReturn(orders); // Act
-    OrdererDetailsService result = ordererDetailsService.getOrdererDetails(username);
-
-    // Assert
-    assertThat(result).isNotNull();
-    assertThat(result.getUsername()).isEqualTo(username);
-    assertThat(result.getJoinDate()).isEqualTo(LocalDate.of(2022, 1, 15));
-    assertThat(result.getOrderCount()).isEqualTo(3);
-    assertThat(result.getRecentOrders())
-        .hasSize(3)
-        .extracting("title")
-        .containsExactly("Order 1", "Order 2", "Order 3");
-    assertThat(result.getRecentOrders().get(0).getItems())
-        .containsExactly("Item 1", "Item 2", "Item 3");
-
-    verify(ordererRepository, times(1)).findByUsername(username);
-    verify(orderRepository, times(1)).findByOrdererOrderByCreatedAtDesc(orderer);
-}
-@Test
-void getOrdererDetails_ShouldThrowException_WhenUserDoesNotExist() {
-  // Arrange
-        String username = "noexiste";
-        when(ordererRepository.findByUsername(username)).thenReturn(null);
+    @Test
+    void loadUserByUsername_ShouldThrowException_WhenEmailDoesNotExist() {
+        // Arrange
+        String email = "nonexistent@example.com";
+        when(ordererRepository.findByEmail(email)).thenReturn(null);
 
         // Act & Assert
-        assertThatThrownBy(() -> ordererDetailsService.getOrdererDetails(username))
+        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(email))
             .isInstanceOf(UsernameNotFoundException.class)
-            .hasMessageContaining("User not found with username: " + username);
+            .hasMessageContaining("User not found with username or email: " + email);
 
-        verify(ordererRepository, times(1)).findByUsername(username);
-        verifyNoInteractions(orderRepository); // Ensure orderRepository is not called
-    
-}
+        verify(ordererRepository, times(1)).findByEmail(email);
+    }
+
+    @Test
+    void loadUserByUsername_ShouldHandleNullInput() {
+        // Act & Assert
+        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(null))
+            .isInstanceOf(UsernameNotFoundException.class)
+            .hasMessageContaining("User not found with username or email: null");
+
+        verifyNoInteractions(ordererRepository);
+    }
+
+    @Test
+    void loadUserByUsername_ShouldHandleEmptyStringInput() {
+        // Arrange
+        String emptyInput = "";
+
+        // Act & Assert
+        assertThatThrownBy(() -> ordererDetailsService.loadUserByUsername(emptyInput))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("Input cannot be empty");
+
+        verifyNoInteractions(ordererRepository);
+    }
 }

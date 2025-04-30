@@ -60,5 +60,11 @@ ReOrder está dirigido a personas que disfrutan creando listas, compartiendo sus
 - **Railway**: Plataforma para el despliegue de la aplicación. ![Railway](https://img.shields.io/badge/railway-%239E137B.svg?style=for-the-badge&logo=railway&logoColor=white)
 
 ---
+## Contribuidores
+<a href="https://github.com/DCCXXV/reorder/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=DCCXXV/reorder" />
+</a>
+
+---
 ¡Gracias por usar ReOrder! Esperamos que disfrutes creando, compartiendo y discutiendo listas con tus amigos.  😊
 
